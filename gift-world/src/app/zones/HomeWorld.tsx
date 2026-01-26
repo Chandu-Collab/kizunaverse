@@ -1,8 +1,10 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import PriyaCharacter from '@/components/3d/PriyaCharacter';
 import UruruCharacter from '@/components/3d/UruruCharacter';
+import GalaxiaAnimeGirl from '@/components/3d/GalaxiaAnimeGirl';
+import AnimatedGLBModel from '@/components/3d/AnimatedGLBModel';
 import { useCharacter } from '@/hooks/useCharacter';
 import Scene from '@/components/3d/Scene';
 import OotyScene from '@/components/3d/OotyScene';
@@ -18,6 +20,12 @@ export default function HomeWorld() {
   const { navigateTo } = useNavigation();
   const { isNight } = useTheme();
   const { selectedCharacter, setSelectedCharacter } = useCharacter();
+
+  const [showWelcome, setShowWelcome] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setShowWelcome(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
@@ -38,24 +46,37 @@ export default function HomeWorld() {
           <img src="/ururu.glb" alt="Ururu" style={{ width: 48, height: 48, objectFit: 'contain' }} />
           <span className="text-white mt-1">Ururu</span>
         </button>
+        <button
+          className={`flex flex-col items-center focus:outline-none ${selectedCharacter === 'galaxia' ? 'ring-2 ring-purple-400' : ''}`}
+          onClick={() => setSelectedCharacter('galaxia')}
+        >
+          <img src="/galaxia-anime-girl/preview.png" alt="Galaxia" style={{ width: 48, height: 48, objectFit: 'contain' }} />
+          <span className="text-white mt-1">Galaxia</span>
+        </button>
       </div>
       <Scene cameraPosition={[0, 7, 14]} enableControls={true}>
         <Suspense fallback={null}>
           <OotyScene />
           <Particles count={isNight ? 150 : 100} />
           {/* Render selected character */}
-          {selectedCharacter === 'priya' ? (
+          {selectedCharacter === 'priya' && (
             <PriyaCharacter
               initialPosition={[0, 1, 6]}
               roamRadius={4}
               onInteract={() => {}}
             />
-          ) : (
+          )}
+          {selectedCharacter === 'ururu' && (
             <UruruCharacter
               initialPosition={[0, 1, 6]}
               roamRadius={4}
               onInteract={() => {}}
             />
+          )}
+          {selectedCharacter === 'galaxia' && (
+            <Suspense fallback={null}>
+              <AnimatedGLBModel />
+            </Suspense>
           )}
           {/* Navigation Objects */}
           <InteractiveObject
@@ -89,30 +110,32 @@ export default function HomeWorld() {
         </Suspense>
       </Scene>
 
-      {/* Welcome Message Overlay */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.5 }}
-          className="pointer-events-auto"
-        >
-          <GlassCard className="text-center max-w-md mx-auto">
-            <h1 className="text-4xl font-bold text-white mb-2">
-              Welcome to Your World!
-            </h1>
-            <p className="text-white/80 text-lg mb-2">
-              {isNight ? 'Enjoy a peaceful night in the hills.' : 'Enjoy your peaceful hill station escape!'}
-            </p>
-            <p className="text-white/70 text-sm mb-3">
-              You are a special guest here. Explore all the amazing zones—just click on the floating objects or say hi to your character as they roam around!
-            </p>
-            <p className="text-white/60 text-xs">
-              Use the theme toggle to switch between day and night
-            </p>
-          </GlassCard>
-        </motion.div>
-      </div>
+      {/* Welcome Message Overlay (disappears after 2s) */}
+      {showWelcome && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.5 }}
+            className="pointer-events-auto"
+          >
+            <GlassCard className="text-center max-w-md mx-auto">
+              <h1 className="text-4xl font-bold text-white mb-2">
+                Welcome to Your World!
+              </h1>
+              <p className="text-white/80 text-lg mb-2">
+                {isNight ? 'Enjoy a peaceful night in the hills.' : 'Enjoy your peaceful hill station escape!'}
+              </p>
+              <p className="text-white/70 text-sm mb-3">
+                You are a special guest here. Explore all the amazing zones—just click on the floating objects or say hi to your character as they roam around!
+              </p>
+              <p className="text-white/60 text-xs">
+                Use the theme toggle to switch between day and night
+              </p>
+            </GlassCard>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }
