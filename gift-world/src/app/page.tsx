@@ -3,6 +3,7 @@
 import { AudioProvider } from '@/components/audio/AudioManager';
 import { NavigationProvider, useNavigation } from '@/hooks/useNavigation';
 import { ThemeProvider } from '@/hooks/useTheme';
+import { CharacterProvider } from '@/hooks/useCharacter';
 import MusicToggle from '@/components/audio/MusicToggle';
 import HomeWorld from './zones/HomeWorld';
 import BirthdayZone from './zones/BirthdayZone';
@@ -35,16 +36,20 @@ function ZoneRenderer() {
   );
 }
 
-export default function Home() {
+function Home() {
   return (
     <ThemeProvider>
-      <AudioProvider>
-        <NavigationProvider>
-          <ParticleBackground />
-          <ZoneRenderer />
-          <MusicToggle />
-        </NavigationProvider>
-      </AudioProvider>
+      <CharacterProvider>
+        <AudioProvider>
+          <NavigationProvider>
+            <ParticleBackground />
+            <ZoneRenderer />
+            <MusicToggle />
+          </NavigationProvider>
+        </AudioProvider>
+      </CharacterProvider>
     </ThemeProvider>
   );
 }
+
+export default Home;
