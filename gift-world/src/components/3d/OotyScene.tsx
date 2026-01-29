@@ -1,8 +1,59 @@
-'use client';
+"use client";
+// Falling Petals/Leaves Particle System
+import { useMemo } from 'react';
+
+
+// Generic animated particle system for seasonal effects
+// ...existing code...
+// ...existing code...
+function AnimatedParticles({ count = 24, type = 'petal', colors, sizeRange = [0.09, 0.13], shape = 'plane' }) {
+  const group = useRef();
+  // Precompute random properties for each particle
+  const particles = useMemo(() => Array.from({ length: count }).map(() => ({
+    x: (Math.random() - 0.5) * 24,
+    y: 5 + Math.random() * 7,
+    z: (Math.random() - 0.5) * 18 - 6,
+    phase: Math.random() * Math.PI * 2,
+    speed: 0.18 + Math.random() * 0.12,
+    sway: 0.7 + Math.random() * 0.5,
+    size: sizeRange[0] + Math.random() * (sizeRange[1] - sizeRange[0]),
+    color: colors[Math.floor(Math.random() * colors.length)]
+  })), [count, colors, sizeRange[0], sizeRange[1]]);
+  useFrame(() => {
+    if (!group.current) return;
+    group.current.children.forEach((mesh, i) => {
+      const p = particles[i];
+      const t = performance.now() / 1000 * p.speed + p.phase;
+      // Animate y and x
+      mesh.position.y = ((p.y - (t * 1.1) % 12) % 12) - 2;
+      mesh.position.x = p.x + Math.sin(t * 1.2) * p.sway;
+      mesh.position.z = p.z + Math.cos(t * 0.7) * p.sway * 0.5;
+      if (shape === 'plane') {
+        mesh.rotation.z = Math.sin(t) * 0.7;
+      } else if (shape === 'sphere') {
+        mesh.rotation.y = Math.sin(t) * 0.7;
+      }
+    });
+  });
+  return (
+    <group ref={group}>
+      {particles.map((p, i) => (
+        <mesh key={i} position={[p.x, p.y, p.z]}>
+          {shape === 'plane' ? (
+            <planeGeometry args={[p.size, p.size * 0.7]} />
+          ) : (
+            <sphereGeometry args={[p.size, 8, 8]} />
+          )}
+          <meshStandardMaterial color={p.color} transparent opacity={0.82} roughness={0.7} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
 
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Mesh, Group } from 'three';
+import { Mesh, Group, Color } from 'three';
 import { useTheme } from '@/hooks/useTheme';
 
 // Refined Mountain with better proportions
@@ -96,13 +147,14 @@ function Lake() {
   useFrame((state) => {
     if (lakeRef.current) {
       const time = state.clock.elapsedTime;
+      lakeRef.current.material.uniforms.uTime.value = time;
       lakeRef.current.rotation.z = Math.sin(time * 0.25) * 0.003;
       lakeRef.current.position.y = 0.1 + Math.sin(time * 0.2) * 0.015;
     }
   });
 
-  const waterColor = isNight ? '#1a4a7a' : '#4A9AE8';
-  const waterEmissive = isNight ? '#0a1a3a' : '#000000';
+  const waterColor = new Color(isNight ? '#1a4a7a' : '#4A9AE8');
+  const waterEmissive = new Color(isNight ? '#0a1a3a' : '#000000');
 
   return (
     <group>
@@ -111,21 +163,45 @@ function Lake() {
         <cylinderGeometry args={[6, 6, 0.4, 32]} />
         <meshStandardMaterial color="#1a1a3a" roughness={1} />
       </mesh>
-      
-      {/* Water surface - smooth and reflective */}
+      {/* Water surface with animated ripples */}
       <mesh ref={lakeRef} position={[0, 0.1, -8]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <planeGeometry args={[12, 8, 48, 48]} />
-        <meshStandardMaterial
-          color={waterColor}
-          transparent
-          opacity={isNight ? 0.7 : 0.8}
-          roughness={0.05}
-          metalness={0.5}
-          emissive={waterEmissive}
-          emissiveIntensity={isNight ? 0.1 : 0}
-        />
+        <planeGeometry args={[12, 8, 96, 96]} />
+        <shaderMaterial
+          attach="material"
+          args={[{
+            uniforms: {
+              uTime: { value: 0 },
+              uColor: { value: waterColor },
+              uEmissive: { value: waterEmissive },
+              uOpacity: { value: isNight ? 0.7 : 0.8 },
+            },
+            vertexShader: `
+              uniform float uTime;
+              varying vec2 vUv;
+              void main() {
+                vUv = uv;
+                vec3 pos = position;
+                float freq = 2.0;
+                float amp = 0.09;
+                pos.z += sin((pos.x + uTime * 0.7) * freq) * amp * 0.5;
+                pos.z += sin((pos.y + uTime * 0.5) * freq * 1.2) * amp * 0.5;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+              }
+            `,
+            fragmentShader: `
+              uniform vec3 uColor;
+              uniform vec3 uEmissive;
+              uniform float uOpacity;
+              varying vec2 vUv;
+              void main() {
+                float ripple = 0.5 + 0.5 * sin((vUv.x + vUv.y) * 30.0);
+                gl_FragColor = vec4(uColor * (0.85 + 0.15 * ripple), uOpacity);
+                gl_FragColor.rgb += uEmissive * 0.12;
+              }
+            `,
+            transparent: true,
+          }]} />
       </mesh>
-      
       {/* Shore */}
       <mesh position={[0, 0.05, -8]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <ringGeometry args={[6, 6.25, 48]} />
@@ -500,8 +576,8 @@ function Ground() {
 }
 
 // Main Ooty Scene Component
-export default function OotyScene() {
-  const { isNight } = useTheme();
+export default function OotyScene({ season = 'spring' }: { season?: string }) {
+  const { isNight, isDay, isMorning } = useTheme();
   const sceneRef = useRef<Group>(null);
 
   useFrame((state) => {
@@ -510,15 +586,117 @@ export default function OotyScene() {
     }
   });
 
+  // Fog color and density logic
+  let fogColor = '#A8D8F8';
+  let fogNear = 28, fogFar = 75;
+  if (isNight) {
+    fogColor = '#181a2a';
+    fogNear = 18; fogFar = 55;
+  } else if (isMorning) {
+    fogColor = '#e0e6ef';
+    fogNear = 16; fogFar = 48;
+  }
   const skyColor = isNight ? '#0a0a1a' : '#A8D8F8';
   const ambientIntensity = isNight ? 0.3 : 0.65;
   const directionalIntensity = isNight ? 0.5 : 1.3;
 
+  // Seasonal logic
+  const isSpring = season === 'spring';
+  const isSummer = season === 'summer';
+  const isAutumn = season === 'autumn';
+  const isWinter = season === 'winter';
+  const isFestival = season === 'festival';
+
   return (
     <group ref={sceneRef}>
-      <fog attach="fog" args={[skyColor, 28, 75]} />
+      <fog attach="fog" args={[fogColor, fogNear, fogFar]} />
+      {/* Sun rays (day) and moonlight beams (night) */}
+      {!isNight && !isWinter && (
+        // Sun rays: semi-transparent cones from above
+        <group>
+          {Array.from({ length: 4 }).map((_, i) => (
+            <mesh key={i} position={[Math.sin(i * Math.PI / 2) * 2, 8, Math.cos(i * Math.PI / 2) * 2 - 8]} rotation={[-Math.PI / 2.5, 0, i * Math.PI / 2]}>
+              <coneGeometry args={[2.2, 7, 32, 1, true]} />
+              <meshStandardMaterial color="#fffbe6" transparent opacity={0.13} emissive="#fffbe6" emissiveIntensity={0.18} />
+            </mesh>
+          ))}
+        </group>
+      )}
+      {isNight && !isWinter && (
+        // Moonlight beams: blueish cones from above
+        <group>
+          {Array.from({ length: 2 }).map((_, i) => (
+            <mesh key={i} position={[Math.sin(i * Math.PI) * 2, 8, Math.cos(i * Math.PI) * 2 - 8]} rotation={[-Math.PI / 2.5, 0, i * Math.PI]}>
+              <coneGeometry args={[1.7, 6, 32, 1, true]} />
+              <meshStandardMaterial color="#bcd7ff" transparent opacity={0.11} emissive="#bcd7ff" emissiveIntensity={0.13} />
+            </mesh>
+          ))}
+        </group>
+      )}
+      {/* Winter: snowflakes */}
+      {isWinter && (
+        <group>
+          {Array.from({ length: 40 }).map((_, i) => {
+            const x = (Math.random() - 0.5) * 24;
+            const y = 5 + Math.random() * 7;
+            const z = (Math.random() - 0.5) * 18 - 6;
+            return (
+              <mesh key={i} position={[x, y, z]}>
+                <sphereGeometry args={[0.08 + Math.random() * 0.04, 8, 8]} />
+                <meshStandardMaterial color="#fff" transparent opacity={0.85} />
+              </mesh>
+            );
+          })}
+        </group>
+      )}
       
       {/* Enhanced Lighting */}
+        {/* Falling petals (spring/day), leaves (autumn/night), or confetti (festival) */}
+        {isSpring && !isNight && (
+          <AnimatedParticles
+            count={28}
+            type="petal"
+            colors={["#FFB6E1", "#FFD93D", "#FF8CC8", "#FF6B9D"]}
+            sizeRange={[0.11, 0.18]}
+            shape="plane"
+          />
+        )}
+        {isAutumn && isNight && (
+          <AnimatedParticles
+            count={18}
+            type="leaf"
+            colors={["#A0522D", "#FFD700", "#8B5C2A", "#D2691E"]}
+            sizeRange={[0.11, 0.18]}
+            shape="plane"
+          />
+        )}
+        {isWinter && (
+          <AnimatedParticles
+            count={40}
+            type="snow"
+            colors={["#fff"]}
+            sizeRange={[0.09, 0.13]}
+            shape="sphere"
+          />
+        )}
+        {isFestival && (
+          <AnimatedParticles
+            count={32}
+            type="confetti"
+            colors={["#FFD700", "#FF69B4", "#00CFFF", "#FF8C00", "#ADFF2F"]}
+            sizeRange={[0.09, 0.13]}
+            shape="sphere"
+          />
+        )}
+        {isSummer && (
+          <AnimatedParticles
+            count={18}
+            type="pollen"
+            colors={["#FFFACD", "#FFD700", "#FFF8DC"]}
+            sizeRange={[0.07, 0.11]}
+            shape="sphere"
+          />
+        )}
       <ambientLight intensity={ambientIntensity} color={isNight ? '#5a5a7a' : '#ffffff'} />
       <directionalLight
         position={isNight ? [-10, 9, -10] : [10, 13, 5]}

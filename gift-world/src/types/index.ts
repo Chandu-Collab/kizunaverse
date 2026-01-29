@@ -1,4 +1,4 @@
-export type Zone = 'home' | 'birthday' | 'fun' | 'study' | 'space';
+export type Zone = 'home' | 'birthday' | 'fun' | 'study' | 'space' | 'ourspace';
 
 export interface NavigationState {
   currentZone: Zone;

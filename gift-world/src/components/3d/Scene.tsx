@@ -26,16 +26,6 @@ export default function Scene({
       >
         <Suspense fallback={null}>
           <PerspectiveCamera makeDefault position={cameraPosition} fov={50} />
-          <ambientLight intensity={0.5} />
-          <directionalLight
-            position={[10, 10, 5]}
-            intensity={1}
-            castShadow={enableShadows}
-            shadow-mapSize-width={2048}
-            shadow-mapSize-height={2048}
-          />
-          <pointLight position={[-10, -10, -10]} intensity={0.5} />
-          <Environment preset="sunset" />
           {children}
           {enableControls && (
             <OrbitControls
