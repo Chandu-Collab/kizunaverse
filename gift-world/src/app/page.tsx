@@ -10,6 +10,9 @@ import BirthdayZone from './zones/BirthdayZone';
 import FunZone from './zones/FunZone';
 import StudyZone from './zones/StudyZone';
 import YourSpace from './zones/YourSpace';
+import OurSpace from './zones/OurSpace';
+// New zones
+// Removed ZenGarden and PuzzleRoom
 import { AnimatePresence, motion } from 'framer-motion';
 import ParticleBackground from '@/components/ui/ParticleBackground';
 
@@ -31,6 +34,8 @@ function ZoneRenderer() {
         {currentZone === 'fun' && <FunZone />}
         {currentZone === 'study' && <StudyZone />}
         {currentZone === 'space' && <YourSpace />}
+        {currentZone === 'ourspace' && <OurSpace />}
+        {/* Removed ZenGarden and PuzzleRoom */}
       </motion.div>
     </AnimatePresence>
   );
