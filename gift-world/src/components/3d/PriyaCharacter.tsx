@@ -6,11 +6,13 @@ import { Html, useGLTF } from '@react-three/drei';
 interface PriyaCharacterProps {
   initialPosition?: [number, number, number];
   roamRadius?: number;
-  onInteract?: () => void;
+  onInteract?: (pos?: [number, number, number]) => void;
 }
 
+export default PriyaCharacter;
+
 // Simple roaming logic: moves Priya in a circle
-export default function PriyaCharacter({
+function PriyaCharacter({
   initialPosition = [0, 1, 6],
   roamRadius = 4,
   onInteract,
@@ -81,7 +83,10 @@ export default function PriyaCharacter({
         }}
         onClick={() => {
           triggerMessage();
-          onInteract && onInteract();
+          if (onInteract && meshRef.current) {
+            const pos = [meshRef.current.position.x, meshRef.current.position.y, meshRef.current.position.z] as [number, number, number];
+            onInteract(pos);
+          }
         }}
         castShadow
         receiveShadow
