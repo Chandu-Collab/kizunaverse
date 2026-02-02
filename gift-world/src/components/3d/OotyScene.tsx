@@ -715,6 +715,9 @@ export default function OotyScene({ season = 'spring' }: { season?: string }) {
           <pointLight position={[0, 11, 0]} intensity={0.35} color="#ffffff" />
           <pointLight position={[-9, 5, -9]} intensity={0.2} color="#FFB84D" />
           <pointLight position={[9, 5, -9]} intensity={0.2} color="#FFB84D" />
+          
+          {/* Reduced atmospheric lighting for performance */}
+          <pointLight position={[0, 3, -8]} intensity={0.3} color="#4A9AE8" />
         </>
       )}
       <pointLight position={[-22, 9, -22]} intensity={isNight ? 0.15 : 0.12} color="#FFE55C" />

@@ -9,6 +9,8 @@ import Book3D from '@/components/3d/Book3D';
 import WindingRoad from '@/components/3d/WindingRoad';
 import { getMainRoadCurve, getBranchRoadCurves, getRoadPointAndTangent } from '@/components/3d/roadUtils';
 import GardenDecor from '@/components/3d/GardenDecor';
+import LakeDecoration from '@/components/3d/LakeDecoration';
+import PathwayLighting from '@/components/3d/PathwayLighting';
 import { Bench, LampPost } from '@/components/3d/BenchLamp';
 import PetDog3D from '@/components/3d/PetDog3D';
 import ParkedCar3D from '@/components/3d/ParkedCar3D';
@@ -31,6 +33,7 @@ import { useTheme } from '@/hooks/useTheme';
 import GlassCard from '@/components/ui/GlassCard';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import { motion } from 'framer-motion';
+import { Html } from '@react-three/drei';
 
 export default function HomeWorld() {
   const { navigateTo } = useNavigation();
@@ -138,6 +141,9 @@ export default function HomeWorld() {
           {/* GardenDecor at lake center and in front of lake */}
           <GardenDecor position={[0, 0, 12]} />
           <GardenDecor position={[0, 0, 8]} />
+          
+          {/* Enhanced Lake Decoration with atmospheric lighting */}
+          <LakeDecoration />\n          \n          {/* Pathway and ground lighting for better night ambiance */}\n          <PathwayLighting />
 
           {/* 3D Male and Female Models */}
           {/* Male model sitting on bench at [2,0,7], facing left */}
