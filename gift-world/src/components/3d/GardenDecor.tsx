@@ -1,6 +1,5 @@
 import { useRef } from 'react';
-
-
+import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 type FlowerProps = { position: [number, number, number]; color: string };
 function Flower({ position, color }: FlowerProps) {
