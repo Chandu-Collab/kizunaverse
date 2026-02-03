@@ -97,59 +97,166 @@ export default function HomeWorld() {
           <WindingRoad />
 
           {/* Houses at ends of branch roads */}
-          {/* Houses at ends of branch roads (match roadUtils) */}
+          {/* Enhanced Houses with 8 realistic homes */}
           {(() => {
             const housePositions = [
-              [-8, 0.01, 6],   // left front
-              [8, 0.01, 6],    // right front
-              [-8, 0.01, -6],  // left back
-              [8, 0.01, -6],   // right back
+              [-10, 0.01, 8],   // left front
+              [10, 0.01, 8],    // right front
+              [-10, 0.01, -8],  // left back
+              [10, 0.01, -8],   // right back
+              [-6, 0.01, 12],   // left far
+              [6, 0.01, 12],    // right far
+              [-6, 0.01, -12],  // left far back
+              [6, 0.01, -12],   // right far back
             ];
             return <>
-              {housePositions.map((pos, i) => (
-                <group key={`house-${i}`} position={pos}>
-                  {/* Simple house model */}
-                  <mesh position={[0, 0.25, 0]}>
-                    <boxGeometry args={[1, 0.5, 1]} />
-                    <meshStandardMaterial color="#F5E6C8" />
-                  </mesh>
-                  <mesh position={[0, 0.55, 0]}>
-                    <coneGeometry args={[0.7, 0.4, 4]} />
-                    <meshStandardMaterial color="#B97A56" />
-                  </mesh>
-                  {/* Door */}
-                  <mesh position={[0, 0.15, 0.51]}>
-                    <boxGeometry args={[0.18, 0.22, 0.04]} />
-                    <meshStandardMaterial color="#8B5C2A" />
-                  </mesh>
-                  {/* Windows */}
-                  <mesh position={[-0.28, 0.32, 0.51]}>
-                    <boxGeometry args={[0.12, 0.12, 0.03]} />
-                    <meshStandardMaterial color="#FFF9E3" />
-                  </mesh>
-                  <mesh position={[0.28, 0.32, 0.51]}>
-                    <boxGeometry args={[0.12, 0.12, 0.03]} />
-                    <meshStandardMaterial color="#FFF9E3" />
-                  </mesh>
-                </group>
-              ))}
+              {housePositions.map((pos, i) => {
+                const houseColors = ['#F5E6C8', '#E8D5B7', '#F0E4D0', '#E6D3A3', '#F2E8D5', '#E9DCC9', '#F7EFDC', '#EDE0D3'];
+                const roofColors = ['#B97A56', '#A67C5A', '#C18B63', '#B5835E', '#AD7952', '#C19666', '#B88A5F', '#A87A57'];
+                const houseHeight = 0.8 + (i % 3) * 0.15; // Varied heights
+                const houseWidth = 1.2 + (i % 2) * 0.3; // Varied widths
+                
+                return (
+                  <group key={`house-${i}`} position={pos}>
+                    {/* Main house structure */}
+                    <mesh position={[0, houseHeight / 2, 0]}>
+                      <boxGeometry args={[houseWidth, houseHeight, 1.2]} />
+                      <meshStandardMaterial color={houseColors[i]} roughness={0.7} />
+                    </mesh>
+                    
+                    {/* Roof with varied styles */}
+                    {i % 2 === 0 ? (
+                      <mesh position={[0, houseHeight + 0.2, 0]}>
+                        <coneGeometry args={[houseWidth * 0.8, 0.5, 4]} />
+                        <meshStandardMaterial color={roofColors[i]} roughness={0.8} />
+                      </mesh>
+                    ) : (
+                      <mesh position={[0, houseHeight + 0.15, 0]}>
+                        <boxGeometry args={[houseWidth + 0.1, 0.3, 1.3]} />
+                        <meshStandardMaterial color={roofColors[i]} roughness={0.8} />
+                      </mesh>
+                    )}
+                    
+                    {/* Front door */}
+                    <mesh position={[0, houseHeight * 0.3, (1.2 / 2) + 0.01]}>
+                      <boxGeometry args={[0.25, houseHeight * 0.6, 0.05]} />
+                      <meshStandardMaterial color="#8B5C2A" roughness={0.9} />
+                    </mesh>
+                    
+                    {/* Door handle */}
+                    <mesh position={[0.08, houseHeight * 0.3, (1.2 / 2) + 0.04]}>
+                      <sphereGeometry args={[0.015, 8, 8]} />
+                      <meshStandardMaterial color="#FFD700" metalness={0.8} roughness={0.2} />
+                    </mesh>
+                    
+                    {/* Windows with night lighting for ALL houses */}
+                    {[-houseWidth * 0.25, houseWidth * 0.25].map((xOffset, winIdx) => (
+                      <mesh key={winIdx} position={[xOffset, houseHeight * 0.6, (1.2 / 2) + 0.01]}>
+                        <boxGeometry args={[0.2, 0.2, 0.04]} />
+                        <meshStandardMaterial 
+                          color={isNight && (i + winIdx) % 3 !== 2 ? '#FFE4B5' : '#B0E0E6'}
+                          emissive={isNight && (i + winIdx) % 3 !== 2 ? '#FFA500' : '#000000'}
+                          emissiveIntensity={isNight ? 0.3 : 0}
+                          transparent
+                          opacity={0.8}
+                        />
+                      </mesh>
+                    ))}
+                    
+                    {/* Chimney for some houses */}
+                    {i % 3 === 0 && (
+                      <mesh position={[houseWidth * 0.25, houseHeight + 0.5, -0.2]}>
+                        <cylinderGeometry args={[0.08, 0.1, 0.6, 8]} />
+                        <meshStandardMaterial color="#8B4513" roughness={0.8} />
+                      </mesh>
+                    )}
+                    
+                    {/* Small garden area */}
+                    <mesh position={[0, 0.01, 1.8]}>
+                      <boxGeometry args={[houseWidth + 0.5, 0.02, 0.8]} />
+                      <meshStandardMaterial color="#90EE90" roughness={0.9} />
+                    </mesh>
+                    
+                    {/* Enhanced porch light system for ALL houses */}
+                    {isNight && (
+                      <>
+                        {/* Main porch light */}
+                        <pointLight 
+                          position={[0, houseHeight * 0.8, 0.8]} 
+                          intensity={0.4} 
+                          color="#FFE4B5" 
+                          distance={3} 
+                          decay={2}
+                        />
+                        <mesh position={[0, houseHeight * 0.8, 0.7]}>
+                          <sphereGeometry args={[0.05, 8, 8]} />
+                          <meshStandardMaterial 
+                            color="#FFE4B5" 
+                            emissive="#FFE4B5" 
+                            emissiveIntensity={0.6}
+                          />
+                        </mesh>
+                        
+                        {/* Additional house number indicator light */}
+                        <mesh position={[0.4, houseHeight * 0.5, 0.65]}>
+                          <boxGeometry args={[0.1, 0.1, 0.02]} />
+                          <meshStandardMaterial 
+                            color="#87CEEB"
+                            emissive="#4169E1"
+                            emissiveIntensity={0.3}
+                          />
+                        </mesh>
+                      </>
+                    )}
+                    
+                    {/* Street light at house entrance - positioned consistently for each house */}
+                    <LampPost position={[
+                      pos[0] > 0 ? pos[0] - 2 : pos[0] + 2, 
+                      0, 
+                      pos[2] > 0 ? pos[2] - 1.5 : pos[2] + 1.5
+                    ]} />
+                  </group>
+                );
+              })}
+              
+              {/* Enhanced road markers for clear house connections */}
+              {housePositions.map((pos, i) => {
+                const connectionPoints = [
+                  [-1.5, 0.01, 6], [1.5, 0.01, 6], [-1.5, 0.01, -6], [1.5, 0.01, -6],
+                  [-1, 0.01, 10], [1, 0.01, 10], [-1, 0.01, -10], [1, 0.01, -10]
+                ];
+                
+                return (
+                  <group key={`roadmarker-${i}`}>
+                    {/* Road connection marker */}
+                    <mesh position={connectionPoints[i]}>
+                      <cylinderGeometry args={[0.1, 0.1, 0.05, 8]} />
+                      <meshStandardMaterial color="#FFD700" emissive={isNight ? "#FFD700" : "#000000"} emissiveIntensity={isNight ? 0.2 : 0} />
+                    </mesh>
+                  </group>
+                );
+              })}
+              
               {/* Flocking birds above houses */}
               <FlockingBirds housePositions={housePositions} flockSize={7} />
             </>;
           })()}
 
-          {/* GardenDecor at lake center and in front of lake */}
-          <GardenDecor position={[0, 0, 12]} />
-          <GardenDecor position={[0, 0, 8]} />
+          {/* GardenDecor repositioned to avoid house overlap */}
+          <GardenDecor position={[0, 0, 15]} />
+          <GardenDecor position={[0, 0, 4]} />
           
           {/* Enhanced Lake Decoration with atmospheric lighting */}
-          <LakeDecoration />\n          \n          {/* Pathway and ground lighting for better night ambiance */}\n          <PathwayLighting />
+          <LakeDecoration />
+          
+          {/* Pathway and ground lighting for better night ambiance */}
+          <PathwayLighting />
 
           {/* 3D Male and Female Models */}
           {/* Male model sitting on bench at [2,0,7], facing left */}
           <Male3D position={[2, 0.28, 7]} scale={0.62} rotationY={Math.PI / 2} />
-          {/* Female model standing near left house, facing toward center */}
-          <Female3D position={[-8.7, 0, 6]} scale={0.62} rotationY={Math.PI / 4} />
+          {/* Female model repositioned to avoid house overlap */}
+          <Female3D position={[-12, 0, 6]} scale={0.62} rotationY={Math.PI / 4} />
           {/* Male and Female models walking and roaming along the main road */}
           {(() => {
             // Animate two walkers along the main road curve
@@ -211,18 +318,22 @@ export default function HomeWorld() {
               );
             });
           })()}
-          {/* Benches and Lamp Posts */}
-          <Bench position={[-2, 0, 3]} />
-          <Bench position={[2, 0, 7]} />
-          <Bench position={[0, 0, 10]} />
-          <LampPost position={[-3, 0, 5]} />
-          <LampPost position={[3, 0, 9]} />
-          <LampPost position={[0, 0, 12]} />
+          {/* Enhanced road junction lighting */}\n          <LampPost position={[-2, 0, 8]} />\n          <LampPost position={[2, 0, 8]} />\n          <LampPost position={[-2, 0, -8]} />\n          <LampPost position={[2, 0, -8]} />\n          <LampPost position={[-1, 0, 12]} />\n          <LampPost position={[1, 0, 12]} />\n          <LampPost position={[-1, 0, -12]} />\n          <LampPost position={[1, 0, -12]} />\n          \n          {/* Benches and Lamp Posts repositioned for clean layout */}
+          <Bench position={[-1, 0, 2]} />
+          <Bench position={[1, 0, 4]} />
+          <Bench position={[0, 0, 15]} />
+          <LampPost position={[-4, 0, 3]} />
+          <LampPost position={[4, 0, 5]} />
+          <LampPost position={[0, 0, 16]} />
 
-          {/* Multiple Pets (Dogs) */}
-          <PetDog3D position={[2, 0, 5]} />
-          <PetDog3D position={[-2, 0, 7]} scale={0.9} />
-          <PetDog3D position={[0, 0, 9]} scale={1.1} />
+          {/* Multiple Pets with movement animations - repositioned to avoid house overlap */}
+          <PetDog3D position={[1.5, 0, 3]} walkRadius={1.2} walkSpeed={0.25} />
+          <PetDog3D position={[-1.5, 0, 5]} scale={0.9} walkRadius={1.5} walkSpeed={0.35} />
+          <PetDog3D position={[0, 0, 1]} scale={1.1} walkRadius={1.0} walkSpeed={0.4} />
+          
+          {/* Additional pets near houses for more liveliness */}
+          <PetDog3D position={[-7, 0, 10]} scale={0.8} walkRadius={0.8} walkSpeed={0.3} />
+          <PetDog3D position={[7, 0, -10]} scale={1.2} walkRadius={1.3} walkSpeed={0.2} />
 
           {/* Multiple Cars on the Main Road, aligned to road direction */}
           {(() => {
