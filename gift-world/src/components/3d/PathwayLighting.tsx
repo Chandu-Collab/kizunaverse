@@ -13,12 +13,15 @@ function GroundSpotlight({ position, color = '#FFE55C', radius = 1.5 }: {
   const { isNight } = useTheme();
   
   useFrame(({ clock }) => {
-    if (spotRef.current) {
+    if (spotRef.current && isNight) {
       const t = clock.getElapsedTime();
-      const intensity = isNight ? 0.3 + Math.sin(t * 2 + position[0] + position[2]) * 0.1 : 0.1;
+      const intensity = 0.3 + Math.sin(t * 2 + position[0] + position[2]) * 0.1;
       (spotRef.current.material as THREE.MeshStandardMaterial).opacity = intensity;
     }
   });
+  
+  // Only show lighting effects at night
+  if (!isNight) return null;
   
   return (
     <>
@@ -27,22 +30,20 @@ function GroundSpotlight({ position, color = '#FFE55C', radius = 1.5 }: {
         <meshStandardMaterial 
           color={color}
           transparent 
-          opacity={isNight ? 0.3 : 0.1}
+          opacity={0.3}
           side={THREE.DoubleSide}
         />
       </mesh>
-      {isNight && (
-        <spotLight
-          position={[position[0], position[1] + 3, position[2]]}
-          target-position={position}
-          intensity={0.8}
-          color={color}
-          distance={6}
-          angle={Math.PI / 4}
-          penumbra={0.5}
-          decay={2}
-        />
-      )}
+      <spotLight
+        position={[position[0], position[1] + 3, position[2]]}
+        target-position={position}
+        intensity={0.8}
+        color={color}
+        distance={6}
+        angle={Math.PI / 4}
+        penumbra={0.5}
+        decay={2}
+      />
     </>
   );
 }
@@ -57,12 +58,15 @@ function GlowingStone({ position, size = 0.1, color = '#A084E8' }: {
   const { isNight } = useTheme();
   
   useFrame(({ clock }) => {
-    if (stoneRef.current) {
+    if (stoneRef.current && isNight) {
       const t = clock.getElapsedTime();
-      const intensity = isNight ? 0.5 + Math.sin(t * 1.5 + position[0] + position[2]) * 0.3 : 0;
+      const intensity = 0.5 + Math.sin(t * 1.5 + position[0] + position[2]) * 0.3;
       (stoneRef.current.material as THREE.MeshStandardMaterial).emissiveIntensity = intensity;
     }
   });
+  
+  // Only show glowing stones at night
+  if (!isNight) return null;
   
   return (
     <group>

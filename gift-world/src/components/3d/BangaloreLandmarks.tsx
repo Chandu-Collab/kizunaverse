@@ -178,9 +178,8 @@ export function ISKCONTemple({ position = [0, 0, 0] }: { position?: [number, num
 }
 
 // Tech Park / IT Building
-export function TechPark({ position = [0, 0, 0], name = "Tech Park" }: { 
+export function TechPark({ position = [0, 0, 0] }: { 
   position?: [number, number, number]; 
-  name?: string; 
 }) {
   const { isNight } = useTheme();
   
@@ -201,10 +200,10 @@ export function TechPark({ position = [0, 0, 0], name = "Tech Park" }: {
           >
             <boxGeometry args={[0.3, 0.3, 0.02]} />
             <meshStandardMaterial 
-              color={isNight && Math.random() > 0.3 ? "#FFD700" : "#87CEEB"} 
+              color={isNight && (floor + window) % 3 !== 0 ? "#FFD700" : "#87CEEB"} 
               transparent 
               opacity={0.7}
-              emissive={isNight && Math.random() > 0.3 ? "#FFD700" : "#000000"}
+              emissive={isNight && (floor + window) % 3 !== 0 ? "#FFD700" : "#000000"}
               emissiveIntensity={isNight ? 0.4 : 0}
             />
           </mesh>
@@ -253,7 +252,7 @@ export function AutoRickshaw({ position = [0, 0, 0], rotation = 0 }: {
       </mesh>
       
       {/* Wheels */}
-      {[[-0.4, 0.1, 0.5], [-0.4, 0.1, -0.5], [0.4, 0.1, 0]].map((pos, i) => (
+      {[[-0.4, 0.1, 0.5] as const, [-0.4, 0.1, -0.5] as const, [0.4, 0.1, 0] as const].map((pos, i) => (
         <mesh key={i} position={pos}>
           <cylinderGeometry args={[0.15, 0.15, 0.1, 8]} />
           <meshStandardMaterial color="#1A1A1A" roughness={0.9} />
@@ -395,7 +394,7 @@ export function Rajajinagar({ position = [0, 0, 0] }: { position?: [number, numb
       {Array.from({ length: 6 }).map((_, i) => {
         const x = (i % 3) * 1.5 - 1.5;
         const z = Math.floor(i / 3) * 1.2 - 0.6;
-        const height = 0.8 + Math.random() * 0.6;
+        const height = 0.8 + ((i * 37) % 60) / 100; // Deterministic height variation
         const colors = ["#F0E68C", "#DDA0DD", "#98FB98", "#F4A460", "#87CEEB", "#FFB6C1"];
         
         return (
@@ -414,10 +413,10 @@ export function Rajajinagar({ position = [0, 0, 0] }: { position?: [number, numb
                 >
                   <boxGeometry args={[0.2, 0.2, 0.02]} />
                   <meshStandardMaterial 
-                    color={isNight && Math.random() > 0.4 ? "#FFD700" : "#87CEEB"} 
+                    color={isNight && (i + floor + window) % 5 !== 0 ? "#FFD700" : "#87CEEB"} 
                     transparent 
                     opacity={0.8}
-                    emissive={isNight && Math.random() > 0.4 ? "#FFD700" : "#000000"}
+                    emissive={isNight && (i + floor + window) % 5 !== 0 ? "#FFD700" : "#000000"}
                     emissiveIntensity={isNight ? 0.3 : 0}
                   />
                 </mesh>
