@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Mesh } from 'three';
 import { Html, useGLTF } from '@react-three/drei';
+import { useTheme } from '@/hooks/useTheme';
 
 interface UruruCharacterProps {
   initialPosition?: [number, number, number];
@@ -16,6 +17,7 @@ function UruruCharacter({
   roamRadius = 4,
   onInteract,
 }: UruruCharacterProps) {
+  const { isNight } = useTheme();
   const meshRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
@@ -51,6 +53,16 @@ function UruruCharacter({
 
   return (
     <group>
+      {/* Character lighting for better visibility */}
+      <ambientLight intensity={isNight ? 0.6 : 0.4} />
+      <pointLight 
+        position={[-2, 3, 2]} 
+        intensity={isNight ? 0.8 : 0.3} 
+        color={isNight ? "#ADD8E6" : "#FFFFFF"}
+        distance={8}
+        decay={2}
+      />
+      
       <primitive
         ref={meshRef}
         object={gltf.scene}

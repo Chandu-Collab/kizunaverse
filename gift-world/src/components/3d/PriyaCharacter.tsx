@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Mesh } from 'three';
 import { Html, useGLTF } from '@react-three/drei';
+import { useTheme } from '@/hooks/useTheme';
 
 interface PriyaCharacterProps {
   initialPosition?: [number, number, number];
@@ -17,6 +18,7 @@ function PriyaCharacter({
   roamRadius = 4,
   onInteract,
 }: PriyaCharacterProps) {
+  const { isNight } = useTheme();
   const meshRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
@@ -68,6 +70,16 @@ function PriyaCharacter({
 
   return (
     <group>
+      {/* Character lighting for better visibility */}
+      <ambientLight intensity={isNight ? 0.6 : 0.4} />
+      <pointLight 
+        position={[2, 3, 2]} 
+        intensity={isNight ? 0.8 : 0.3} 
+        color={isNight ? "#FFE4B5" : "#FFFFFF"}
+        distance={8}
+        decay={2}
+      />
+      
       <primitive
         ref={meshRef}
         object={gltf.scene}

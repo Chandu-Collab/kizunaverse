@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { Html } from '@react-three/drei';
+import { useTheme } from '@/hooks/useTheme';
 
 // FBXLoader from three.js examples
 // @ts-ignore
@@ -15,6 +16,7 @@ const ANIMATIONS = {
 };
 
 export default function GalaxiaAnimeGirl() {
+  const { isDark } = useTheme();
   const groupRef = useRef<THREE.Group>(null);
   const mixerRef = useRef<THREE.AnimationMixer | null>(null);
   const [actions, setActions] = useState<{ [key: string]: THREE.AnimationAction }>({});
@@ -83,6 +85,14 @@ export default function GalaxiaAnimeGirl() {
 
   return (
     <group ref={groupRef} position={[0, 0.5, 0]} scale={[0.08, 0.08, 0.08]}>
+      {/* Night lighting for character visibility */}
+      {isDark && (
+        <group>
+          <ambientLight intensity={0.6} />
+          <pointLight position={[0, 2, 2]} intensity={0.8} color="#ff69b4" />
+          <pointLight position={[-1, 1, -1]} intensity={0.4} color="#9d4edd" />
+        </group>
+      )}
       {/* Show loading message if model not loaded */}
       {!modelLoaded && (
         <Html center position={[0, 2.5, 0]}>

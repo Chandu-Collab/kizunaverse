@@ -1,5 +1,7 @@
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
+import { useTheme } from '@/hooks/useTheme';
+import * as THREE from 'three';
 
 type Female3DProps = {
   position?: [number, number, number];
@@ -10,6 +12,7 @@ type Female3DProps = {
 };
 
 export default function Female3D({ position = [-1.5, 0, 7], scale = 1, rotationY = 0, walking = false, onClick }: Female3DProps) {
+  const { isNight } = useTheme();
   const groupRef = useRef<THREE.Group>(null);
   const leftLegRef = useRef<THREE.Mesh>(null);
   const rightLegRef = useRef<THREE.Mesh>(null);
@@ -31,6 +34,16 @@ export default function Female3D({ position = [-1.5, 0, 7], scale = 1, rotationY
   });
   return (
     <group ref={groupRef} position={position} scale={[scale, scale, scale]} rotation={[0, rotationY, 0]} onClick={onClick}>
+      {/* Character lighting for better visibility */}
+      <ambientLight intensity={isNight ? 0.5 : 0.3} />
+      <pointLight 
+        position={[-1, 2, 1]} 
+        intensity={isNight ? 0.7 : 0.2} 
+        color={isNight ? "#FFB6C1" : "#FFFFFF"}
+        distance={5}
+        decay={2}
+      />
+      
       {/* Shoes */}
       <mesh position={[-0.08, 0.05, 0.08]}>
         <boxGeometry args={[0.08, 0.055, 0.16]} />
