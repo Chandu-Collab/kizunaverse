@@ -32,9 +32,13 @@ export default function Scene({
               enablePan={true}
               enableZoom={true}
               enableRotate={true}
-              minDistance={5}
-              maxDistance={20}
+              minDistance={3}
+              maxDistance={100}
+              maxPolarAngle={Math.PI / 2.1}
               autoRotate={false}
+              panSpeed={1.5}
+              zoomSpeed={1.2}
+              rotateSpeed={0.8}
             />
           )}
         </Suspense>
