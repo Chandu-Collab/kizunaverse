@@ -8,12 +8,16 @@ import { useTheme } from '@/hooks/useTheme';
 import GlassCard from '@/components/ui/GlassCard';
 import Button from '@/components/ui/Button';
 import ThemeToggle from '@/components/ui/ThemeToggle';
+import WeatherControls from '@/components/ui/WeatherControls';
+import { useWeatherSystem } from '@/components/3d/weather/WeatherSystem';
 import { motion } from 'framer-motion';
 
 export default function OurSpace() {
   const { navigateTo } = useNavigation();
   const { isNight } = useTheme();
   const [showInfo, setShowInfo] = useState(true);
+  const [showCityInfo, setShowCityInfo] = useState(true);
+  const { weather, autoWeather, changeWeather, enableAutoWeather } = useWeatherSystem();
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
@@ -61,37 +65,48 @@ export default function OurSpace() {
       )}
 
       {/* City Information Panel */}
-      <div className="absolute top-20 left-4 z-20">
-        <GlassCard className="p-4 max-w-xs">
-          <h3 className="text-lg font-bold text-white mb-3">🏙️ Bengaluru Metropolis (Left)</h3>
-          <ul className="text-sm text-white/80 space-y-1 mb-4">
-            <li>🏛️ Vidhana Soudha - Government HQ</li>
-            <li>🏰 Bangalore Palace - Royal Heritage</li>
-            <li>🛕 ISKCON Temple - Spiritual Center</li>
-            <li>🏥 BMS College - Medical Institution</li>
-            <li>🏢 Electronic City - IT Hub</li>
-            <li>💼 Koramangala IT Hub - Tech District</li>
-            <li>🛍️ Brigade Road - Shopping Street</li>
-            <li>🌺 Lalbagh Garden - Botanical Beauty</li>
-            <li>🌳 Cubbon Park - Green Lung</li>
-            <li>🚇 Namma Metro - Rail Network</li>
-            <li>🛺 Auto-rickshaws - City Transport</li>
-          </ul>
-          <h3 className="text-lg font-bold text-white mb-2">🏘️ Rajajinagar Region (Right)</h3>
-          <ul className="text-sm text-white/80 space-y-1">
-            <li>🏠 Main Rajajinagar - Town Center</li>
-            <li>🏘️ Extension Area - New Development</li>
-            <li>🛒 Traditional Market - Local Commerce</li>
-            <li>🌳 Village Grove - Natural Beauty</li>
-            <li>🏛️ Community Temples</li>
-            <li>🏡 Residential Neighborhoods</li>
-            <li>💡 Traditional Street Lighting</li>
-          </ul>
-        </GlassCard>
-      </div>
+      {showCityInfo && (
+        <div className="absolute top-20 left-4 z-20">
+          <GlassCard className="p-4 max-w-xs">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-lg font-bold text-white">🏙️ Bengaluru Metropolis (Left)</h3>
+              <button 
+                onClick={() => setShowCityInfo(false)}
+                className="text-white/60 hover:text-white transition-colors"
+                title="Hide city info"
+              >
+                ✕
+              </button>
+            </div>
+            <ul className="text-sm text-white/80 space-y-1 mb-4">
+              <li>🏛️ Vidhana Soudha - Government HQ</li>
+              <li>🏰 Bangalore Palace - Royal Heritage</li>
+              <li>🛕 ISKCON Temple - Spiritual Center</li>
+              <li>🏥 BMS College - Medical Institution</li>
+              <li>🏢 Electronic City - IT Hub</li>
+              <li>💼 Koramangala IT Hub - Tech District</li>
+              <li>🛍️ Brigade Road - Shopping Street</li>
+              <li>🌺 Lalbagh Garden - Botanical Beauty</li>
+              <li>🌳 Cubbon Park - Green Lung</li>
+              <li>🚇 Namma Metro - Rail Network</li>
+              <li>🛺 Auto-rickshaws - City Transport</li>
+            </ul>
+            <h3 className="text-lg font-bold text-white mb-2">🏘️ Rajajinagar Region (Right)</h3>
+            <ul className="text-sm text-white/80 space-y-1">
+              <li>🏠 Main Rajajinagar - Town Center</li>
+              <li>🏘️ Extension Area - New Development</li>
+              <li>🛒 Traditional Market - Local Commerce</li>
+              <li>🌳 Village Grove - Natural Beauty</li>
+              <li>🏛️ Community Temples</li>
+              <li>🏡 Residential Neighborhoods</li>
+              <li>💡 Traditional Street Lighting</li>
+            </ul>
+          </GlassCard>
+        </div>
+      )}
 
       {/* 3D Bangalore Cityscape */}
-      <Scene cameraPosition={[0, 8, 12]} enableControls={true}>
+      <Scene cameraPosition={[0, 25, 35]} enableControls={true}>
         <Suspense fallback={null}>
           {/* Enhanced lighting for city atmosphere */}
           <ambientLight intensity={isNight ? 0.2 : 0.6} color={isNight ? "#E6E6FA" : "#FFFFFF"} />
@@ -116,7 +131,7 @@ export default function OurSpace() {
           
           {/* Expanded ground plane for maximum space usage */}
           <mesh position={[0, -0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-            <planeGeometry args={[80, 40]} />
+            <planeGeometry args={[120, 80]} />
             <meshStandardMaterial 
               color={isNight ? "#1A1A2E" : "#7D8471"} 
               roughness={0.8} 
@@ -126,15 +141,35 @@ export default function OurSpace() {
       </Scene>
 
       {/* Quick navigation if info is hidden */}
-      {!showInfo && (
+      {(!showInfo || !showCityInfo) && (
         <div className="absolute bottom-4 left-4 z-20">
-          <Button 
-            onClick={() => navigateTo('home')} 
-            variant="ghost" 
-            size="sm"
-          >
-            ← Back Home
-          </Button>
+          <div className="flex flex-col gap-2">
+            {!showInfo && (
+              <Button 
+                onClick={() => setShowInfo(true)} 
+                variant="primary" 
+                size="sm"
+              >
+                📍 Show Welcome Info
+              </Button>
+            )}
+            {!showCityInfo && (
+              <Button 
+                onClick={() => setShowCityInfo(true)} 
+                variant="primary" 
+                size="sm"
+              >
+                🏙️ Show City Guide
+              </Button>
+            )}
+            <Button 
+              onClick={() => navigateTo('home')} 
+              variant="ghost" 
+              size="sm"
+            >
+              ← Back Home
+            </Button>
+          </div>
         </div>
       )}
       
@@ -148,6 +183,14 @@ export default function OurSpace() {
           {showInfo ? 'Hide Info' : 'Show Info'}
         </Button>
       </div>
+
+      {/* Weather Controls */}
+      <WeatherControls 
+        currentWeather={weather}
+        autoWeather={autoWeather}
+        onWeatherChange={changeWeather}
+        onToggleAuto={enableAutoWeather}
+      />
     </div>
   );
 }
