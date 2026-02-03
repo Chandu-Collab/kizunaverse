@@ -30,14 +30,14 @@ export default function OurSpace() {
           >
             <GlassCard className="text-center max-w-md mx-auto">
               <h1 className="text-4xl font-bold text-white mb-2">
-                🏙️ Namma Bengaluru
+                🏙️ Bengaluru & Rajajinagar
               </h1>
               <p className="text-white/80 text-lg mb-2">
-                {isNight ? 'Experience the vibrant nightlife of Silicon City!' : 'Welcome to the Garden City of India!'}
+                {isNight ? 'Experience the vibrant city-town contrast at night!' : 'Welcome to Bengaluru City & Rajajinagar Town!'}
               </p>
               <p className="text-white/70 text-sm mb-4">
-                Click on landmarks to learn more about Bangalore's iconic places. 
-                Watch auto-rickshaws navigate through traffic!
+                Explore the bustling Bengaluru metropolis on the left and the peaceful 
+                Rajajinagar town on the right. Click landmarks to discover more!
               </p>
               <div className="flex gap-2">
                 <Button 
@@ -63,24 +63,35 @@ export default function OurSpace() {
       {/* City Information Panel */}
       <div className="absolute top-20 left-4 z-20">
         <GlassCard className="p-4 max-w-xs">
-          <h3 className="text-lg font-bold text-white mb-2">🌆 Bangalore Highlights</h3>
-          <ul className="text-sm text-white/80 space-y-1">
-            <li>🏛️ Vidhana Soudha - Government Seat</li>
+          <h3 className="text-lg font-bold text-white mb-3">🏙️ Bengaluru Metropolis (Left)</h3>
+          <ul className="text-sm text-white/80 space-y-1 mb-4">
+            <li>🏛️ Vidhana Soudha - Government HQ</li>
             <li>🏰 Bangalore Palace - Royal Heritage</li>
             <li>🛕 ISKCON Temple - Spiritual Center</li>
-            <li>� BMS College - Medical Institution</li>
-            <li>🏘️ Rajajinagar - Residential Area</li>
-            <li>�🏢 Tech Parks - IT Capital</li>
-            <li>🌳 Cubbon Park - Green Oasis</li>
-            <li>🚇 Namma Metro - Modern Transport</li>
-            <li>🛍️ MG Road - Shopping Hub</li>
-            <li>🛺 Auto-rickshaws - Local Transport</li>
+            <li>🏥 BMS College - Medical Institution</li>
+            <li>🏢 Electronic City - IT Hub</li>
+            <li>💼 Koramangala IT Hub - Tech District</li>
+            <li>🛍️ Brigade Road - Shopping Street</li>
+            <li>🌺 Lalbagh Garden - Botanical Beauty</li>
+            <li>🌳 Cubbon Park - Green Lung</li>
+            <li>🚇 Namma Metro - Rail Network</li>
+            <li>🛺 Auto-rickshaws - City Transport</li>
+          </ul>
+          <h3 className="text-lg font-bold text-white mb-2">🏘️ Rajajinagar Region (Right)</h3>
+          <ul className="text-sm text-white/80 space-y-1">
+            <li>🏠 Main Rajajinagar - Town Center</li>
+            <li>🏘️ Extension Area - New Development</li>
+            <li>🛒 Traditional Market - Local Commerce</li>
+            <li>🌳 Village Grove - Natural Beauty</li>
+            <li>🏛️ Community Temples</li>
+            <li>🏡 Residential Neighborhoods</li>
+            <li>💡 Traditional Street Lighting</li>
           </ul>
         </GlassCard>
       </div>
 
       {/* 3D Bangalore Cityscape */}
-      <Scene cameraPosition={[12, 8, 12]} enableControls={true}>
+      <Scene cameraPosition={[0, 8, 12]} enableControls={true}>
         <Suspense fallback={null}>
           {/* Enhanced lighting for city atmosphere */}
           <ambientLight intensity={isNight ? 0.2 : 0.6} color={isNight ? "#E6E6FA" : "#FFFFFF"} />
@@ -103,9 +114,9 @@ export default function OurSpace() {
             </>
           )}
           
-          {/* Ground plane */}
+          {/* Expanded ground plane for maximum space usage */}
           <mesh position={[0, -0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-            <planeGeometry args={[30, 30]} />
+            <planeGeometry args={[80, 40]} />
             <meshStandardMaterial 
               color={isNight ? "#1A1A2E" : "#7D8471"} 
               roughness={0.8} 
