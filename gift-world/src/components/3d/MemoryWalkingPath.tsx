@@ -12,6 +12,7 @@ import Temple from './buildings/Temple';
 import Playground from './recreation/Playground';
 import Male3D from './Male3D';
 import Female3D from './Female3D';
+import WalkingCouple from './WalkingCouple';
 import PetDog3D from './PetDog3D';
 import { Bird, Butterfly } from './BirdButterfly3D';
 import * as THREE from 'three';
@@ -586,11 +587,53 @@ export default function MemoryWalkingPath({
         {/* Small community temple - very common in Bengaluru neighborhoods */}
         <Temple position={[2.5, 0, -1]} type="community" name="Local Temple" scale={0.6} />
         
-        {/* Animated residents in friend's area */}
-        <Female3D position={[-1.5, 0, 0.5]} scale={0.6} rotationY={Math.PI / 3} walking /> {/* Local resident walking */}
-        <Male3D position={[-2.2, 0, 2.2]} scale={0.6} rotationY={-Math.PI / 4} /> {/* Near kirana store */}
-        <Female3D position={[2.8, 0, 1.8]} scale={0.6} rotationY={Math.PI / 6} /> {/* Near auto stand */}
-        <Male3D position={[2.3, 0, -0.8]} scale={0.65} rotationY={Math.PI / 2} /> {/* Near temple */}
+        {/* Animated walking couple going from college to friend's home */}
+        <WalkingCouple 
+          startPosition={startPosition}
+          endPosition={endPosition}
+          walkingSpeed={0.08}
+          scale={0.85}
+        />
+        
+        {/* Girl waiting in front of friend's home - positioned at the actual end location */}
+        <Female3D 
+          position={[-1.2, 0, -29]} 
+          scale={0.82} 
+          rotationY={Math.PI / 4} 
+          walking={false}
+          talking={true}
+        />
+        
+        {/* Add some waiting gestures - she's checking her phone/looking around */}
+        <mesh position={[-1.1, 1.2, -28.8]}>
+          <boxGeometry args={[0.06, 0.1, 0.02]} />
+          <meshStandardMaterial 
+            color="#1A1A1A" 
+            emissive="#00BFFF"
+            emissiveIntensity={0.3}
+          />
+        </mesh>
+        
+        {/* Local residents and other characters */}
+        <Male3D position={[-2.2, 0, 2.2]} scale={0.65} rotationY={-Math.PI / 4} walking={false} /> {/* Near kirana store */}
+        <Female3D position={[2.8, 0, 1.8]} scale={0.62} rotationY={Math.PI / 6} walking={false} /> {/* Near auto stand */}
+        <Male3D position={[2.3, 0, -0.8]} scale={0.68} rotationY={Math.PI / 2} walking={false} /> {/* Near temple */}
+        
+        {/* Some background characters with extremely slow walking */}
+        <Female3D 
+          position={[-3.5, 0, 5]} 
+          scale={0.6} 
+          rotationY={Math.PI / 3} 
+          walking={true}
+          walkingSpeed={0.3}
+        />
+        <Male3D 
+          position={[3.2, 0, -5]} 
+          scale={0.6} 
+          rotationY={-Math.PI / 4} 
+          walking={true}
+          walkingSpeed={0.25}
+        />
         
         {/* Community playground - common in residential areas */}
         <Playground position={[-3.5, 0, -1]} scale={0.6} />
