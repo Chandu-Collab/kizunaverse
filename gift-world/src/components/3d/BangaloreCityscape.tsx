@@ -539,8 +539,8 @@ export default function BangaloreCityscape() {
         ))}
         
         {/* BMTC City Buses - Realistic Bangalore Transport - On clear roads */}
-        <BMTCBus position={[-4, 0, -0.5]} rotationY={Math.PI / 2} scale={0.7} moving />
-        <BMTCBus position={[-1, 0, -8]} rotationY={0} scale={0.7} />
+        <BMTCBus position={[-15, 0, -0.5]} rotationY={Math.PI / 2} scale={0.7} moving />
+        <BMTCBus position={[-12, 0, -8]} rotationY={0} scale={0.7} />
         <BMTCBus position={[-35, 0, -2]} rotationY={-Math.PI / 4} scale={0.7} moving />
         
         {/* Two-wheelers scattered realistically - On roads, not overlapping */}
@@ -566,7 +566,7 @@ export default function BangaloreCityscape() {
         
         {/* Additional BMTC City Buses - On main roads */}
         <BMTCBus position={[-30, 0, -8]} rotationY={Math.PI / 2} scale={0.8} />
-        <BMTCBus position={[-2, 0, 6]} rotationY={0} scale={0.8} />
+        <BMTCBus position={[-18, 0, 6]} rotationY={0} scale={0.8} />
         <BMTCBus position={[-33, 0, 5]} rotationY={-Math.PI / 4} scale={0.8} />
         
         {/* Two-wheelers scattered realistically - Additional vehicles on clear paths */}

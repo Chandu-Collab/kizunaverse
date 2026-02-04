@@ -3,6 +3,9 @@
 import { Suspense, useState } from 'react';
 import Scene from '@/components/3d/Scene';
 import BangaloreCityscape from '@/components/3d/BangaloreCityscape';
+import SpecialBMSCollege from '@/components/3d/SpecialBMSCollege';
+import MemoryWalkingPath from '@/components/3d/MemoryWalkingPath';
+import MemoryModal from '@/components/ui/MemoryModal';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useTheme } from '@/hooks/useTheme';
 import GlassCard from '@/components/ui/GlassCard';
@@ -17,6 +20,7 @@ export default function OurSpace() {
   const { isNight } = useTheme();
   const [showInfo, setShowInfo] = useState(true);
   const [showCityInfo, setShowCityInfo] = useState(true);
+  const [showMemoryModal, setShowMemoryModal] = useState(false);
   const { weather, autoWeather, changeWeather, enableAutoWeather } = useWeatherSystem();
 
   return (
@@ -34,14 +38,14 @@ export default function OurSpace() {
           >
             <GlassCard className="text-center max-w-md mx-auto">
               <h1 className="text-4xl font-bold text-white mb-2">
-                🏙️ Bengaluru & Rajajinagar
+                🏙️ Bengaluru Exploration
               </h1>
               <p className="text-white/80 text-lg mb-2">
-                {isNight ? 'Experience the vibrant city-town contrast at night!' : 'Welcome to Bengaluru City & Rajajinagar Town!'}
+                {isNight ? 'Discover special places under the stars!' : 'Welcome to our Bengaluru journey!'}
               </p>
               <p className="text-white/70 text-sm mb-4">
-                Explore the bustling Bengaluru metropolis on the left and the peaceful 
-                Rajajinagar town on the right. Click landmarks to discover more!
+                Explore meaningful locations around the city. 
+                Click on the glowing college to discover more! ✨
               </p>
               <div className="flex gap-2">
                 <Button 
@@ -49,8 +53,17 @@ export default function OurSpace() {
                   variant="primary" 
                   size="sm"
                 >
-                  Explore City
+                  🎓 Explore Journey
                 </Button>
+                <Button 
+                  onClick={() => setShowMemoryModal(true)} 
+                  variant="ghost" 
+                  size="sm"
+                >
+                  ✨ January 18th Story
+                </Button>
+              </div>
+              <div className="mt-3">
                 <Button 
                   onClick={() => navigateTo('home')} 
                   variant="ghost" 
@@ -69,7 +82,7 @@ export default function OurSpace() {
         <div className="absolute top-20 left-4 z-20">
           <GlassCard className="p-4 max-w-xs">
             <div className="flex justify-between items-center mb-3">
-              <h3 className="text-lg font-bold text-white">🏙️ Bengaluru Metropolis (Left)</h3>
+              <h3 className="text-lg font-bold text-white">�️ City Guide</h3>
               <button 
                 onClick={() => setShowCityInfo(false)}
                 className="text-white/60 hover:text-white transition-colors"
@@ -79,28 +92,29 @@ export default function OurSpace() {
               </button>
             </div>
             <ul className="text-sm text-white/80 space-y-1 mb-4">
+              <li>🎓 BMS College - Important Meeting Place</li>
+              <li>🚶‍♂️ The 2km Walking Path</li>
+              <li>🏠 Friend's Home in Rajajinagar</li>
               <li>🏛️ Vidhana Soudha - Government HQ</li>
               <li>🏰 Bangalore Palace - Royal Heritage</li>
               <li>🛕 ISKCON Temple - Spiritual Center</li>
-              <li>🏥 BMS College - Medical Institution</li>
               <li>🏢 Electronic City - IT Hub</li>
               <li>💼 Koramangala IT Hub - Tech District</li>
               <li>🛍️ Brigade Road - Shopping Street</li>
               <li>🌺 Lalbagh Garden - Botanical Beauty</li>
               <li>🌳 Cubbon Park - Green Lung</li>
               <li>🚇 Namma Metro - Rail Network</li>
-              <li>🛺 Auto-rickshaws - City Transport</li>
             </ul>
-            <h3 className="text-lg font-bold text-white mb-2">🏘️ Rajajinagar Region (Right)</h3>
-            <ul className="text-sm text-white/80 space-y-1">
-              <li>🏠 Main Rajajinagar - Town Center</li>
-              <li>🏘️ Extension Area - New Development</li>
-              <li>🛒 Traditional Market - Local Commerce</li>
-              <li>🌳 Village Grove - Natural Beauty</li>
-              <li>🏛️ Community Temples</li>
-              <li>🏡 Residential Neighborhoods</li>
-              <li>💡 Traditional Street Lighting</li>
-            </ul>
+            <div className="border-t border-white/20 pt-2">
+              <Button 
+                onClick={() => setShowMemoryModal(true)} 
+                variant="primary" 
+                size="sm"
+                className="w-full bg-gradient-to-r from-blue-500 to-purple-600"
+              >
+                📖 View Story
+              </Button>
+            </div>
           </GlassCard>
         </div>
       )}
@@ -119,6 +133,18 @@ export default function OurSpace() {
           
           {/* The main Bangalore cityscape */}
           <BangaloreCityscape />
+          
+          {/* Our special BMS College - positioned in front center */}
+          <SpecialBMSCollege 
+            position={[0, 0, 30]} 
+            onClick={() => setShowMemoryModal(true)} 
+          />
+          
+          {/* The memory walking path with proper road */}
+          <MemoryWalkingPath 
+            startPosition={[0, 0, 30]} 
+            endPosition={[0, 0, -30]} 
+          />
           
           {/* Additional atmospheric effects for night */}
           {isNight && (
@@ -159,9 +185,17 @@ export default function OurSpace() {
                 variant="primary" 
                 size="sm"
               >
-                🏙️ Show City Guide
+                �️ Show City Guide
               </Button>
             )}
+            <Button 
+              onClick={() => setShowMemoryModal(true)} 
+              variant="primary" 
+              size="sm"
+              className="bg-gradient-to-r from-blue-500 to-purple-600"
+            >
+              📖 January 18th Story
+            </Button>
             <Button 
               onClick={() => navigateTo('home')} 
               variant="ghost" 
@@ -190,6 +224,12 @@ export default function OurSpace() {
         autoWeather={autoWeather}
         onWeatherChange={changeWeather}
         onToggleAuto={enableAutoWeather}
+      />
+
+      {/* Memory Modal - Our love story */}
+      <MemoryModal 
+        isOpen={showMemoryModal} 
+        onClose={() => setShowMemoryModal(false)} 
       />
     </div>
   );
