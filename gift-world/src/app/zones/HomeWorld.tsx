@@ -255,8 +255,6 @@ export default function HomeWorld() {
           {/* 3D Male and Female Models */}
           {/* Male model sitting on bench at [2,0,7], facing left */}
           <Male3D position={[2, 0.28, 7]} scale={0.62} rotationY={Math.PI / 2} />
-          {/* Female model repositioned to avoid house overlap */}
-          <Female3D position={[-12, 0, 6]} scale={0.62} rotationY={Math.PI / 4} />
           {/* Male and Female models walking and roaming along the main road */}
           {(() => {
             // Animate two walkers along the main road curve
