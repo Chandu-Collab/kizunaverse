@@ -240,11 +240,11 @@ export default function MemoryWalkingPath({
         return null;
       })}
       
-      {/* Street food vendor along the path - authentic Bengaluru experience */}
-      <StreetFoodStall position={[2, 0, 0]} type="chaat" scale={0.7} />
-      
-      {/* Traffic signal at intersection - typical Bengaluru */}
-      <TrafficSignal position={[-3, 0, 5]} />
+{/* Street food vendor along the path - repositioned to avoid overlap */}
+        <StreetFoodStall position={[-1.5, 0, 8]} type="chaat" scale={0.7} />
+        
+        {/* Traffic signal at intersection - repositioned */}
+        <TrafficSignal position={[-2, 0, 10]} />
       
       {/* Utility poles with cables - very common in Bengaluru */}
       {pathPoints.map((point, index) => {
@@ -501,10 +501,10 @@ export default function MemoryWalkingPath({
       
       {/* End marker - Rajajinagar style residential area */}
       <group position={endPosition}>
-        {/* Main residential buildings - matching Rajajinagar style */}
+        {/* Main residential buildings - repositioned for better spacing */}
         {Array.from({ length: 6 }).map((_, i) => {
-          const x = (i % 3) * 1.8 - 1.8;
-          const z = Math.floor(i / 3) * 1.5 - 0.75;
+          const x = (i % 3) * 2.5 - 2.5; // Increased spacing from 1.8 to 2.5
+          const z = Math.floor(i / 3) * 2 - 1; // Increased spacing from 1.5 to 2
           const height = 0.8 + ((i * 37) % 60) / 100;
           const colors = ["#F0E68C", "#DDA0DD", "#98FB98", "#F4A460", "#87CEEB", "#FFB6C1"];
           
@@ -553,8 +553,8 @@ export default function MemoryWalkingPath({
           />
         </mesh>
         
-        {/* Small park area - city style */}
-        <mesh position={[0, 0.02, 1.5]} rotation={[-Math.PI / 2, 0, 0]}>
+        {/* Small park area - positioned safely away from buildings */}
+        <mesh position={[-1.5, 0.02, 1]} rotation={[-Math.PI / 2, 0, 0]}>
           <circleGeometry args={[1.2, 16]} />
           <meshStandardMaterial color="#90EE90" roughness={0.9} />
         </mesh>
@@ -578,14 +578,14 @@ export default function MemoryWalkingPath({
           </group>
         ))}
         
-        {/* Auto rickshaw stand - common in residential areas */}
-        <AutoRickshawStand position={[3, 0, 2]} autoCount={2} scale={0.7} />
+        {/* Auto rickshaw stand - moved away from trees and park */}
+        <AutoRickshawStand position={[6, 0, -1]} autoCount={2} scale={0.7} />
         
-        {/* Local kirana store - essential in residential areas */}
-        <KiranaStore position={[-2.5, 0, 2.5]} storeName="Rajajinagar Provision Store" type="general" scale={0.7} bustling />
+        {/* Local kirana store - repositioned away from park area */}
+        <KiranaStore position={[-6, 0, -2]} storeName="Rajajinagar Provision Store" type="general" scale={0.7} bustling />
         
-        {/* Small community temple - very common in Bengaluru neighborhoods */}
-        <Temple position={[2.5, 0, -1]} type="community" name="Local Temple" scale={0.6} />
+        {/* Small community temple - moved away from playground and trees */}
+        <Temple position={[6.5, 0, -4]} type="community" name="Local Temple" scale={0.6} />
         
         {/* Animated walking couple going from college to friend's home */}
         <WalkingCouple 
@@ -593,19 +593,21 @@ export default function MemoryWalkingPath({
           endPosition={endPosition}
           walkingSpeed={0.08}
           scale={0.85}
+          friendPosition={[0, 0, 15]} // Position where friend is waiting on main road
         />
         
-        {/* Girl waiting in front of friend's home - positioned at the actual end location */}
+        {/* Girl waiting in front of town on the main road - positioned correctly */}
         <Female3D 
-          position={[-1.2, 0, -29]} 
+          position={[0, 0, 15]} 
           scale={0.82} 
-          rotationY={Math.PI / 4} 
+          rotationY={Math.PI} 
           walking={false}
           talking={true}
+          onClick={() => console.log('Friend greeted!')}
         />
         
         {/* Add some waiting gestures - she's checking her phone/looking around */}
-        <mesh position={[-1.1, 1.2, -28.8]}>
+        <mesh position={[0.2, 1.2, 15.2]}>
           <boxGeometry args={[0.06, 0.1, 0.02]} />
           <meshStandardMaterial 
             color="#1A1A1A" 
@@ -614,39 +616,51 @@ export default function MemoryWalkingPath({
           />
         </mesh>
         
-        {/* Local residents and other characters */}
-        <Male3D position={[-2.2, 0, 2.2]} scale={0.65} rotationY={-Math.PI / 4} walking={false} /> {/* Near kirana store */}
-        <Female3D position={[2.8, 0, 1.8]} scale={0.62} rotationY={Math.PI / 6} walking={false} /> {/* Near auto stand */}
-        <Male3D position={[2.3, 0, -0.8]} scale={0.68} rotationY={Math.PI / 2} walking={false} /> {/* Near temple */}
+        {/* Greeting indicator - shows she's waiting */}
+        <mesh position={[0, 2.2, 15]}>
+          <sphereGeometry args={[0.1, 8, 8]} />
+          <meshStandardMaterial 
+            color="#FFD700" 
+            transparent 
+            opacity={0.8}
+            emissive="#FFD700"
+            emissiveIntensity={0.4}
+          />
+        </mesh>
         
-        {/* Some background characters with extremely slow walking */}
+        {/* Local residents and other characters - moved away from green spaces */}
+        <Male3D position={[-5.5, 0, -2.2]} scale={0.65} rotationY={-Math.PI / 4} walking={false} /> {/* Near kirana store */}
+        <Female3D position={[5.8, 0, -1.2]} scale={0.62} rotationY={Math.PI / 6} walking={false} /> {/* Near auto stand */}
+        <Male3D position={[6.2, 0, -4.5]} scale={0.68} rotationY={Math.PI / 2} walking={false} /> {/* Near temple */}
+        
+        {/* Some background characters - positioned away from parks and trees */}
         <Female3D 
-          position={[-3.5, 0, 5]} 
+          position={[-7, 0, 4]} 
           scale={0.6} 
           rotationY={Math.PI / 3} 
           walking={true}
           walkingSpeed={0.3}
         />
         <Male3D 
-          position={[3.2, 0, -5]} 
+          position={[7.5, 0, -6]} 
           scale={0.6} 
           rotationY={-Math.PI / 4} 
           walking={true}
           walkingSpeed={0.25}
         />
         
-        {/* Community playground - common in residential areas */}
-        <Playground position={[-3.5, 0, -1]} scale={0.6} />
+        {/* Community playground - positioned in its own clear space away from trees */}
+        <Playground position={[-8, 0, -1]} scale={0.6} />
         
-        {/* Roaming dogs - very common in Indian residential areas */}
-        <PetDog3D position={[1, 0, 3]} scale={0.85} walkRadius={1.2} walkSpeed={0.28} />
-        <PetDog3D position={[-4, 0, 1.5]} scale={0.75} walkRadius={0.9} walkSpeed={0.22} />
+        {/* Roaming dogs - positioned on clear pathways away from green spaces */}
+        <PetDog3D position={[-3, 0, -5]} scale={0.85} walkRadius={1.2} walkSpeed={0.28} />
+        <PetDog3D position={[3.5, 0, -6]} scale={0.75} walkRadius={0.9} walkSpeed={0.22} />
         
-        {/* Flying birds and butterflies over residential area */}
-        <Bird position={[2, 6, 0]} color="#A084E8" speed={1.0} phase={0.8} />
-        <Bird position={[-3, 5, 2]} color="#FFD93D" speed={0.8} phase={1.5} />
-        <Butterfly position={[0, 3, 1]} color="#FF6B6B" speed={0.6} />
-        <Butterfly position={[-2, 2, -2]} color="#4ECDC4" speed={0.7} phase={2} />
+        {/* Flying birds and butterflies over appropriate areas - not conflicting with structures */}
+        <Bird position={[3, 6, -3]} color="#A084E8" speed={1.0} phase={0.8} />
+        <Bird position={[-4, 5, -1]} color="#FFD93D" speed={0.8} phase={1.5} />
+        <Butterfly position={[1, 3, -2]} color="#FF6B6B" speed={0.6} />
+        <Butterfly position={[-3, 2, -4]} color="#4ECDC4" speed={0.7} phase={2} />
         
         {showEndLabel && (
           <Html position={[0, 3, 0]} center>
