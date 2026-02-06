@@ -689,12 +689,28 @@ function CoconutPalm({ position }: { position: [number, number, number] }) {
 function FishingBoat({ position }: { position: [number, number, number] }) {
   const boatRef = useRef<THREE.Group>(null);
   const { isNight } = useTheme();
+  const drift = useMemo(() => {
+    const baseSpeed = 0.18 + Math.random() * 0.14;
+    return {
+      speed: baseSpeed,
+      phase: Math.random() * Math.PI * 2,
+      swayX: 0.5 + Math.random() * 0.3,
+      swayZ: 0.7 + Math.random() * 0.4,
+      yaw: 0.08 + Math.random() * 0.05,
+      loopSpan: 10 + Math.random() * 4,
+      loopSpeed: 0.2 + Math.random() * 0.1
+    };
+  }, []);
   
   useFrame(({ clock }) => {
     if (boatRef.current) {
       const t = clock.getElapsedTime();
-      boatRef.current.position.y = position[1] + Math.sin(t * 0.8) * 0.05;
-      boatRef.current.rotation.z = Math.sin(t * 0.6) * 0.02;
+      const loopOffset = ((t * drift.loopSpeed + drift.phase) % drift.loopSpan) - drift.loopSpan / 2;
+      boatRef.current.position.x = position[0] + loopOffset + Math.sin(t * drift.speed + drift.phase) * drift.swayX;
+      boatRef.current.position.z = position[2] + Math.cos(t * drift.speed * 0.9 + drift.phase) * drift.swayZ;
+      boatRef.current.position.y = position[1] + Math.sin(t * 0.8 + drift.phase) * 0.05;
+      boatRef.current.rotation.z = Math.sin(t * 0.6 + drift.phase) * 0.02;
+      boatRef.current.rotation.y = Math.sin(t * drift.speed + drift.phase) * drift.yaw;
     }
   });
 
