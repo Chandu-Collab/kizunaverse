@@ -350,7 +350,7 @@ function BeachVegetation({ position }: { position: [number, number, number] }) {
 function DetailedOcean({ season = 'summer', waterColor = '#4169E1' }: { season?: string; waterColor?: string; } = {}) {
   const oceanRef = useRef<THREE.Mesh>(null);
   const waveRefs = useRef<THREE.Mesh[]>([]);
-  const { isNight } = useTheme();
+  const { isNight } = useTheme();//helper to determine if it's night based on the current time of day
   
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
