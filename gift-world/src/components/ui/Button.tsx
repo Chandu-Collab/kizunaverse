@@ -10,6 +10,7 @@ interface ButtonProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   disabled?: boolean;
+  style?: React.CSSProperties;
 }
 
 export default function Button({
@@ -19,6 +20,7 @@ export default function Button({
   size = 'md',
   className = '',
   disabled = false,
+  style,
 }: ButtonProps) {
   const baseStyles = 'rounded-xl font-semibold no-select transition-all duration-300';
   
@@ -40,6 +42,7 @@ export default function Button({
       whileTap={!disabled ? { scale: 0.95 } : {}}
       onClick={onClick}
       disabled={disabled}
+      style={style}
       className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className} ${
         disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
       }`}
