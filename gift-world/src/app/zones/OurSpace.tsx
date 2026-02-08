@@ -5,7 +5,7 @@ import Scene from '@/components/3d/Scene';
 import BangaloreCityscape from '@/components/3d/BangaloreCityscape';
 import SpecialBMSCollege from '@/components/3d/SpecialBMSCollege';
 import MemoryWalkingPath from '@/components/3d/MemoryWalkingPath';
-import MemoryModal from '@/components/ui/MemoryModal';
+import EnhancedMemoryModal from '@/components/ui/EnhancedMemoryModal';
 import { useNavigation } from '@/hooks/useNavigation';
 import { useTheme } from '@/hooks/useTheme';
 import GlassCard from '@/components/ui/GlassCard';
@@ -60,7 +60,7 @@ export default function OurSpace() {
                   variant="ghost" 
                   size="sm"
                 >
-                  ✨ January 18th Story
+                  📖 Read Our Story
                 </Button>
               </div>
               <div className="mt-3">
@@ -112,7 +112,7 @@ export default function OurSpace() {
                 size="sm"
                 className="w-full bg-gradient-to-r from-blue-500 to-purple-600"
               >
-                📖 View Story
+                📖 Read January 18th Story
               </Button>
             </div>
           </GlassCard>
@@ -194,7 +194,7 @@ export default function OurSpace() {
               size="sm"
               className="bg-gradient-to-r from-blue-500 to-purple-600"
             >
-              📖 January 18th Story
+              📖 Our Love Story
             </Button>
             <Button 
               onClick={() => navigateTo('home')} 
@@ -226,8 +226,8 @@ export default function OurSpace() {
         onToggleAuto={enableAutoWeather}
       />
 
-      {/* Memory Modal - Our love story */}
-      <MemoryModal 
+      {/* Memory Modal - Our enhanced love story */}
+      <EnhancedMemoryModal 
         isOpen={showMemoryModal} 
         onClose={() => setShowMemoryModal(false)} 
       />
