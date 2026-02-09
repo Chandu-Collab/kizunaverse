@@ -1,7 +1,7 @@
 'use client';
 
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei';
+import { OrbitControls, Environment } from '@react-three/drei';
 import { ReactNode, Suspense } from 'react';
 
 interface SceneProps {
@@ -21,11 +21,22 @@ export default function Scene({
     <div className="canvas-container">
       <Canvas
         shadows={enableShadows}
-        gl={{ antialias: true, alpha: true }}
+        gl={{ 
+          antialias: true, 
+          alpha: true,
+          powerPreference: "high-performance",
+          stencil: false,
+          depth: true
+        }}
         dpr={[1, 2]}
+        camera={{ 
+          fov: 50, 
+          near: 0.1, 
+          far: 1000, 
+          position: cameraPosition 
+        }}
       >
         <Suspense fallback={null}>
-          <PerspectiveCamera makeDefault position={cameraPosition} fov={50} />
           {children}
           {enableControls && (
             <OrbitControls
@@ -33,12 +44,17 @@ export default function Scene({
               enableZoom={true}
               enableRotate={true}
               minDistance={3}
-              maxDistance={100}
+              maxDistance={50}
               maxPolarAngle={Math.PI / 2.1}
+              minPolarAngle={Math.PI / 6}
               autoRotate={false}
+              autoRotateSpeed={0.5}
               panSpeed={1.5}
               zoomSpeed={1.2}
               rotateSpeed={0.8}
+              enableDamping={true}
+              dampingFactor={0.05}
+              screenSpacePanning={false}
             />
           )}
         </Suspense>

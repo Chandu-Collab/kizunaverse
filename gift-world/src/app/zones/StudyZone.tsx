@@ -6,6 +6,8 @@ import Button from '@/components/ui/Button';
 import { useNavigation } from '@/hooks/useNavigation';
 import { motion } from 'framer-motion';
 import ParticleBackground from '@/components/ui/ParticleBackground';
+import Scene from '@/components/3d/Scene';
+import StudyHome3D from '@/components/3d/StudyHome3D';
 
 const MOTIVATIONAL_QUOTES = [
   "You're capable of amazing things! 💪",
@@ -23,6 +25,9 @@ export default function StudyZone() {
   const [completedPomodoros, setCompletedPomodoros] = useState(0);
   const [notes, setNotes] = useState('');
   const [currentQuote, setCurrentQuote] = useState(MOTIVATIONAL_QUOTES[0]);
+  const [showStudyHome, setShowStudyHome] = useState(false);
+  const [showInterior, setShowInterior] = useState(false);
+  const [currentRoom, setCurrentRoom] = useState<'library' | 'bedroom' | 'kitchen' | 'washroom' | 'hall' | 'terrace' | 'exterior'>('exterior');
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -68,72 +73,418 @@ export default function StudyZone() {
     <div className="relative w-full h-screen overflow-hidden">
       <ParticleBackground />
       
-      <div className="content-overlay flex items-center justify-center min-h-screen p-4">
-        <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Pomodoro Timer */}
-          <GlassCard className="text-center">
-            <h1 className="text-3xl font-bold text-white mb-4">📚 Study Zone</h1>
-            
-            <div className="mb-6">
-              <div className="text-6xl font-bold text-white mb-2">
-                {formatTime(timeLeft)}
+      {showStudyHome ? (
+        // 3D Study Home View
+        <div className="relative w-full h-screen">
+          <Scene 
+            cameraPosition={
+              currentRoom === 'exterior' ? [12, 8, 15] : 
+              currentRoom === 'terrace' ? [0, 10, 8] :
+              currentRoom === 'hall' ? [8, 6, 8] :
+              [5, 5, 6]
+            } 
+            enableControls={true}
+            enableShadows={true}
+          >
+            <StudyHome3D 
+              showStudyRoom={showInterior} 
+              currentRoom={currentRoom}
+            />
+          </Scene>
+          
+          {/* 3D View Controls */}
+          <div className="absolute top-4 left-4 z-10">
+            <GlassCard className="p-4 max-w-sm">
+              <h2 className="text-xl font-bold text-white mb-3">🏛️ Beautiful Home</h2>
+              <div className="text-sm text-white/80 mb-3">
+                {currentRoom === 'exterior' ? 'Explore the beautiful Victorian-style home exterior' :
+                 currentRoom === 'library' ? 'Cozy library with books and study space' :
+                 currentRoom === 'bedroom' ? 'Comfortable bedroom for rest' :
+                 currentRoom === 'kitchen' ? 'Modern kitchen with dining area' :
+                 currentRoom === 'washroom' ? 'Clean and modern bathroom' :
+                 currentRoom === 'hall' ? 'Spacious living room with TV and sofas' :
+                 currentRoom === 'terrace' ? 'Beautiful terrace with garden view' :
+                 'Select a room to explore'}
               </div>
-              <div className="text-xl text-white/80 mb-4">
-                {sessionType === 'work' ? 'Focus Time' : 'Break Time'}
+              
+              {/* Room Navigation */}
+              <div className="grid grid-cols-3 gap-2 mb-3">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setCurrentRoom('exterior')}
+                  className={`p-2 rounded text-xs transition-colors ${
+                    currentRoom === 'exterior' 
+                      ? 'bg-white/30 text-white' 
+                      : 'bg-white/10 text-white/80 hover:bg-white/20'
+                  }`}
+                >
+                  🏠 Exterior
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setCurrentRoom('library')}
+                  className={`p-2 rounded text-xs transition-colors ${
+                    currentRoom === 'library' 
+                      ? 'bg-white/30 text-white' 
+                      : 'bg-white/10 text-white/80 hover:bg-white/20'
+                  }`}
+                >
+                  📚 Library
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setCurrentRoom('bedroom')}
+                  className={`p-2 rounded text-xs transition-colors ${
+                    currentRoom === 'bedroom' 
+                      ? 'bg-white/30 text-white' 
+                      : 'bg-white/10 text-white/80 hover:bg-white/20'
+                  }`}
+                >
+                  🛏️ Bedroom
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setCurrentRoom('kitchen')}
+                  className={`p-2 rounded text-xs transition-colors ${
+                    currentRoom === 'kitchen' 
+                      ? 'bg-white/30 text-white' 
+                      : 'bg-white/10 text-white/80 hover:bg-white/20'
+                  }`}
+                >
+                  🍳 Kitchen
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setCurrentRoom('washroom')}
+                  className={`p-2 rounded text-xs transition-colors ${
+                    currentRoom === 'washroom' 
+                      ? 'bg-white/30 text-white' 
+                      : 'bg-white/10 text-white/80 hover:bg-white/20'
+                  }`}
+                >
+                  🚿 Bathroom
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setCurrentRoom('hall')}
+                  className={`p-2 rounded text-xs transition-colors ${
+                    currentRoom === 'hall' 
+                      ? 'bg-white/30 text-white' 
+                      : 'bg-white/10 text-white/80 hover:bg-white/20'
+                  }`}
+                >
+                  🛋️ Living Room
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setCurrentRoom('terrace')}
+                  className={`p-2 rounded text-xs transition-colors ${
+                    currentRoom === 'terrace' 
+                      ? 'bg-white/30 text-white' 
+                      : 'bg-white/10 text-white/80 hover:bg-white/20'
+                  }`}
+                >
+                  🌿 Terrace
+                </motion.button>
               </div>
-              <div className="text-lg text-white/70">
-                Completed: {completedPomodoros} pomodoros
+              
+              <div className="space-y-2">
+                <Button
+                  onClick={() => setShowStudyHome(false)}
+                  variant="secondary"
+                  size="sm"
+                  className="w-full"
+                >
+                  📋 Study Tools
+                </Button>
               </div>
-            </div>
+            </GlassCard>
+          </div>
 
-            <div className="flex gap-3 justify-center mb-6">
-              <Button
-                onClick={() => setIsRunning(!isRunning)}
-                variant="primary"
-                size="lg"
-              >
-                {isRunning ? '⏸ Pause' : '▶ Start'}
-              </Button>
-              <Button onClick={resetTimer} variant="secondary" size="lg">
-                ↻ Reset
-              </Button>
-            </div>
+          {/* Quick Timer Display */}
+          <div className="absolute top-4 right-4 z-10">
+            <GlassCard className="p-4">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white mb-1">
+                  {formatTime(timeLeft)}
+                </div>
+                <div className="text-sm text-white/80">
+                  {sessionType === 'work' ? 'Focus Time' : 'Break Time'}
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    onClick={() => setIsRunning(!isRunning)}
+                    variant="primary"
+                    size="sm"
+                  >
+                    {isRunning ? '⏸' : '▶'}
+                  </Button>
+                  <Button onClick={resetTimer} variant="secondary" size="sm">
+                    ↻
+                  </Button>
+                </div>
+              </div>
+            </GlassCard>
+          </div>
 
-            <motion.div
-              key={currentQuote}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-6 p-4 glass rounded-lg"
-            >
-              <p className="text-white/90 text-lg">{currentQuote}</p>
-            </motion.div>
+          {/* Room Info Panel */}
+          <div className="absolute bottom-4 right-4 z-10">
+            <GlassCard className="p-4 max-w-xs">
+              <h3 className="text-lg font-semibold text-white mb-2">
+                {currentRoom === 'exterior' ? '🏠 Home Exterior' :
+                 currentRoom === 'library' ? '📚 Study Library' :
+                 currentRoom === 'bedroom' ? '🛏️ Master Bedroom' :
+                 currentRoom === 'kitchen' ? '🍳 Modern Kitchen' :
+                 currentRoom === 'washroom' ? '🚿 Bathroom' :
+                 currentRoom === 'hall' ? '🛋️ Living Room' :
+                 currentRoom === 'terrace' ? '🌿 Garden Terrace' : 'Room'}
+              </h3>
+              <div className="text-sm text-white/80 mb-3">
+                {currentRoom === 'exterior' && 'Beautiful Victorian architecture with garden landscaping'}
+                {currentRoom === 'library' && 'Perfect study space with student reading at desk'}
+                {currentRoom === 'bedroom' && 'Cozy bedroom with double bed and wardrobe'}
+                {currentRoom === 'kitchen' && 'Fully equipped kitchen with dining area'}
+                {currentRoom === 'washroom' && 'Modern bathroom with all amenities'}
+                {currentRoom === 'hall' && 'Spacious living area with entertainment center'}
+                {currentRoom === 'terrace' && 'Outdoor space with city view and plants'}
+              </div>
+              
+              {/* Quick Room Access */}
+              <div className="text-xs text-white/70">
+                🏠 Use mouse to look around • Scroll to zoom
+              </div>
+            </GlassCard>
+          </div>
 
+          {/* Navigation */}
+          <div className="absolute bottom-4 left-4 z-10">
             <Button
               onClick={() => navigateTo('home')}
               variant="ghost"
               size="md"
-              className="mt-4"
             >
               ← Back Home
             </Button>
-          </GlassCard>
-
-          {/* Notes Panel */}
-          <GlassCard>
-            <h2 className="text-2xl font-bold text-white mb-4">📝 Notes</h2>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Write your thoughts, goals, or study notes here..."
-              className="w-full h-64 p-4 rounded-lg glass-strong text-white placeholder-white/50 resize-none focus:outline-none focus:ring-2 focus:ring-white/30"
-              style={{ background: 'rgba(255, 255, 255, 0.1)' }}
-            />
-            <div className="mt-4 text-sm text-white/70">
-              {notes.length} characters
-            </div>
-          </GlassCard>
+          </div>
         </div>
-      </div>
+      ) : (
+        // Traditional Study Tools View
+        <div className="content-overlay flex items-center justify-center min-h-screen p-4">
+          <div className="max-w-6xl w-full">
+            {/* View Toggle */}
+            <div className="mb-6 text-center">
+              <Button
+                onClick={() => { setShowStudyHome(true); setCurrentRoom('exterior'); }}
+                variant="secondary"
+                size="md"
+                className="mb-4"
+              >
+                🏛️ Explore Beautiful Home
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+              {/* Pomodoro Timer */}
+              <GlassCard className="text-center">
+                <h1 className="text-3xl font-bold text-white mb-4">📚 Study Zone</h1>
+                
+                <div className="mb-6">
+                  <div className="text-6xl font-bold text-white mb-2">
+                    {formatTime(timeLeft)}
+                  </div>
+                  <div className="text-xl text-white/80 mb-4">
+                    {sessionType === 'work' ? 'Focus Time' : 'Break Time'}
+                  </div>
+                  <div className="text-lg text-white/70">
+                    Completed: {completedPomodoros} pomodoros
+                  </div>
+                </div>
+
+                <div className="flex gap-3 justify-center mb-6">
+                  <Button
+                    onClick={() => setIsRunning(!isRunning)}
+                    variant="primary"
+                    size="lg"
+                  >
+                    {isRunning ? '⏸ Pause' : '▶ Start'}
+                  </Button>
+                  <Button onClick={resetTimer} variant="secondary" size="lg">
+                    ↻ Reset
+                  </Button>
+                </div>
+
+                <motion.div
+                  key={currentQuote}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-6 p-4 glass rounded-lg"
+                >
+                  <p className="text-white/90 text-lg">{currentQuote}</p>
+                </motion.div>
+              </GlassCard>
+
+              {/* Notes Panel */}
+              <GlassCard>
+                <h2 className="text-2xl font-bold text-white mb-4">📝 Notes</h2>
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Write your thoughts, goals, or study notes here..."
+                  className="w-full h-64 p-4 rounded-lg glass-strong text-white placeholder-white/50 resize-none focus:outline-none focus:ring-2 focus:ring-white/30"
+                  style={{ background: 'rgba(255, 255, 255, 0.1)' }}
+                />
+                <div className="mt-4 text-sm text-white/70">
+                  {notes.length} characters
+                </div>
+              </GlassCard>
+
+              {/* Study Tools */}
+              <GlassCard>
+                <h2 className="text-2xl font-bold text-white mb-4">🛠️ Study Tools</h2>
+                <div className="space-y-4">
+                  <div className="p-4 glass rounded-lg">
+                    <h3 className="text-lg font-semibold text-white mb-2">📊 Study Stats</h3>
+                    <div className="text-white/80">
+                      <p>Session Type: {sessionType === 'work' ? 'Focus' : 'Break'}</p>
+                      <p>Completed: {completedPomodoros} sessions</p>
+                      <p>Total Notes: {notes.length} chars</p>
+                      <p>Study Time Today: {(completedPomodoros * 25)} minutes</p>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 glass rounded-lg">
+                    <h3 className="text-lg font-semibold text-white mb-2">🎯 Quick Actions</h3>
+                    <div className="space-y-2">
+                      <button 
+                        className="w-full p-2 text-white/80 hover:text-white hover:bg-white/10 rounded transition-colors text-left"
+                        onClick={() => setNotes(notes + '\n\n=== ' + new Date().toLocaleDateString() + ' ===\nStudy Session Goals:\n• \n• \n• \n\nKey Learnings:\n')}
+                      >
+                        📖 Start Study Template
+                      </button>
+                      <button 
+                        className="w-full p-2 text-white/80 hover:text-white hover:bg-white/10 rounded transition-colors text-left"
+                        onClick={() => setNotes(notes + '\n\n--- Break Reflection ---\nProgress made:\nNext steps:\n')}
+                      >
+                        ☕ Add Break Notes
+                      </button>
+                      <button 
+                        className="w-full p-2 text-white/80 hover:text-white hover:bg-white/10 rounded transition-colors text-left"
+                        onClick={() => setNotes('')}
+                      >
+                        🗑️ Clear Notes
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="p-4 glass rounded-lg">
+                    <h3 className="text-lg font-semibold text-white mb-2">🎨 Study Modes</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button 
+                        className="p-2 text-white/80 hover:text-white hover:bg-white/10 rounded transition-colors"
+                        onClick={() => { setTimeLeft(25 * 60); setSessionType('work'); }}
+                      >
+                        📚 Focus Mode<br/>
+                        <span className="text-xs">25 min</span>
+                      </button>
+                      <button 
+                        className="p-2 text-white/80 hover:text-white hover:bg-white/10 rounded transition-colors"
+                        onClick={() => { setTimeLeft(15 * 60); setSessionType('work'); }}
+                      >
+                        📝 Quick Study<br/>
+                        <span className="text-xs">15 min</span>
+                      </button>
+                      <button 
+                        className="p-2 text-white/80 hover:text-white hover:bg-white/10 rounded transition-colors"
+                        onClick={() => { setTimeLeft(50 * 60); setSessionType('work'); }}
+                      >
+                        📖 Deep Focus<br/>
+                        <span className="text-xs">50 min</span>
+                      </button>
+                      <button 
+                        className="p-2 text-white/80 hover:text-white hover:bg-white/10 rounded transition-colors"
+                        onClick={() => { setTimeLeft(5 * 60); setSessionType('break'); }}
+                      >
+                        ☕ Break Time<br/>
+                        <span className="text-xs">5 min</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </GlassCard>
+
+              {/* Study Progress */}
+              <GlassCard>
+                <h2 className="text-2xl font-bold text-white mb-4">📈 Progress</h2>
+                <div className="space-y-4">
+                  <div className="p-4 glass rounded-lg">
+                    <h3 className="text-lg font-semibold text-white mb-3">Today's Progress</h3>
+                    <div className="w-full bg-white/10 rounded-full h-3 mb-2">
+                      <div 
+                        className="bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-300" 
+                        style={{ width: `${Math.min((completedPomodoros / 8) * 100, 100)}%` }}
+                      ></div>
+                    </div>
+                    <p className="text-white/80 text-sm">
+                      {completedPomodoros} / 8 sessions completed ({Math.round((completedPomodoros / 8) * 100)}%)
+                    </p>
+                  </div>
+
+                  <div className="p-4 glass rounded-lg">
+                    <h3 className="text-lg font-semibold text-white mb-3">🏆 Achievements</h3>
+                    <div className="space-y-2">
+                      <div className={`flex items-center p-2 rounded ${completedPomodoros >= 1 ? 'bg-white/20' : 'bg-white/5'}`}>
+                        <span className="mr-2">{completedPomodoros >= 1 ? '🏅' : '⭕'}</span>
+                        <span className={completedPomodoros >= 1 ? 'text-white' : 'text-white/50'}>
+                          First Session
+                        </span>
+                      </div>
+                      <div className={`flex items-center p-2 rounded ${completedPomodoros >= 4 ? 'bg-white/20' : 'bg-white/5'}`}>
+                        <span className="mr-2">{completedPomodoros >= 4 ? '🔥' : '⭕'}</span>
+                        <span className={completedPomodoros >= 4 ? 'text-white' : 'text-white/50'}>
+                          Study Streak
+                        </span>
+                      </div>
+                      <div className={`flex items-center p-2 rounded ${completedPomodoros >= 8 ? 'bg-white/20' : 'bg-white/5'}`}>
+                        <span className="mr-2">{completedPomodoros >= 8 ? '🌟' : '⭕'}</span>
+                        <span className={completedPomodoros >= 8 ? 'text-white' : 'text-white/50'}>
+                          Daily Goal
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 glass rounded-lg">
+                    <h3 className="text-lg font-semibold text-white mb-2">💡 Study Tips</h3>
+                    <div className="text-white/80 text-sm">
+                      <p className="mb-2">• Take regular breaks to maintain focus</p>
+                      <p className="mb-2">• Stay hydrated and keep healthy snacks nearby</p>
+                      <p className="mb-2">• Use the 3D library for immersive study mood</p>
+                      <p>• Review notes after each session</p>
+                    </div>
+                  </div>
+                </div>
+              </GlassCard>
+            </div>
+
+            <div className="mt-6 text-center">
+              <Button
+                onClick={() => navigateTo('home')}
+                variant="ghost"
+                size="md"
+              >
+                ← Back Home
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
