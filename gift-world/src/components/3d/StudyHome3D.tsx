@@ -31,7 +31,7 @@ function StudyHomeContent({
     }
   });
 
-  // Render specific room interior
+  // Render specific room interior with connected hallway system
   if (currentRoom !== 'exterior') {
     return (
       <group ref={groupRef}>
@@ -62,21 +62,27 @@ function StudyHomeContent({
           shadow-camera-bottom={-20}
         />
 
-        {/* Room-specific content */}
-        {currentRoom === 'library' && <LibraryRoom />}
-        {currentRoom === 'bedroom' && <BedroomRoom />}
-        {currentRoom === 'kitchen' && <KitchenRoom />}
-        {currentRoom === 'washroom' && <WashroomRoom />}
-        {currentRoom === 'hall' && <HallRoom />}
-        {currentRoom === 'terrace' && <TerraceRoom />}
+        {/* Central Hallway System - Always visible */}
+        <CentralHallway currentRoom={currentRoom} />
+
+        {/* Room-specific content with connected layout */}
+        {currentRoom === 'hall' && <HallRoom position={[0, 0, 0]} />}
+        {currentRoom === 'library' && <LibraryRoom position={[-8, 0, -8]} />}
+        {currentRoom === 'bedroom' && <BedroomRoom position={[8, 0, -8]} />}
+        {currentRoom === 'kitchen' && <KitchenRoom position={[-8, 0, 8]} />}
+        {currentRoom === 'washroom' && <WashroomRoom position={[8, 0, 8]} />}
+        {currentRoom === 'terrace' && <TerraceRoom position={[0, 0, 12]} />}
+
+        {/* Show room connections and doorways */}
+        <RoomConnections currentRoom={currentRoom} />
 
         {/* Ground shadows */}
         <ContactShadows 
           position={[0, 0, 0]} 
           opacity={0.3} 
-          scale={15} 
+          scale={25} 
           blur={2} 
-          far={10} 
+          far={15} 
         />
       </group>
     );
@@ -298,6 +304,272 @@ function StudyHomeContent({
         blur={2} 
         far={15} 
       />
+    </group>
+  );
+}
+
+// Central Hallway System Component
+function CentralHallway({ currentRoom }: { currentRoom: string }) {
+  const { isNight } = useTheme();
+  
+  return (
+    <group>
+      {/* Main Central Hallway - L-shaped */}
+      
+      {/* Horizontal Hallway (East-West) */}
+      <mesh position={[0, 0.1, 0]} receiveShadow>
+        <boxGeometry args={[16, 0.2, 3]} />
+        <meshStandardMaterial color="#F5F5DC" roughness={0.8} />
+      </mesh>
+      
+      {/* Vertical Hallway (North-South) */}
+      <mesh position={[0, 0.1, -6]} receiveShadow>
+        <boxGeometry args={[3, 0.2, 12]} />
+        <meshStandardMaterial color="#F5F5DC" roughness={0.8} />
+      </mesh>
+      
+      {/* Hallway to Terrace */}
+      <mesh position={[0, 0.1, 8]} receiveShadow>
+        <boxGeometry args={[3, 0.2, 8]} />
+        <meshStandardMaterial color="#F5F5DC" roughness={0.8} />
+      </mesh>
+
+      {/* Hallway Walls */}
+      {/* Main hallway walls */}
+      <mesh position={[0, 2, -1.5]} receiveShadow>
+        <boxGeometry args={[16, 4, 0.2]} />
+        <meshStandardMaterial color="#FFFAF0" roughness={0.6} />
+      </mesh>
+      <mesh position={[0, 2, 1.5]} receiveShadow>
+        <boxGeometry args={[16, 4, 0.2]} />
+        <meshStandardMaterial color="#FFFAF0" roughness={0.6} />
+      </mesh>
+
+      {/* Vertical hallway walls */}
+      <mesh position={[-1.5, 2, -6]} receiveShadow>
+        <boxGeometry args={[0.2, 4, 12]} />
+        <meshStandardMaterial color="#FFFAF0" roughness={0.6} />
+      </mesh>
+      <mesh position={[1.5, 2, -6]} receiveShadow>
+        <boxGeometry args={[0.2, 4, 12]} />
+        <meshStandardMaterial color="#FFFAF0" roughness={0.6} />
+      </mesh>
+
+      {/* Terrace hallway walls */}
+      <mesh position={[-1.5, 2, 8]} receiveShadow>
+        <boxGeometry args={[0.2, 4, 8]} />
+        <meshStandardMaterial color="#FFFAF0" roughness={0.6} />
+      </mesh>
+      <mesh position={[1.5, 2, 8]} receiveShadow>
+        <boxGeometry args={[0.2, 4, 8]} />
+        <meshStandardMaterial color="#FFFAF0" roughness={0.6} />
+      </mesh>
+
+      {/* Decorative Elements in Hallway */}
+      {/* Wall Art/Paintings */}
+      {[-6, -2, 2, 6].map((x, i) => (
+        <group key={`art-${i}`}>
+          <mesh position={[x, 2.5, 1.48]} castShadow>
+            <boxGeometry args={[0.8, 0.6, 0.05]} />
+            <meshStandardMaterial color={['#8B4513', '#DAA520', '#B22222', '#4169E1'][i]} />
+          </mesh>
+          <mesh position={[x, 2.5, 1.45]} castShadow>
+            <boxGeometry args={[0.7, 0.5, 0.02]} />
+            <meshStandardMaterial color="#FFFAF0" />
+          </mesh>
+        </group>
+      ))}
+      
+      {/* Hallway Lighting - Ceiling Lights */}
+      {[-4, 0, 4].map((x, i) => (
+        <mesh key={`light-${i}`} position={[x, 3.8, 0]} castShadow>
+          <cylinderGeometry args={[0.2, 0.2, 0.1]} />
+          <meshStandardMaterial 
+            color={isNight ? '#FFF8DC' : '#FFFFFF'} 
+            emissive={isNight ? '#FFF8DC' : '#000000'}
+            emissiveIntensity={isNight ? 0.6 : 0}
+          />
+        </mesh>
+      ))}
+
+      {/* Hallway Runner Carpet */}
+      <mesh position={[0, 0.22, 0]} receiveShadow>
+        <boxGeometry args={[15, 0.02, 1.5]} />
+        <meshStandardMaterial color="#B22222" roughness={0.9} />
+      </mesh>
+      
+      <mesh position={[0, 0.22, -6]} receiveShadow>
+        <boxGeometry args={[1.5, 0.02, 11]} />
+        <meshStandardMaterial color="#B22222" roughness={0.9} />
+      </mesh>
+
+      {isNight && (
+        <>
+          {[-4, 0, 4].map((x, i) => (
+            <pointLight
+              key={`hallway-light-${i}`}
+              position={[x, 3.5, 0]}
+              intensity={0.8}
+              color="#FFF8DC"
+              castShadow
+            />
+          ))}
+        </>
+      )}
+    </group>
+  );
+}
+
+// Room Connections Component - Doorways and Transitions
+function RoomConnections({ currentRoom }: { currentRoom: string }) {
+  const { isNight } = useTheme();
+  
+  return (
+    <group>
+      {/* Door Frames and Doorways */}
+      
+      {/* Library Door (Left side) */}
+      <group position={[-6, 0, -4]}>
+        <mesh position={[0, 2, 0]} castShadow>
+          <boxGeometry args={[0.2, 4, 1.5]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        <mesh position={[0, 2, -1]} castShadow>
+          <boxGeometry args={[0.2, 4, 1.5]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        <mesh position={[0, 3.8, -0.5]} castShadow>
+          <boxGeometry args={[0.2, 0.4, 1]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        {/* Door Label */}
+        <Text
+          position={[0.2, 3.5, -0.5]}
+          fontSize={0.2}
+          color="#8B4513"
+          rotation={[0, Math.PI/2, 0]}
+        >
+          📚 LIBRARY
+        </Text>
+      </group>
+
+      {/* Bedroom Door (Right side) */}
+      <group position={[6, 0, -4]}>
+        <mesh position={[0, 2, 0]} castShadow>
+          <boxGeometry args={[0.2, 4, 1.5]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        <mesh position={[0, 2, -1]} castShadow>
+          <boxGeometry args={[0.2, 4, 1.5]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        <mesh position={[0, 3.8, -0.5]} castShadow>
+          <boxGeometry args={[0.2, 0.4, 1]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        <Text
+          position={[-0.2, 3.5, -0.5]}
+          fontSize={0.2}
+          color="#8B4513"
+          rotation={[0, -Math.PI/2, 0]}
+        >
+          🛏️ BEDROOM
+        </Text>
+      </group>
+
+      {/* Kitchen Door (Left back) */}
+      <group position={[-6, 0, 4]}>
+        <mesh position={[0, 2, 0]} castShadow>
+          <boxGeometry args={[0.2, 4, 1.5]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        <mesh position={[0, 2, 1]} castShadow>
+          <boxGeometry args={[0.2, 4, 1.5]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        <mesh position={[0, 3.8, 0.5]} castShadow>
+          <boxGeometry args={[0.2, 0.4, 1]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        <Text
+          position={[0.2, 3.5, 0.5]}
+          fontSize={0.2}
+          color="#8B4513"
+          rotation={[0, Math.PI/2, 0]}
+        >
+          🍳 KITCHEN
+        </Text>
+      </group>
+
+      {/* Washroom Door (Right back) */}
+      <group position={[6, 0, 4]}>
+        <mesh position={[0, 2, 0]} castShadow>
+          <boxGeometry args={[0.2, 4, 1.5]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        <mesh position={[0, 2, 1]} castShadow>
+          <boxGeometry args={[0.2, 4, 1.5]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        <mesh position={[0, 3.8, 0.5]} castShadow>
+          <boxGeometry args={[0.2, 0.4, 1]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        <Text
+          position={[-0.2, 3.5, 0.5]}
+          fontSize={0.2}
+          color="#8B4513"
+          rotation={[0, -Math.PI/2, 0]}
+        >
+          🚿 WASHROOM
+        </Text>
+      </group>
+
+      {/* Terrace Door/Opening */}
+      <group position={[0, 0, 10]}>
+        <mesh position={[-1, 2, 0]} castShadow>
+          <boxGeometry args={[1, 4, 0.2]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        <mesh position={[1, 2, 0]} castShadow>
+          <boxGeometry args={[1, 4, 0.2]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        <mesh position={[0, 3.8, 0]} castShadow>
+          <boxGeometry args={[2, 0.4, 0.2]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        <Text
+          position={[0, 3.5, 0.2]}
+          fontSize={0.2}
+          color="#8B4513"
+        >
+          🏞️ TERRACE
+        </Text>
+      </group>
+
+      {/* Transition Indicators - Subtle lighting to show connections */}
+      {currentRoom !== 'hall' && (
+        <>
+          {/* Light paths showing room connections */}
+          <mesh position={[-6, 0.25, -2]} receiveShadow>
+            <boxGeometry args={[0.1, 0.05, 4]} />
+            <meshStandardMaterial 
+              color="#FFD700" 
+              emissive="#FFD700" 
+              emissiveIntensity={0.3}
+            />
+          </mesh>
+          <mesh position={[6, 0.25, -2]} receiveShadow>
+            <boxGeometry args={[0.1, 0.05, 4]} />
+            <meshStandardMaterial 
+              color="#FFD700" 
+              emissive="#FFD700" 
+              emissiveIntensity={0.3}
+            />
+          </mesh>
+        </>
+      )}
     </group>
   );
 }

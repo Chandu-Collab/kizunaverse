@@ -79,9 +79,13 @@ export default function StudyZone() {
           <Scene 
             cameraPosition={
               currentRoom === 'exterior' ? [12, 8, 15] : 
-              currentRoom === 'terrace' ? [0, 10, 8] :
-              currentRoom === 'hall' ? [8, 6, 8] :
-              [5, 5, 6]
+              currentRoom === 'hall' ? [0, 6, 6] : // Better view of the living room layout
+              currentRoom === 'library' ? [-6, 5, -4] : // Positioned to see the library desk and bookshelves
+              currentRoom === 'bedroom' ? [10, 5, -6] : // Good angle for bedroom furniture
+              currentRoom === 'kitchen' ? [-10, 5, 10] : // Kitchen activity area view
+              currentRoom === 'washroom' ? [10, 4, 10] : // Bathroom overview
+              currentRoom === 'terrace' ? [0, 8, 16] : // Elevated terrace view
+              [4, 6, 4] // Default interior view
             } 
             enableControls={true}
             enableShadows={true}
@@ -95,103 +99,131 @@ export default function StudyZone() {
           {/* 3D View Controls */}
           <div className="absolute top-4 left-4 z-10">
             <GlassCard className="p-4 max-w-sm">
-              <h2 className="text-xl font-bold text-white mb-3">🏛️ Beautiful Home</h2>
+              <h2 className="text-xl font-bold text-white mb-3">� Beautiful Connected Home</h2>
               <div className="text-sm text-white/80 mb-3">
                 {currentRoom === 'exterior' ? 'Explore the beautiful Victorian-style home exterior' :
-                 currentRoom === 'library' ? 'Cozy library with books and study space' :
-                 currentRoom === 'bedroom' ? 'Comfortable bedroom for rest' :
-                 currentRoom === 'kitchen' ? 'Modern kitchen with dining area' :
-                 currentRoom === 'washroom' ? 'Clean and modern bathroom' :
-                 currentRoom === 'hall' ? 'Spacious living room with TV and sofas' :
-                 currentRoom === 'terrace' ? 'Beautiful terrace with garden view' :
-                 'Select a room to explore'}
+                 currentRoom === 'hall' ? 'Central hallway connecting all rooms with elegant decor' :
+                 currentRoom === 'library' ? 'Cozy library with extensive bookshelves and reading area' :
+                 currentRoom === 'bedroom' ? 'Comfortable bedroom with modern furnishing' :
+                 currentRoom === 'kitchen' ? 'Fully equipped modern kitchen with dining area' :
+                 currentRoom === 'washroom' ? 'Clean and well-appointed bathroom' :
+                 currentRoom === 'terrace' ? 'Beautiful outdoor terrace with city/mountain views' : 'Unknown room'}
               </div>
               
-              {/* Room Navigation */}
-              <div className="grid grid-cols-3 gap-2 mb-3">
+              {/* Home Layout Map */}
+              <div className="mb-4">
+                <div className="text-xs text-white/60 mb-2">Connected Home Layout:</div>
+                <div className="grid grid-cols-3 gap-1 text-xs">
+                  {/* Top Row */}
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setCurrentRoom('library')}
+                    className={`p-1 rounded transition-colors ${
+                      currentRoom === 'library' 
+                        ? 'bg-blue-500/50 text-white border border-blue-300' 
+                        : 'bg-white/10 text-white/70 hover:bg-white/20'
+                    }`}
+                  >
+                    📚 LIB
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setCurrentRoom('hall')}
+                    className={`p-1 rounded transition-colors ${
+                      currentRoom === 'hall' 
+                        ? 'bg-green-500/50 text-white border border-green-300' 
+                        : 'bg-white/10 text-white/70 hover:bg-white/20'
+                    }`}
+                  >
+                    🛋️ HALL
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setCurrentRoom('bedroom')}
+                    className={`p-1 rounded transition-colors ${
+                      currentRoom === 'bedroom' 
+                        ? 'bg-purple-500/50 text-white border border-purple-300' 
+                        : 'bg-white/10 text-white/70 hover:bg-white/20'
+                    }`}
+                  >
+                    🛏️ BED
+                  </motion.button>
+                  
+                  {/* Middle Row */}
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setCurrentRoom('kitchen')}
+                    className={`p-1 rounded transition-colors ${
+                      currentRoom === 'kitchen' 
+                        ? 'bg-orange-500/50 text-white border border-orange-300' 
+                        : 'bg-white/10 text-white/70 hover:bg-white/20'
+                    }`}
+                  >
+                    🍳 KITCH
+                  </motion.button>
+                  <div className="p-1 text-center text-white/40 text-xs">
+                    ↕️ CONNECT
+                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setCurrentRoom('washroom')}
+                    className={`p-1 rounded transition-colors ${
+                      currentRoom === 'washroom' 
+                        ? 'bg-cyan-500/50 text-white border border-cyan-300' 
+                        : 'bg-white/10 text-white/70 hover:bg-white/20'
+                    }`}
+                  >
+                    🚿 WASH
+                  </motion.button>
+                  
+                  {/* Bottom Row */}
+                  <div></div>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setCurrentRoom('terrace')}
+                    className={`p-1 rounded transition-colors ${
+                      currentRoom === 'terrace' 
+                        ? 'bg-emerald-500/50 text-white border border-emerald-300' 
+                        : 'bg-white/10 text-white/70 hover:bg-white/20'
+                    }`}
+                  >
+                    🌿 TERRACE
+                  </motion.button>
+                  <div></div>
+                </div>
+              </div>
+              
+              {/* Exterior/Interior Toggle */}
+              <div className="grid grid-cols-2 gap-2 mb-3">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setCurrentRoom('exterior')}
                   className={`p-2 rounded text-xs transition-colors ${
                     currentRoom === 'exterior' 
-                      ? 'bg-white/30 text-white' 
+                      ? 'bg-white/30 text-white border border-white/50' 
                       : 'bg-white/10 text-white/80 hover:bg-white/20'
                   }`}
                 >
-                  🏠 Exterior
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setCurrentRoom('library')}
-                  className={`p-2 rounded text-xs transition-colors ${
-                    currentRoom === 'library' 
-                      ? 'bg-white/30 text-white' 
-                      : 'bg-white/10 text-white/80 hover:bg-white/20'
-                  }`}
-                >
-                  📚 Library
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setCurrentRoom('bedroom')}
-                  className={`p-2 rounded text-xs transition-colors ${
-                    currentRoom === 'bedroom' 
-                      ? 'bg-white/30 text-white' 
-                      : 'bg-white/10 text-white/80 hover:bg-white/20'
-                  }`}
-                >
-                  🛏️ Bedroom
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setCurrentRoom('kitchen')}
-                  className={`p-2 rounded text-xs transition-colors ${
-                    currentRoom === 'kitchen' 
-                      ? 'bg-white/30 text-white' 
-                      : 'bg-white/10 text-white/80 hover:bg-white/20'
-                  }`}
-                >
-                  🍳 Kitchen
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setCurrentRoom('washroom')}
-                  className={`p-2 rounded text-xs transition-colors ${
-                    currentRoom === 'washroom' 
-                      ? 'bg-white/30 text-white' 
-                      : 'bg-white/10 text-white/80 hover:bg-white/20'
-                  }`}
-                >
-                  🚿 Bathroom
+                  🏠 Exterior View
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setCurrentRoom('hall')}
                   className={`p-2 rounded text-xs transition-colors ${
-                    currentRoom === 'hall' 
-                      ? 'bg-white/30 text-white' 
+                    currentRoom !== 'exterior' 
+                      ? 'bg-white/30 text-white border border-white/50' 
                       : 'bg-white/10 text-white/80 hover:bg-white/20'
                   }`}
                 >
-                  🛋️ Living Room
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setCurrentRoom('terrace')}
-                  className={`p-2 rounded text-xs transition-colors ${
-                    currentRoom === 'terrace' 
-                      ? 'bg-white/30 text-white' 
-                      : 'bg-white/10 text-white/80 hover:bg-white/20'
-                  }`}
-                >
-                  🌿 Terrace
+                  🏛️ Interior View
                 </motion.button>
               </div>
               
