@@ -11,30 +11,31 @@ interface StoryReaderProps {
   onClose: () => void;
 }
 
-// Floating particles component
+// Optimized floating particles for better performance
 const FloatingParticles = ({ effect, color }: { effect: string, color: string }) => {
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(effect === 'hearts' ? 8 : 12)].map((_, i) => (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ transform: 'translateZ(0)' }}>
+      {[...Array(effect === 'hearts' ? 6 : 8)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute"
+          className="absolute text-xl will-change-transform"
           initial={{ 
             opacity: 0,
             x: Math.random() * 100 + '%',
-            y: '100%'
+            y: '110%'
           }}
           animate={{
             opacity: [0, 0.6, 0],
-            y: '-10%',
+            y: '-15%',
             x: Math.random() * 20 - 10 + '%'
           }}
           transition={{
             duration: 8 + Math.random() * 4,
             repeat: Infinity,
-            delay: Math.random() * 8
+            delay: Math.random() * 8,
+            ease: "linear"
           }}
-          style={{ color }}
+          style={{ color, willChange: 'transform, opacity' }}
         >
           {effect === 'hearts' ? '💕' : effect === 'sparkles' ? '✨' : '🌟'}
         </motion.div>
@@ -43,7 +44,7 @@ const FloatingParticles = ({ effect, color }: { effect: string, color: string })
   );
 };
 
-// Enhanced text component with highlight effects
+// Optimized text component for better performance
 const EnhancedText = ({ 
   text, 
   highlights, 
@@ -57,38 +58,55 @@ const EnhancedText = ({
 }) => {
   const isHighlight = highlights?.some(h => text.toLowerCase().includes(h.toLowerCase()));
   
+  if (text === '') {
+    return <div className="h-4" />;
+  }
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: delay * 0.08, duration: 0.6 }}
-      className={`${
-        text === '' 
-          ? 'h-3' 
-          : text.length < 50
-          ? 'text-lg text-white font-medium leading-relaxed'
-          : 'text-base text-white/90 leading-relaxed'
-      } ${isHighlight ? 'relative' : ''}`}
+      transition={{ 
+        delay: delay * 0.06, 
+        duration: 0.6, 
+        ease: "easeOut"
+      }}
+      className={`relative will-change-transform ${
+        text.length < 50
+          ? 'text-xl text-white font-semibold leading-relaxed mb-4'
+          : 'text-lg text-white/95 leading-relaxed mb-3'
+      } text-center mx-auto max-w-4xl px-4 py-2`}
+      style={{
+        textAlign: 'justify',
+        textAlignLast: 'center',
+        textShadow: `0 2px 10px ${theme.primaryColor}30`,
+        transform: 'translateZ(0)'
+      }}
     >
+      {/* Optimized background for highlights */}
       {isHighlight && (
         <motion.div
-          className="absolute inset-0 rounded-lg -z-10"
+          className="absolute -inset-2 rounded-2xl -z-10 will-change-transform"
           style={{ 
-            background: `linear-gradient(45deg, ${theme.primaryColor}20, ${theme.secondaryColor}20)`,
-            boxShadow: `0 0 20px ${theme.primaryColor}30`
+            background: `linear-gradient(135deg, ${theme.primaryColor}15, ${theme.secondaryColor}15)`,
+            border: `1px solid ${theme.primaryColor}30`,
+            boxShadow: `0 0 15px ${theme.primaryColor}15`
           }}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: delay * 0.08 + 0.5 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: delay * 0.06 + 0.3, duration: 0.4 }}
         />
       )}
-      {text}
+      
+      <span className="inline-block">{text}</span>
+      
+      {/* Simple highlight indicator */}
       {isHighlight && (
         <motion.span
-          className="absolute -top-1 -right-1"
+          className="absolute -top-1 -right-1 text-sm"
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: delay * 0.08 + 0.8 }}
+          transition={{ delay: delay * 0.06 + 0.5 }}
         >
           💖
         </motion.span>
@@ -151,9 +169,13 @@ export default function EnhancedStoryReader({ story, onClose }: StoryReaderProps
       {/* Floating particles */}
       <FloatingParticles effect={theme.particleEffect} color={theme.primaryColor} />
 
-      {/* Custom scrollbar styles */}
+      {/* Optimized styles for performance */}
       <style dangerouslySetInnerHTML={{
         __html: `
+          .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: ${theme.primaryColor}60 transparent;
+          }
           .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
           }
@@ -166,6 +188,14 @@ export default function EnhancedStoryReader({ story, onClose }: StoryReaderProps
           }
           .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: ${theme.primaryColor}80;
+          }
+          .will-change-transform {
+            will-change: transform;
+          }
+          .gpu-accelerated {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000px;
           }
         `
       }} />
@@ -307,62 +337,102 @@ export default function EnhancedStoryReader({ story, onClose }: StoryReaderProps
                   scrollbarColor: `${theme.primaryColor}60 transparent`
                 }}
               >
-                {/* Enhanced Chapter Header */}
+                {/* Optimized Chapter Header */}
                 <motion.div 
-                  className="text-center mb-8"
-                  initial={{ opacity: 0, y: 20 }}
+                  className="text-center mb-8 relative will-change-transform"
+                  initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
+                  transition={{ delay: 0.2, duration: 0.6 }}
+                  style={{ transform: 'translateZ(0)' }}
                 >
                   <motion.div 
-                    className="text-5xl mb-4"
+                    className="text-6xl mb-4 inline-block will-change-transform"
                     animate={{ 
-                      rotate: [0, 5, -5, 0],
-                      scale: [1, 1.1, 1]
+                      rotate: [0, 5, -5, 0]
                     }}
                     transition={{ 
                       duration: 4,
                       repeat: Infinity,
-                      repeatType: "reverse"
+                      ease: "easeInOut"
+                    }}
+                    style={{
+                      filter: `drop-shadow(0 0 15px ${theme.primaryColor}50)`
                     }}
                   >
                     {chapter.emoji}
                   </motion.div>
+                  
                   <motion.h2 
-                    className="text-2xl font-bold text-white mb-2"
-                    style={{ textShadow: `0 0 20px ${theme.primaryColor}50` }}
+                    className="text-3xl font-bold text-white mb-3"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    style={{ 
+                      textShadow: `0 0 20px ${theme.primaryColor}50`
+                    }}
                   >
                     Chapter {chapter.id}
                   </motion.h2>
+                  
                   <motion.h3 
-                    className="text-xl font-medium"
-                    style={{ color: theme.secondaryColor }}
+                    className="text-xl font-semibold mb-4"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    style={{ 
+                      color: theme.secondaryColor
+                    }}
                   >
                     {chapter.title}
                   </motion.h3>
+                  
+                  {/* Simple divider */}
+                  <motion.div
+                    className="w-20 h-0.5 mx-auto rounded-full"
+                    style={{
+                      background: `linear-gradient(90deg, ${theme.primaryColor}, ${theme.secondaryColor})`
+                    }}
+                    initial={{ opacity: 0, scaleX: 0 }}
+                    animate={{ opacity: 1, scaleX: 1 }}
+                    transition={{ delay: 0.6, duration: 0.6 }}
+                  />
                 </motion.div>
 
-                {/* Enhanced Chapter Text with highlights */}
-                <div className="space-y-4 text-center max-w-2xl mx-auto pb-8">
-                  {chapter.content.map((paragraph, index) => (
-                    <EnhancedText
-                      key={index}
-                      text={paragraph}
-                      highlights={theme.emotionalHighlight}
-                      delay={index}
-                      theme={theme}
-                    />
-                  ))}
-                  
-                  {/* Chapter completion celebration */}
+                {/* Optimized Chapter Text */}
+                <div className="relative max-w-4xl mx-auto pb-8" style={{ transform: 'translateZ(0)' }}>
+                  {/* Simple progress indicator */}
                   <motion.div
-                    className="pt-6"
+                    className="w-0.5 rounded-full absolute -left-4 top-0 will-change-transform"
+                    style={{
+                      background: `linear-gradient(to bottom, ${theme.primaryColor}, ${theme.secondaryColor})`
+                    }}
+                    initial={{ height: 0 }}
+                    animate={{ height: '100%' }}
+                    transition={{ duration: 1.5, ease: "easeOut" }}
+                  />
+                  
+                  {/* Optimized content */}
+                  <div className="space-y-4">
+                    {chapter.content.map((paragraph, index) => (
+                      <EnhancedText
+                        key={index}
+                        text={paragraph}
+                        highlights={theme.emotionalHighlight}
+                        delay={index}
+                        theme={theme}
+                      />
+                    ))}
+                  </div>
+                  
+                  {/* Simple completion indicator */}
+                  <motion.div
+                    className="pt-6 text-center"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: chapter.content.length * 0.08 + 1 }}
+                    transition={{ delay: 1 }}
                   >
                     <div 
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium will-change-transform"
                       style={{
                         background: `linear-gradient(45deg, ${theme.primaryColor}20, ${theme.secondaryColor}20)`,
                         border: `1px solid ${theme.primaryColor}40`
@@ -370,7 +440,7 @@ export default function EnhancedStoryReader({ story, onClose }: StoryReaderProps
                     >
                       <span>✨</span>
                       <span style={{ color: theme.secondaryColor }}>
-                        Chapter {chapter.id} Complete
+                        Chapter {chapter.id} Complete!
                       </span>
                       <span>✨</span>
                     </div>
@@ -418,14 +488,14 @@ export default function EnhancedStoryReader({ story, onClose }: StoryReaderProps
         transition={{ delay: 0.4 }}
         className="mt-6 space-y-4 flex-shrink-0"
       >
-        {/* Chapter Navigation */}
-        <div className="flex justify-center gap-3">
+        {/* Optimized Chapter Navigation */}
+        <div className="flex justify-center gap-4">
           <Button
             onClick={goToPreviousChapter}
             disabled={isFirstChapter}
             variant="ghost"
             size="sm"
-            className={`border-white/30 text-white/80 hover:bg-white/10 disabled:opacity-30`}
+            className={`border-white/30 text-white/80 hover:bg-white/10 disabled:opacity-30 px-4 py-2 rounded-xl transition-all duration-200 will-change-transform`}
           >
             ← Previous
           </Button>
@@ -434,12 +504,13 @@ export default function EnhancedStoryReader({ story, onClose }: StoryReaderProps
             onClick={() => setIsAutoPlaying(!isAutoPlaying)}
             variant="primary"
             size="sm"
-            className={`text-white border-2`}
+            className={`text-white border-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 will-change-transform`}
             style={{
               background: isAutoPlaying 
                 ? `linear-gradient(45deg, #ef4444, #f97316)` 
                 : `linear-gradient(45deg, ${theme.primaryColor}, ${theme.secondaryColor})`,
-              borderColor: theme.primaryColor + '60'
+              borderColor: theme.primaryColor + '60',
+              transform: 'translateZ(0)'
             }}
           >
             {isAutoPlaying ? '⏸️ Pause' : '▶️ Auto Read'}
@@ -450,7 +521,7 @@ export default function EnhancedStoryReader({ story, onClose }: StoryReaderProps
             disabled={isLastChapter}
             variant="ghost"
             size="sm"
-            className={`border-white/30 text-white/80 hover:bg-white/10 disabled:opacity-30`}
+            className={`border-white/30 text-white/80 hover:bg-white/10 disabled:opacity-30 px-4 py-2 rounded-xl transition-all duration-200 will-change-transform`}
           >
             Next →
           </Button>
