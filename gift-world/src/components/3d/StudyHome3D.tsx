@@ -12,14 +12,17 @@ interface StudyHome3DProps {
   position?: [number, number, number];
   showStudyRoom?: boolean;
   currentRoom?: 'library' | 'bedroom' | 'kitchen' | 'washroom' | 'hall' | 'terrace' | 'exterior';
+  viewMode?: 'exterior' | 'interior';
 }
 
 function StudyHomeContent({ 
   showStudyRoom = false, 
-  currentRoom = 'exterior' 
+  currentRoom = 'exterior',
+  viewMode = 'exterior'
 }: { 
   showStudyRoom?: boolean;
   currentRoom?: 'library' | 'bedroom' | 'kitchen' | 'washroom' | 'hall' | 'terrace' | 'exterior';
+  viewMode?: 'exterior' | 'interior';
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const { isNight } = useTheme();
@@ -62,19 +65,122 @@ function StudyHomeContent({
           shadow-camera-bottom={-20}
         />
 
-        {/* Central Hallway System - Always visible */}
-        <CentralHallway currentRoom={currentRoom} />
-
-        {/* Room-specific content with connected layout */}
-        {currentRoom === 'hall' && <HallRoom position={[0, 0, 0]} />}
-        {currentRoom === 'library' && <LibraryRoom position={[-8, 0, -8]} />}
-        {currentRoom === 'bedroom' && <BedroomRoom position={[8, 0, -8]} />}
-        {currentRoom === 'kitchen' && <KitchenRoom position={[-8, 0, 8]} />}
-        {currentRoom === 'washroom' && <WashroomRoom position={[8, 0, 8]} />}
-        {currentRoom === 'terrace' && <TerraceRoom position={[0, 0, 12]} />}
-
-        {/* Show room connections and doorways */}
-        <RoomConnections currentRoom={currentRoom} />
+        {/* Room-specific content based on view mode */}
+        {viewMode === 'exterior' ? (
+          // Exterior view: Show only the selected room without connections
+          <>
+            {currentRoom === 'hall' && <HallRoom position={[0, 0, 0]} />}
+            {currentRoom === 'library' && <LibraryRoom position={[0, 0, 0]} />}
+            {currentRoom === 'bedroom' && <BedroomRoom position={[0, 0, 0]} />}
+            {currentRoom === 'kitchen' && <KitchenRoom position={[0, 0, 0]} />}
+            {currentRoom === 'washroom' && <WashroomRoom position={[0, 0, 0]} />}
+            {currentRoom === 'terrace' && <TerraceRoom position={[0, 0, 0]} />}
+          </>
+        ) : (
+          // Interior view: Show ALL rooms simultaneously in proper 2-floor layout
+          <>
+            <CentralHallway currentRoom={currentRoom} />
+            <RoomConnections currentRoom={currentRoom} />
+            
+            {/* GROUND FLOOR - 3 Rooms (better spread) */}
+            <group>
+              <HallRoom position={[0, 0, 0]} />
+              {currentRoom === 'hall' && (
+                <mesh position={[0, 0.05, 0]}>
+                  <boxGeometry args={[12.5, 0.1, 10.5]} />
+                  <meshStandardMaterial 
+                    color="#FFD700" 
+                    transparent 
+                    opacity={0.3}
+                    emissive="#FFD700"
+                    emissiveIntensity={0.2}
+                  />
+                </mesh>
+              )}
+            </group>
+            
+            <group>
+              <KitchenRoom position={[-12, 0, 6]} />
+              {currentRoom === 'kitchen' && (
+                <mesh position={[-12, 0.05, 6]}>
+                  <boxGeometry args={[8.5, 0.1, 6.5]} />
+                  <meshStandardMaterial 
+                    color="#FF6347" 
+                    transparent 
+                    opacity={0.3}
+                    emissive="#FF6347"
+                    emissiveIntensity={0.2}
+                  />
+                </mesh>
+              )}
+            </group>
+            
+            <group>
+              <LibraryRoom position={[-12, 0, -10]} />
+              {currentRoom === 'library' && (
+                <mesh position={[-12, 0.05, -10]}>
+                  <boxGeometry args={[8.5, 0.1, 8.5]} />
+                  <meshStandardMaterial 
+                    color="#4169E1" 
+                    transparent 
+                    opacity={0.3}
+                    emissive="#4169E1"
+                    emissiveIntensity={0.2}
+                  />
+                </mesh>
+              )}
+            </group>
+            
+            {/* FIRST FLOOR - 2 Rooms + Terrace (well separated) */}
+            <group>
+              <BedroomRoom position={[12, 5, -6]} />
+              {currentRoom === 'bedroom' && (
+                <mesh position={[12, 5.05, -6]}>
+                  <boxGeometry args={[8.5, 0.1, 6.5]} />
+                  <meshStandardMaterial 
+                    color="#DDA0DD" 
+                    transparent 
+                    opacity={0.3}
+                    emissive="#DDA0DD"
+                    emissiveIntensity={0.2}
+                  />
+                </mesh>
+              )}
+            </group>
+            
+            <group>
+              <WashroomRoom position={[12, 5, 6]} />
+              {currentRoom === 'washroom' && (
+                <mesh position={[12, 5.05, 6]}>
+                  <boxGeometry args={[6.5, 0.1, 6.5]} />
+                  <meshStandardMaterial 
+                    color="#00CED1" 
+                    transparent 
+                    opacity={0.3}
+                    emissive="#00CED1"
+                    emissiveIntensity={0.2}
+                  />
+                </mesh>
+              )}
+            </group>
+            
+            <group>
+              <TerraceRoom position={[0, 5, 15]} />
+              {currentRoom === 'terrace' && (
+                <mesh position={[0, 5.05, 15]}>
+                  <boxGeometry args={[10.5, 0.1, 6.5]} />
+                  <meshStandardMaterial 
+                    color="#32CD32" 
+                    transparent 
+                    opacity={0.3}
+                    emissive="#32CD32"
+                    emissiveIntensity={0.2}
+                  />
+                </mesh>
+              )}
+            </group>
+          </>
+        )}
 
         {/* Ground shadows */}
         <ContactShadows 
@@ -314,28 +420,27 @@ function CentralHallway({ currentRoom }: { currentRoom: string }) {
   
   return (
     <group>
-      {/* Main Central Hallway - L-shaped */}
+      {/* GROUND FLOOR HALLWAYS - Connecting 3 rooms */}
       
-      {/* Horizontal Hallway (East-West) */}
+      {/* Main Central Hallway */}
       <mesh position={[0, 0.1, 0]} receiveShadow>
         <boxGeometry args={[16, 0.2, 3]} />
         <meshStandardMaterial color="#F5F5DC" roughness={0.8} />
       </mesh>
       
-      {/* Vertical Hallway (North-South) */}
-      <mesh position={[0, 0.1, -6]} receiveShadow>
-        <boxGeometry args={[3, 0.2, 12]} />
+      {/* Left Wing Hallway to Kitchen & Library */}
+      <mesh position={[-6, 0.1, 0]} receiveShadow>
+        <boxGeometry args={[12, 0.2, 3]} />
         <meshStandardMaterial color="#F5F5DC" roughness={0.8} />
       </mesh>
       
-      {/* Hallway to Terrace */}
-      <mesh position={[0, 0.1, 8]} receiveShadow>
-        <boxGeometry args={[3, 0.2, 8]} />
+      {/* Vertical Connector to Kitchen & Library */}
+      <mesh position={[-12, 0.1, -2]} receiveShadow>
+        <boxGeometry args={[3, 0.2, 16]} />
         <meshStandardMaterial color="#F5F5DC" roughness={0.8} />
       </mesh>
 
-      {/* Hallway Walls */}
-      {/* Main hallway walls */}
+      {/* GROUND FLOOR WALLS */}
       <mesh position={[0, 2, -1.5]} receiveShadow>
         <boxGeometry args={[16, 4, 0.2]} />
         <meshStandardMaterial color="#FFFAF0" roughness={0.6} />
@@ -345,20 +450,53 @@ function CentralHallway({ currentRoom }: { currentRoom: string }) {
         <meshStandardMaterial color="#FFFAF0" roughness={0.6} />
       </mesh>
 
-      {/* Vertical hallway walls */}
-      <mesh position={[-1.5, 2, -6]} receiveShadow>
-        <boxGeometry args={[0.2, 4, 12]} />
-        <meshStandardMaterial color="#FFFAF0" roughness={0.6} />
+      {/* STAIRCASE - Connecting Ground Floor to First Floor */}
+      {/* Stair Steps - More realistic positioning */}
+      {Array.from({ length: 10 }).map((_, i) => (
+        <mesh key={i} position={[8, 0.3 + (i * 0.5), -2 + (i * 0.4)]} castShadow>
+          <boxGeometry args={[2, 0.2, 0.8]} />
+          <meshStandardMaterial color="#8B4513" roughness={0.7} />
+        </mesh>
+      ))}
+      
+      {/* Stair Railings */}
+      <mesh position={[7, 3, 1]} castShadow>
+        <boxGeometry args={[0.1, 5, 6]} />
+        <meshStandardMaterial color="#654321" />
       </mesh>
-      <mesh position={[1.5, 2, -6]} receiveShadow>
-        <boxGeometry args={[0.2, 4, 12]} />
-        <meshStandardMaterial color="#FFFAF0" roughness={0.6} />
+      <mesh position={[9, 3, 1]} castShadow>
+        <boxGeometry args={[0.1, 5, 6]} />
+        <meshStandardMaterial color="#654321" />
       </mesh>
 
-      {/* Terrace hallway walls */}
-      <mesh position={[-1.5, 2, 8]} receiveShadow>
-        <boxGeometry args={[0.2, 4, 8]} />
-        <meshStandardMaterial color="#FFFAF0" roughness={0.6} />
+      {/* FIRST FLOOR HALLWAYS - Connecting 2 rooms + terrace */}
+      
+      {/* First Floor Main Hallway */}
+      <mesh position={[6, 5.1, 0]} receiveShadow>
+        <boxGeometry args={[12, 0.2, 3]} />
+        <meshStandardMaterial color="#F0E68C" roughness={0.8} />
+      </mesh>
+      
+      {/* Right Wing Hallway to Bedroom & Washroom */}
+      <mesh position={[12, 5.1, 0]} receiveShadow>
+        <boxGeometry args={[3, 0.2, 12]} />
+        <meshStandardMaterial color="#F0E68C" roughness={0.8} />
+      </mesh>
+      
+      {/* Terrace Connector */}
+      <mesh position={[0, 5.1, 10]} receiveShadow>
+        <boxGeometry args={[3, 0.2, 10]} />
+        <meshStandardMaterial color="#F0E68C" roughness={0.8} />
+      </mesh>
+
+      {/* FIRST FLOOR WALLS */}
+      <mesh position={[6, 7, -1.5]} receiveShadow>
+        <boxGeometry args={[12, 4, 0.2]} />
+        <meshStandardMaterial color="#FFF8DC" roughness={0.6} />
+      </mesh>
+      <mesh position={[6, 7, 1.5]} receiveShadow>
+        <boxGeometry args={[12, 4, 0.2]} />
+        <meshStandardMaterial color="#FFF8DC" roughness={0.6} />
       </mesh>
       <mesh position={[1.5, 2, 8]} receiveShadow>
         <boxGeometry args={[0.2, 4, 8]} />
@@ -577,12 +715,13 @@ function RoomConnections({ currentRoom }: { currentRoom: string }) {
 export default function StudyHome3D({ 
   position = [0, 0, 0],
   showStudyRoom = false,
-  currentRoom = 'exterior'
+  currentRoom = 'exterior',
+  viewMode = 'exterior'
 }: StudyHome3DProps) {
   return (
     <group position={position}>
       <Suspense fallback={null}>
-        <StudyHomeContent showStudyRoom={showStudyRoom} currentRoom={currentRoom} />
+        <StudyHomeContent showStudyRoom={showStudyRoom} currentRoom={currentRoom} viewMode={viewMode} />
       </Suspense>
     </group>
   );

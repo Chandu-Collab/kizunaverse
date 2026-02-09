@@ -28,6 +28,7 @@ export default function StudyZone() {
   const [showStudyHome, setShowStudyHome] = useState(false);
   const [showInterior, setShowInterior] = useState(false);
   const [currentRoom, setCurrentRoom] = useState<'library' | 'bedroom' | 'kitchen' | 'washroom' | 'hall' | 'terrace' | 'exterior'>('exterior');
+  const [viewMode, setViewMode] = useState<'exterior' | 'interior'>('exterior');
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -78,14 +79,20 @@ export default function StudyZone() {
         <div className="relative w-full h-screen">
           <Scene 
             cameraPosition={
-              currentRoom === 'exterior' ? [12, 8, 15] : 
-              currentRoom === 'hall' ? [0, 6, 6] : // Better view of the living room layout
-              currentRoom === 'library' ? [-6, 5, -4] : // Positioned to see the library desk and bookshelves
-              currentRoom === 'bedroom' ? [10, 5, -6] : // Good angle for bedroom furniture
-              currentRoom === 'kitchen' ? [-10, 5, 10] : // Kitchen activity area view
-              currentRoom === 'washroom' ? [10, 4, 10] : // Bathroom overview
-              currentRoom === 'terrace' ? [0, 8, 16] : // Elevated terrace view
-              [4, 6, 4] // Default interior view
+              viewMode === 'exterior' ? (
+                currentRoom === 'exterior' ? [12, 8, 15] : 
+                // Exterior mode: Close-up views of individual rooms
+                currentRoom === 'hall' ? [0, 3, 6] :
+                currentRoom === 'library' ? [0, 3, 6] :
+                currentRoom === 'bedroom' ? [0, 3, 6] :
+                currentRoom === 'kitchen' ? [0, 3, 6] :
+                currentRoom === 'washroom' ? [0, 3, 6] :
+                currentRoom === 'terrace' ? [0, 5, 8] :
+                [0, 3, 6]
+              ) : (
+                // Interior mode: Overview position to see entire 2-floor layout with proper separation
+                [-5, 10, 25] // Better angle to see both floors and all rooms
+              )
             } 
             enableControls={true}
             enableShadows={true}
@@ -93,6 +100,7 @@ export default function StudyZone() {
             <StudyHome3D 
               showStudyRoom={showInterior} 
               currentRoom={currentRoom}
+              viewMode={viewMode}
             />
           </Scene>
           
@@ -204,9 +212,12 @@ export default function StudyZone() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setCurrentRoom('exterior')}
+                  onClick={() => {
+                    setViewMode('exterior');
+                    setCurrentRoom('exterior');
+                  }}
                   className={`p-2 rounded text-xs transition-colors ${
-                    currentRoom === 'exterior' 
+                    viewMode === 'exterior' 
                       ? 'bg-white/30 text-white border border-white/50' 
                       : 'bg-white/10 text-white/80 hover:bg-white/20'
                   }`}
@@ -216,9 +227,12 @@ export default function StudyZone() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setCurrentRoom('hall')}
+                  onClick={() => {
+                    setViewMode('interior');
+                    setCurrentRoom('hall');
+                  }}
                   className={`p-2 rounded text-xs transition-colors ${
-                    currentRoom !== 'exterior' 
+                    viewMode === 'interior' 
                       ? 'bg-white/30 text-white border border-white/50' 
                       : 'bg-white/10 text-white/80 hover:bg-white/20'
                   }`}
