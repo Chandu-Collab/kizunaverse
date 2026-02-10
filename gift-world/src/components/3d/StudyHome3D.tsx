@@ -77,16 +77,27 @@ function StudyHomeContent({
             {currentRoom === 'terrace' && <TerraceRoom position={[0, 0, 0]} />}
           </>
         ) : (
-          // Interior view: Show ALL rooms simultaneously in proper 2-floor layout
+          // Interior view: Show ALL rooms in realistic 2-floor house layout
           <>
-            <CentralHallway currentRoom={currentRoom} />
-            <RoomConnections currentRoom={currentRoom} />
+            {/* MAIN HOUSE FOUNDATION & STRUCTURE */}
+            {/* Ground Floor Base */}
+            <mesh position={[0, -0.2, 0]} receiveShadow>
+              <boxGeometry args={[16, 0.4, 12]} />
+              <meshStandardMaterial color="#8B4513" roughness={0.8} />
+            </mesh>
             
-            {/* GROUND FLOOR - 3 Rooms (better spread) */}
+            {/* First Floor Base */}
+            <mesh position={[0, 4.8, 0]} receiveShadow>
+              <boxGeometry args={[16, 0.4, 12]} />
+              <meshStandardMaterial color="#8B4513" roughness={0.8} />
+            </mesh>
+            
+            {/* GROUND FLOOR - 3 Rooms in realistic layout */}
             <group>
-              <HallRoom position={[0, 0, 0]} />
+              {/* Living Room - Front Center */}
+              <HallRoom position={[0, 0, 2]} />
               {currentRoom === 'hall' && (
-                <mesh position={[0, 0.05, 0]}>
+                <mesh position={[0, 0.05, 2]}>
                   <boxGeometry args={[12.5, 0.1, 10.5]} />
                   <meshStandardMaterial 
                     color="#FFD700" 
@@ -100,9 +111,10 @@ function StudyHomeContent({
             </group>
             
             <group>
-              <KitchenRoom position={[-12, 0, 6]} />
+              {/* Kitchen - Back Right */}
+              <KitchenRoom position={[5, 0, -4]} />
               {currentRoom === 'kitchen' && (
-                <mesh position={[-12, 0.05, 6]}>
+                <mesh position={[5, 0.05, -4]}>
                   <boxGeometry args={[8.5, 0.1, 6.5]} />
                   <meshStandardMaterial 
                     color="#FF6347" 
@@ -116,9 +128,10 @@ function StudyHomeContent({
             </group>
             
             <group>
-              <LibraryRoom position={[-12, 0, -10]} />
+              {/* Study/Library - Back Left */}
+              <LibraryRoom position={[-5, 0, -4]} />
               {currentRoom === 'library' && (
-                <mesh position={[-12, 0.05, -10]}>
+                <mesh position={[-5, 0.05, -4]}>
                   <boxGeometry args={[8.5, 0.1, 8.5]} />
                   <meshStandardMaterial 
                     color="#4169E1" 
@@ -131,11 +144,67 @@ function StudyHomeContent({
               )}
             </group>
             
-            {/* FIRST FLOOR - 2 Rooms + Terrace (well separated) */}
+            {/* STAIRCASE - Connecting floors - Individual Steps */}
+            <group position={[7, 2.5, 0]}>
+              {/* Individual stair steps */}
+              <mesh position={[0, -2, 0]} castShadow>
+                <boxGeometry args={[1.5, 0.2, 0.3]} />
+                <meshStandardMaterial color="#D2691E" />
+              </mesh>
+              <mesh position={[0, -1.5, 0.3]} castShadow>
+                <boxGeometry args={[1.5, 0.2, 0.3]} />
+                <meshStandardMaterial color="#D2691E" />
+              </mesh>
+              <mesh position={[0, -1, 0.6]} castShadow>
+                <boxGeometry args={[1.5, 0.2, 0.3]} />
+                <meshStandardMaterial color="#D2691E" />
+              </mesh>
+              <mesh position={[0, -0.5, 0.9]} castShadow>
+                <boxGeometry args={[1.5, 0.2, 0.3]} />
+                <meshStandardMaterial color="#D2691E" />
+              </mesh>
+              <mesh position={[0, 0, 1.2]} castShadow>
+                <boxGeometry args={[1.5, 0.2, 0.3]} />
+                <meshStandardMaterial color="#D2691E" />
+              </mesh>
+              <mesh position={[0, 0.5, 1.5]} castShadow>
+                <boxGeometry args={[1.5, 0.2, 0.3]} />
+                <meshStandardMaterial color="#D2691E" />
+              </mesh>
+              <mesh position={[0, 1, 1.8]} castShadow>
+                <boxGeometry args={[1.5, 0.2, 0.3]} />
+                <meshStandardMaterial color="#D2691E" />
+              </mesh>
+              <mesh position={[0, 1.5, 2.1]} castShadow>
+                <boxGeometry args={[1.5, 0.2, 0.3]} />
+                <meshStandardMaterial color="#D2691E" />
+              </mesh>
+              <mesh position={[0, 2, 2.4]} castShadow>
+                <boxGeometry args={[1.5, 0.2, 0.3]} />
+                <meshStandardMaterial color="#D2691E" />
+              </mesh>
+              <mesh position={[0, 2.5, 2.7]} castShadow>
+                <boxGeometry args={[1.5, 0.2, 0.3]} />
+                <meshStandardMaterial color="#D2691E" />
+              </mesh>
+              
+              {/* Stair railings */}
+              <mesh position={[0.6, 2.5, 1.5]} castShadow>
+                <boxGeometry args={[0.1, 5, 0.1]} />
+                <meshStandardMaterial color="#8B4513" />
+              </mesh>
+              <mesh position={[-0.6, 2.5, 1.5]} castShadow>
+                <boxGeometry args={[0.1, 5, 0.1]} />
+                <meshStandardMaterial color="#8B4513" />
+              </mesh>
+            </group>
+            
+            {/* FIRST FLOOR - 2 Rooms with optimal spacing */}
             <group>
-              <BedroomRoom position={[12, 5, -6]} />
+              {/* Bedroom - Left-center of first floor */}
+              <BedroomRoom position={[-4, 5, 2]} />
               {currentRoom === 'bedroom' && (
-                <mesh position={[12, 5.05, -6]}>
+                <mesh position={[-4, 5.05, 2]}>
                   <boxGeometry args={[8.5, 0.1, 6.5]} />
                   <meshStandardMaterial 
                     color="#DDA0DD" 
@@ -149,9 +218,10 @@ function StudyHomeContent({
             </group>
             
             <group>
-              <WashroomRoom position={[12, 5, 6]} />
+              {/* Washroom - Right-center of first floor */}
+              <WashroomRoom position={[4, 5, 2]} />
               {currentRoom === 'washroom' && (
-                <mesh position={[12, 5.05, 6]}>
+                <mesh position={[4, 5.05, 2]}>
                   <boxGeometry args={[6.5, 0.1, 6.5]} />
                   <meshStandardMaterial 
                     color="#00CED1" 
@@ -164,11 +234,13 @@ function StudyHomeContent({
               )}
             </group>
             
+            {/* SECOND FLOOR / ROOFTOP - Terrace */}
             <group>
-              <TerraceRoom position={[0, 5, 15]} />
+              {/* Terrace - Rooftop level */}
+              <TerraceRoom position={[0, 10, 0]} />
               {currentRoom === 'terrace' && (
-                <mesh position={[0, 5.05, 15]}>
-                  <boxGeometry args={[10.5, 0.1, 6.5]} />
+                <mesh position={[0, 10.05, 0]}>
+                  <boxGeometry args={[12, 0.1, 8]} />
                   <meshStandardMaterial 
                     color="#32CD32" 
                     transparent 
@@ -179,6 +251,96 @@ function StudyHomeContent({
                 </mesh>
               )}
             </group>
+            
+            {/* CONNECTING HALLWAYS */}
+            {/* Ground floor hallway */}
+            <mesh position={[0, 0.1, -1]} receiveShadow>
+              <boxGeometry args={[14, 0.2, 2]} />
+              <meshStandardMaterial color="#F5F5DC" roughness={0.8} />
+            </mesh>
+            
+            {/* First floor hallway - optimized for closer room spacing */}
+            <mesh position={[0, 5.1, 2]} receiveShadow>
+              <boxGeometry args={[12, 0.2, 3]} />
+              <meshStandardMaterial color="#F5F5DC" roughness={0.8} />
+            </mesh>
+            
+            {/* Central connecting area between rooms */}
+            <mesh position={[0, 5.1, -1]} receiveShadow>
+              <boxGeometry args={[4, 0.2, 6]} />
+              <meshStandardMaterial color="#F0E68C" roughness={0.8} />
+            </mesh>
+            
+            {/* Second floor base for terrace */}
+            <mesh position={[0, 9.8, 0]} receiveShadow>
+              <boxGeometry args={[14, 0.4, 10]} />
+              <meshStandardMaterial color="#8B4513" roughness={0.8} />
+            </mesh>
+            
+            {/* Rooftop terrace access stairs - Individual Steps */}
+            <group position={[0, 7.5, -6]}>
+              {/* Individual stair steps to terrace */}
+              <mesh position={[0, -0.6, 0]} castShadow>
+                <boxGeometry args={[1.5, 0.15, 0.25]} />
+                <meshStandardMaterial color="#D2691E" />
+              </mesh>
+              <mesh position={[0, -0.3, 0.2]} castShadow>
+                <boxGeometry args={[1.5, 0.15, 0.25]} />
+                <meshStandardMaterial color="#D2691E" />
+              </mesh>
+              <mesh position={[0, 0, 0.4]} castShadow>
+                <boxGeometry args={[1.5, 0.15, 0.25]} />
+                <meshStandardMaterial color="#D2691E" />
+              </mesh>
+              <mesh position={[0, 0.3, 0.6]} castShadow>
+                <boxGeometry args={[1.5, 0.15, 0.25]} />
+                <meshStandardMaterial color="#D2691E" />
+              </mesh>
+              <mesh position={[0, 0.6, 0.8]} castShadow>
+                <boxGeometry args={[1.5, 0.15, 0.25]} />
+                <meshStandardMaterial color="#D2691E" />
+              </mesh>
+              <mesh position={[0, 0.9, 1.0]} castShadow>
+                <boxGeometry args={[1.5, 0.15, 0.25]} />
+                <meshStandardMaterial color="#D2691E" />
+              </mesh>
+              <mesh position={[0, 1.2, 1.2]} castShadow>
+                <boxGeometry args={[1.5, 0.15, 0.25]} />
+                <meshStandardMaterial color="#D2691E" />
+              </mesh>
+              <mesh position={[0, 1.5, 1.4]} castShadow>
+                <boxGeometry args={[1.5, 0.15, 0.25]} />
+                <meshStandardMaterial color="#D2691E" />
+              </mesh>
+              
+              {/* Stair railings for terrace access */}
+              <mesh position={[0.6, 1.2, 0.8]} castShadow>
+                <boxGeometry args={[0.08, 2.4, 0.08]} />
+                <meshStandardMaterial color="#8B4513" />
+              </mesh>
+              <mesh position={[-0.6, 1.2, 0.8]} castShadow>
+                <boxGeometry args={[0.08, 2.4, 0.08]} />
+                <meshStandardMaterial color="#8B4513" />
+              </mesh>
+            </group>
+            
+            {/* SUPPORT PILLARS - Simplified single structures */}
+            <mesh position={[-6, 5, -6]} castShadow>
+              <boxGeometry args={[0.3, 10, 0.3]} />
+              <meshStandardMaterial color="#8B4513" />
+            </mesh>
+            <mesh position={[6, 5, -6]} castShadow>
+              <boxGeometry args={[0.3, 10, 0.3]} />
+              <meshStandardMaterial color="#8B4513" />
+            </mesh>
+            <mesh position={[-6, 5, 8]} castShadow>
+              <boxGeometry args={[0.3, 10, 0.3]} />
+              <meshStandardMaterial color="#8B4513" />
+            </mesh>
+            <mesh position={[6, 5, 8]} castShadow>
+              <boxGeometry args={[0.3, 10, 0.3]} />
+              <meshStandardMaterial color="#8B4513" />
+            </mesh>
           </>
         )}
 
@@ -224,12 +386,12 @@ function StudyHomeContent({
         shadow-camera-bottom={-20}
       />
       
-      {/* Modern Victorian-Style House */}
+      {/* Modern 3-Story House - Matching Interior Layout */}
       <Float speed={0.2} rotationIntensity={0.05} floatIntensity={0.05}>
         <group>
-          {/* Main House Structure - Two Stories */}
-          <mesh position={[0, 2, 0]} castShadow receiveShadow>
-            <boxGeometry args={[10, 4, 8]} />
+          {/* GROUND FLOOR - Wide base for 3 rooms (Kitchen, Hall, Library) */}
+          <mesh position={[0, 1.5, 0]} castShadow receiveShadow>
+            <boxGeometry args={[14, 3, 10]} />
             <meshStandardMaterial 
               color={isNight ? '#F5F5DC' : '#FFFAF0'} 
               roughness={0.4} 
@@ -237,9 +399,9 @@ function StudyHomeContent({
             />
           </mesh>
 
-          {/* Second Floor */}
-          <mesh position={[0, 5, 0]} castShadow receiveShadow>
-            <boxGeometry args={[8, 2, 6]} />
+          {/* FIRST FLOOR - Medium size for 2 rooms (Bedroom, Washroom) */}
+          <mesh position={[0, 4.5, 0]} castShadow receiveShadow>
+            <boxGeometry args={[12, 3, 8]} />
             <meshStandardMaterial 
               color={isNight ? '#F0E68C' : '#FFF8DC'} 
               roughness={0.4} 
@@ -247,52 +409,71 @@ function StudyHomeContent({
             />
           </mesh>
 
-          {/* Victorian-Style Roof */}
-          <mesh position={[0, 6.5, 0]} castShadow>
-            <coneGeometry args={[6, 2, 4]} />
+          {/* SECOND FLOOR - Smaller rooftop level for Terrace (NO GAP) */}
+          <mesh position={[0, 7, 0]} castShadow receiveShadow>
+            <boxGeometry args={[10, 2, 6]} />
+            <meshStandardMaterial 
+              color={isNight ? '#E6E6FA' : '#F0F8FF'} 
+              roughness={0.4} 
+              metalness={0.05}
+            />
+          </mesh>
+
+          {/* Main Roof - Peaked roof over everything */}
+          <mesh position={[0, 8.5, 0]} castShadow>
+            <coneGeometry args={[7, 2.5, 6]} />
             <meshStandardMaterial color="#8B4513" roughness={0.8} />
           </mesh>
 
-          {/* Terrace on Second Floor */}
-          <mesh position={[0, 6.2, -4]} castShadow receiveShadow>
-            <boxGeometry args={[8, 0.4, 2]} />
+          {/* Terrace Deck - Open rooftop area */}
+          <mesh position={[0, 8.2, -3]} castShadow receiveShadow>
+            <boxGeometry args={[9, 0.3, 4]} />
             <meshStandardMaterial color="#D2B48C" roughness={0.7} />
           </mesh>
 
-          {/* Terrace Railing */}
-          <mesh position={[0, 7.2, -5]} castShadow>
-            <boxGeometry args={[8, 2, 0.1]} />
+          {/* Terrace Railings */}
+          <mesh position={[0, 8.8, -5]} castShadow>
+            <boxGeometry args={[9.2, 1.6, 0.1]} />
+            <meshStandardMaterial color="#8B4513" />
+          </mesh>
+          <mesh position={[-4.5, 8.8, -3]} castShadow>
+            <boxGeometry args={[0.1, 1.6, 4]} />
+            <meshStandardMaterial color="#8B4513" />
+          </mesh>
+          <mesh position={[4.5, 8.8, -3]} castShadow>
+            <boxGeometry args={[0.1, 1.6, 4]} />
             <meshStandardMaterial color="#8B4513" />
           </mesh>
 
-          {/* Chimney */}
-          <mesh position={[2, 7, 1]} castShadow>
-            <boxGeometry args={[0.6, 1.5, 0.6]} />
-            <meshStandardMaterial color="#B22222" roughness={0.9} />
-          </mesh>
-
-          {/* Grand Front Door */}
-          <mesh position={[0, 1.5, 4.01]} castShadow>
-            <boxGeometry args={[1.5, 3, 0.15]} />
+          {/* Grand Front Door - Ground Floor entrance */}
+          <mesh position={[0, 1.2, 5.01]} castShadow>
+            <boxGeometry args={[1.8, 2.4, 0.15]} />
             <meshStandardMaterial color="#8B4513" roughness={0.6} />
           </mesh>
 
           {/* Door Handle */}
-          <mesh position={[0.6, 1.5, 4.1]}>
+          <mesh position={[0.7, 1.2, 5.1]}>
             <sphereGeometry args={[0.08]} />
             <meshStandardMaterial color="#DAA520" roughness={0.1} metalness={0.9} />
           </mesh>
 
-          {/* Windows - First Floor */}
-          {[-3, -1, 1, 3].map((x, i) => (
-            <group key={`window1-${i}`}>
+          {/* Enhanced Chimney for 3-story house */}
+          <mesh position={[3, 8.5, 1]} castShadow>
+            <boxGeometry args={[0.8, 2, 0.8]} />
+            <meshStandardMaterial color="#B22222" roughness={0.9} />
+          </mesh>
+
+          {/* Windows - GROUND FLOOR (3 room layout) */}
+          {/* Front windows for Hall/Living Room */}
+          {[-4, -2, 0, 2, 4].map((x, i) => (
+            <group key={`ground-window-${i}`}>
               {/* Window Frame */}
-              <mesh position={[x, 2, 4.01]} castShadow>
+              <mesh position={[x, 1.5, 5.01]} castShadow>
                 <boxGeometry args={[1.2, 1.8, 0.1]} />
                 <meshStandardMaterial color="#FFFFFF" roughness={0.3} />
               </mesh>
               {/* Window Glass */}
-              <mesh position={[x, 2, 4.05]}>
+              <mesh position={[x, 1.5, 5.05]}>
                 <boxGeometry args={[1.1, 1.7, 0.02]} />
                 <meshStandardMaterial 
                   color={isNight ? '#FFE4B5' : '#87ceeb'} 
@@ -303,26 +484,26 @@ function StudyHomeContent({
                 />
               </mesh>
               {/* Window Cross */}
-              <mesh position={[x, 2, 4.06]}>
+              <mesh position={[x, 1.5, 5.06]}>
                 <boxGeometry args={[0.05, 1.7, 0.01]} />
                 <meshStandardMaterial color="#8B4513" />
               </mesh>
-              <mesh position={[x, 2, 4.06]}>
+              <mesh position={[x, 1.5, 5.06]}>
                 <boxGeometry args={[1.1, 0.05, 0.01]} />
                 <meshStandardMaterial color="#8B4513" />
               </mesh>
             </group>
           ))}
 
-          {/* Windows - Second Floor */}
-          {[-2, 0, 2].map((x, i) => (
-            <group key={`window2-${i}`}>
-              <mesh position={[x, 5, 3.01]} castShadow>
-                <boxGeometry args={[1, 1.2, 0.1]} />
+          {/* Side windows for Kitchen and Library */}
+          {[-6, 6].map((x, i) => (
+            <group key={`side-window-${i}`}>
+              <mesh position={[x + (i === 0 ? 0.01 : -0.01), 1.5, 2]} castShadow>
+                <boxGeometry args={[0.1, 1.8, 1.2]} />
                 <meshStandardMaterial color="#FFFFFF" roughness={0.3} />
               </mesh>
-              <mesh position={[x, 5, 3.05]}>
-                <boxGeometry args={[0.9, 1.1, 0.02]} />
+              <mesh position={[x + (i === 0 ? 0.05 : -0.05), 1.5, 2]}>
+                <boxGeometry args={[0.02, 1.7, 1.1]} />
                 <meshStandardMaterial 
                   color={isNight ? '#FFE4B5' : '#87ceeb'} 
                   transparent 
@@ -334,19 +515,56 @@ function StudyHomeContent({
             </group>
           ))}
 
-          {/* Front Steps */}
-          <mesh position={[0, 0.15, 5.5]} receiveShadow>
-            <boxGeometry args={[2.5, 0.3, 1]} />
-            <meshStandardMaterial color="#D3D3D3" roughness={0.7} />
-          </mesh>
-
-          {/* Pillars */}
-          {[-1.5, 1.5].map((x, i) => (
-            <mesh key={`pillar-${i}`} position={[x, 2.5, 4.2]} castShadow>
-              <cylinderGeometry args={[0.15, 0.15, 4]} />
-              <meshStandardMaterial color="#FFFFFF" roughness={0.3} />
-            </mesh>
+          {/* Windows - FIRST FLOOR (2 room layout) */}
+          {/* Bedroom and Washroom windows */}
+          {[-3, -1, 1, 3].map((x, i) => (
+            <group key={`first-window-${i}`}>
+              <mesh position={[x, 4.5, 4.01]} castShadow>
+                <boxGeometry args={[1, 1.5, 0.1]} />
+                <meshStandardMaterial color="#FFFFFF" roughness={0.3} />
+              </mesh>
+              <mesh position={[x, 4.5, 4.05]}>
+                <boxGeometry args={[0.9, 1.4, 0.02]} />
+                <meshStandardMaterial 
+                  color={isNight ? '#FFE4B5' : '#87ceeb'} 
+                  transparent 
+                  opacity={0.7}
+                  emissive={isNight ? '#FFE4B5' : '#000000'}
+                  emissiveIntensity={isNight ? 0.3 : 0}
+                />
+              </mesh>
+            </group>
           ))}
+
+          {/* Windows - SECOND FLOOR (Terrace level) */}
+          {[-2, 0, 2].map((x, i) => (
+            <group key={`second-window-${i}`}>
+              <mesh position={[x, 7, 3.01]} castShadow>
+                <boxGeometry args={[0.8, 1.2, 0.1]} />
+                <meshStandardMaterial color="#FFFFFF" roughness={0.3} />
+              </mesh>
+              <mesh position={[x, 7, 3.05]}>
+                <boxGeometry args={[0.7, 1.1, 0.02]} />
+                <meshStandardMaterial 
+                  color={isNight ? '#FFE4B5' : '#87ceeb'} 
+                  transparent 
+                  opacity={0.7}
+                  emissive={isNight ? '#FFE4B5' : '#000000'}
+                  emissiveIntensity={isNight ? 0.3 : 0}
+                />
+              </mesh>
+            </group>
+          ))}
+
+          {/* Enhanced Front Steps - Multiple levels for 3-story house */}
+          <mesh position={[0, 0.15, 6]} receiveShadow>
+            <boxGeometry args={[3, 0.3, 1.5]} />
+            <meshStandardMaterial color="#D2B48C" roughness={0.8} />
+          </mesh>
+          <mesh position={[0, 0.35, 6.5]} receiveShadow>
+            <boxGeometry args={[3.5, 0.3, 0.8]} />
+            <meshStandardMaterial color="#D2B48C" roughness={0.8} />
+          </mesh>
 
           {/* Garden Elements */}
           {/* Garden Bed */}
