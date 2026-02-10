@@ -37,34 +37,68 @@ import { Html } from '@react-three/drei';
 
 export default function HomeWorld() {
   const { navigateTo } = useNavigation();
-  const { isNight } = useTheme();
+  const { isNight, toggleTheme } = useTheme();
   const { selectedCharacter, setSelectedCharacter } = useCharacter();
 
   const [showWelcome, setShowWelcome] = useState(true);
   const [season, setSeason] = useState('spring');
+  const [isAutoCycle, setIsAutoCycle] = useState(true);
   useEffect(() => {
     const timer = setTimeout(() => setShowWelcome(false), 2000);
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (!isAutoCycle) {
+      return undefined;
+    }
+
+    const interval = setInterval(() => {
+      toggleTheme();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [isAutoCycle, toggleTheme]);
+
   return (
     <div className="relative w-full h-screen overflow-hidden">
       <ThemeToggle />
       {/* Season Selector */}
-      <div className="absolute top-4 right-4 z-30 bg-black/40 rounded-lg px-4 py-2 flex items-center gap-2 shadow">
-        <label htmlFor="season-select" className="text-white text-sm">Season:</label>
-        <select
-          id="season-select"
-          value={season}
-          onChange={e => setSeason(e.target.value)}
-          className="bg-white/80 text-black rounded px-2 py-1 text-sm focus:outline-none"
-        >
-          <option value="spring">Spring</option>
-          <option value="summer">Summer</option>
-          <option value="autumn">Autumn</option>
-          <option value="winter">Winter</option>
-          <option value="festival">Festival</option>
-        </select>
+      <div className="absolute top-4 right-4 z-30 bg-black/40 rounded-lg px-4 py-3 flex flex-col gap-3 shadow">
+        <div className="flex items-center gap-2">
+          <label htmlFor="season-select" className="text-white text-sm">Season:</label>
+          <select
+            id="season-select"
+            value={season}
+            onChange={e => setSeason(e.target.value)}
+            className="bg-white/80 text-black rounded px-2 py-1 text-sm focus:outline-none"
+          >
+            <option value="spring">Spring</option>
+            <option value="summer">Summer</option>
+            <option value="autumn">Autumn</option>
+            <option value="winter">Winter</option>
+            <option value="festival">Festival</option>
+          </select>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-white text-sm">Auto cycle:</span>
+          <button
+            onClick={() => setIsAutoCycle(prev => !prev)}
+            className={`text-xs px-3 py-1 rounded-full border transition-colors ${
+              isAutoCycle
+                ? 'bg-emerald-500/30 text-emerald-100 border-emerald-300/40'
+                : 'bg-white/10 text-white/70 border-white/20'
+            }`}
+          >
+            {isAutoCycle ? 'On (30s)' : 'Off'}
+          </button>
+          <button
+            onClick={toggleTheme}
+            className="text-xs px-3 py-1 rounded-full border border-white/20 bg-white/10 text-white/80 hover:bg-white/20 transition-colors"
+          >
+            {isNight ? 'Switch Day' : 'Switch Night'}
+          </button>
+        </div>
       </div>
       {/* Character Selection UI */}
       <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 flex gap-6 bg-black/40 rounded-xl px-6 py-3 shadow-lg">

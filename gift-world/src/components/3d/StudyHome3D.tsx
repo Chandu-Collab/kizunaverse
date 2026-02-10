@@ -34,6 +34,16 @@ function StudyHomeContent({
     }
   });
 
+  const roomLightBase = isNight ? 1.4 : 0.8;
+  const getRoomLightIntensity = (
+    room: 'library' | 'bedroom' | 'kitchen' | 'washroom' | 'hall' | 'terrace'
+  ) => {
+    if (viewMode === 'interior') {
+      return currentRoom === room ? roomLightBase + 0.7 : roomLightBase * 0.7;
+    }
+    return currentRoom === room ? roomLightBase + 0.4 : 0.0;
+  };
+
   // Render specific room interior with connected hallway system
   if (currentRoom !== 'exterior') {
     return (
@@ -63,6 +73,178 @@ function StudyHomeContent({
           shadow-camera-right={20}
           shadow-camera-top={20}
           shadow-camera-bottom={-20}
+        />
+
+        {/* Interior lighting system */}
+        <pointLight
+          position={[0, 3.2, 2]}
+          intensity={getRoomLightIntensity('hall')}
+          color={isNight ? '#FFD6A5' : '#FFF3D6'}
+          distance={12}
+          decay={2}
+        />
+        <pointLight
+          position={[0, 3.2, 0]}
+          intensity={getRoomLightIntensity('hall') * 0.6}
+          color={isNight ? '#FFE9C7' : '#FFF8E8'}
+          distance={10}
+          decay={2}
+        />
+        <pointLight
+          position={[5, 3.2, -4]}
+          intensity={getRoomLightIntensity('kitchen')}
+          color={isNight ? '#FFE6B3' : '#FFF7E6'}
+          distance={10}
+          decay={2}
+        />
+        <pointLight
+          position={[6.5, 3.2, -3.5]}
+          intensity={getRoomLightIntensity('kitchen') * 0.6}
+          color={isNight ? '#FFEFD1' : '#FFF9ED'}
+          distance={9}
+          decay={2}
+        />
+        <pointLight
+          position={[5, 3.2, 4]}
+          intensity={getRoomLightIntensity('washroom')}
+          color={isNight ? '#E0F2FF' : '#F4FBFF'}
+          distance={8}
+          decay={2}
+        />
+        <pointLight
+          position={[6.2, 3.2, 4]}
+          intensity={getRoomLightIntensity('washroom') * 0.5}
+          color={isNight ? '#EAF6FF' : '#F7FCFF'}
+          distance={7}
+          decay={2}
+        />
+        <pointLight
+          position={[-5, 3.2, -4]}
+          intensity={getRoomLightIntensity('library')}
+          color={isNight ? '#FFD9C2' : '#FFF1E6'}
+          distance={10}
+          decay={2}
+        />
+        <pointLight
+          position={[-6.5, 3.2, -3.5]}
+          intensity={getRoomLightIntensity('library') * 0.6}
+          color={isNight ? '#FFE7D8' : '#FFF6EE'}
+          distance={9}
+          decay={2}
+        />
+        <pointLight
+          position={[-5, 3.2, 4]}
+          intensity={getRoomLightIntensity('bedroom')}
+          color={isNight ? '#FFE0F2' : '#FFF0FA'}
+          distance={10}
+          decay={2}
+        />
+        <pointLight
+          position={[-6.2, 3.2, 4]}
+          intensity={getRoomLightIntensity('bedroom') * 0.6}
+          color={isNight ? '#FFEAF7' : '#FFF6FC'}
+          distance={9}
+          decay={2}
+        />
+        <pointLight
+          position={[0, 6.5, 8]}
+          intensity={getRoomLightIntensity('terrace') * 2.0}
+          color={isNight ? '#D6E8FF' : '#EAF4FF'}
+          distance={20}
+          decay={2}
+        />
+        <pointLight
+          position={[-3.5, 6.5, 8]}
+          intensity={getRoomLightIntensity('terrace') * 1.6}
+          color={isNight ? '#DCEBFF' : '#EDF6FF'}
+          distance={18}
+          decay={2}
+        />
+        <pointLight
+          position={[3.5, 6.5, 8]}
+          intensity={getRoomLightIntensity('terrace') * 1.6}
+          color={isNight ? '#DCEBFF' : '#EDF6FF'}
+          distance={18}
+          decay={2}
+        />
+        <pointLight
+          position={[-5.5, 6.5, 6]}
+          intensity={getRoomLightIntensity('terrace') * 1.5}
+          color={isNight ? '#D6E8FF' : '#EAF4FF'}
+          distance={16}
+          decay={2}
+        />
+        <pointLight
+          position={[5.5, 6.5, 6]}
+          intensity={getRoomLightIntensity('terrace') * 1.5}
+          color={isNight ? '#D6E8FF' : '#EAF4FF'}
+          distance={16}
+          decay={2}
+        />
+        {/* Tree Lights */}
+        <pointLight
+          position={[-6, 3.5, 8]}
+          intensity={getRoomLightIntensity('terrace') * 1.3}
+          color={isNight ? '#B8D4FF' : '#D6E8FF'}
+          distance={12}
+          decay={2}
+        />
+        <pointLight
+          position={[-3, 3.5, 8]}
+          intensity={getRoomLightIntensity('terrace') * 1.3}
+          color={isNight ? '#B8D4FF' : '#D6E8FF'}
+          distance={12}
+          decay={2}
+        />
+        <pointLight
+          position={[3, 3.5, 8]}
+          intensity={getRoomLightIntensity('terrace') * 1.3}
+          color={isNight ? '#B8D4FF' : '#D6E8FF'}
+          distance={12}
+          decay={2}
+        />
+        <pointLight
+          position={[6, 3.5, 8]}
+          intensity={getRoomLightIntensity('terrace') * 1.3}
+          color={isNight ? '#B8D4FF' : '#D6E8FF'}
+          distance={12}
+          decay={2}
+        />
+        {/* Ground Level Lights for Bright Base Coverage */}
+        <pointLight
+          position={[-4, 1.5, 6]}
+          intensity={getRoomLightIntensity('terrace') * 1.2}
+          color={isNight ? '#D6E8FF' : '#EAF4FF'}
+          distance={10}
+          decay={2}
+        />
+        <pointLight
+          position={[4, 1.5, 6]}
+          intensity={getRoomLightIntensity('terrace') * 1.2}
+          color={isNight ? '#D6E8FF' : '#EAF4FF'}
+          distance={10}
+          decay={2}
+        />
+        <pointLight
+          position={[0, 1.5, 4]}
+          intensity={getRoomLightIntensity('terrace') * 1.2}
+          color={isNight ? '#DCEBFF' : '#EDF6FF'}
+          distance={10}
+          decay={2}
+        />
+        <pointLight
+          position={[-5, 1.5, 3]}
+          intensity={getRoomLightIntensity('terrace') * 1.0}
+          color={isNight ? '#D6E8FF' : '#EAF4FF'}
+          distance={9}
+          decay={2}
+        />
+        <pointLight
+          position={[5, 1.5, 3]}
+          intensity={getRoomLightIntensity('terrace') * 1.0}
+          color={isNight ? '#D6E8FF' : '#EAF4FF'}
+          distance={9}
+          decay={2}
         />
 
         {/* Room-specific content based on view mode */}
