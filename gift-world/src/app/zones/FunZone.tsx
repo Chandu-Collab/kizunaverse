@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import FloatingBubblesGame from '@/components/3d/FloatingBubblesGame';
 import GardenGrow from '@/components/3d/GardenGrow';
 import MemoryTilesGame from '@/components/3d/MemoryTilesGame';
+import ColorFlowGame from '@/components/3d/ColorFlowGame';
 
 interface Game {
   id: number;
@@ -39,7 +40,13 @@ const GAMES: Game[] = [
     description: 'Match pairs - keeps mind active without stress',
     component: MemoryTilesGame
   },
-  { id: 4, name: 'Flappy Run', emoji: '🚀', description: 'Jump and dash through obstacles' },
+  { 
+    id: 4, 
+    name: 'Color Flow', 
+    emoji: '🌈', 
+    description: 'Connect colors like flowing liquid - pure art',
+    component: ColorFlowGame
+  },
   { id: 5, name: 'Color Match', emoji: '🎨', description: 'Match colors in sequences' },
   { id: 6, name: 'Word Builder', emoji: '📝', description: 'Create words from letters' },
   { id: 7, name: 'Pattern Play', emoji: '🔷', description: 'Complete visual patterns' },
