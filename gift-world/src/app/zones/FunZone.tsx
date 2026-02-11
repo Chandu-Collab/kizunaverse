@@ -9,6 +9,7 @@ import FloatingBubblesGame from '@/components/3d/FloatingBubblesGame';
 import GardenGrow from '@/components/3d/GardenGrow';
 import MemoryTilesGame from '@/components/3d/MemoryTilesGame';
 import ColorFlowGame from '@/components/3d/ColorFlowGame';
+import WindLeavesGame from '@/components/3d/WindLeavesGame';
 
 interface Game {
   id: number;
@@ -47,7 +48,13 @@ const GAMES: Game[] = [
     description: 'Connect colors like flowing liquid - pure art',
     component: ColorFlowGame
   },
-  { id: 5, name: 'Color Match', emoji: '🎨', description: 'Match colors in sequences' },
+  { 
+    id: 5, 
+    name: 'Wind & Leaves', 
+    emoji: '🍃', 
+    description: 'Move and watch leaves dance - pure meditation',
+    component: WindLeavesGame
+  },
   { id: 6, name: 'Word Builder', emoji: '📝', description: 'Create words from letters' },
   { id: 7, name: 'Pattern Play', emoji: '🔷', description: 'Complete visual patterns' },
   { id: 8, name: 'Speed Racer', emoji: '🏁', description: 'Race against the clock' },
