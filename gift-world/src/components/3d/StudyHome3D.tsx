@@ -41,6 +41,10 @@ function StudyHomeContent({
     if (viewMode === 'interior') {
       return currentRoom === room ? roomLightBase + 0.7 : roomLightBase * 0.7;
     }
+    // Boost terrace lighting in exterior view
+    if (room === 'terrace' && currentRoom === 'terrace') {
+      return roomLightBase + 0.8;
+    }
     return currentRoom === room ? roomLightBase + 0.4 : 0.0;
   };
 
@@ -59,10 +63,21 @@ function StudyHomeContent({
         />
         
         {/* Global Lighting */}
-        <ambientLight intensity={isNight ? 0.4 : 0.7} color={isNight ? '#4a5568' : '#fff8e1'} />
+        <ambientLight 
+          intensity={
+            currentRoom === 'terrace' 
+              ? (isNight ? 1.0 : 1.2) 
+              : (isNight ? 0.4 : 0.7)
+          } 
+          color={isNight ? '#4a5568' : '#fff8e1'} 
+        />
         <directionalLight 
           position={[15, 15, 10]} 
-          intensity={isNight ? 0.3 : 0.8}
+          intensity={
+            currentRoom === 'terrace' 
+              ? (isNight ? 0.8 : 1.3) 
+              : (isNight ? 0.3 : 0.8)
+          }
           color={isNight ? '#9ca3af' : '#ffffff'}
           castShadow
           shadow-mapSize-width={2048}
@@ -148,23 +163,23 @@ function StudyHomeContent({
         />
         <pointLight
           position={[0, 6.5, 8]}
-          intensity={getRoomLightIntensity('terrace') * 2.0}
-          color={isNight ? '#D6E8FF' : '#EAF4FF'}
-          distance={20}
+          intensity={getRoomLightIntensity('terrace') * 2.5}
+          color={isNight ? '#FFE4B5' : '#FFF8DC'}
+          distance={22}
           decay={2}
         />
         <pointLight
           position={[-3.5, 6.5, 8]}
-          intensity={getRoomLightIntensity('terrace') * 1.6}
-          color={isNight ? '#DCEBFF' : '#EDF6FF'}
-          distance={18}
+          intensity={getRoomLightIntensity('terrace') * 2.0}
+          color={isNight ? '#FFD700' : '#FFFACD'}
+          distance={20}
           decay={2}
         />
         <pointLight
           position={[3.5, 6.5, 8]}
-          intensity={getRoomLightIntensity('terrace') * 1.6}
-          color={isNight ? '#DCEBFF' : '#EDF6FF'}
-          distance={18}
+          intensity={getRoomLightIntensity('terrace') * 2.0}
+          color={isNight ? '#FFD700' : '#FFFACD'}
+          distance={20}
           decay={2}
         />
         <pointLight
@@ -244,6 +259,95 @@ function StudyHomeContent({
           intensity={getRoomLightIntensity('terrace') * 1.0}
           color={isNight ? '#D6E8FF' : '#EAF4FF'}
           distance={9}
+          decay={2}
+        />
+
+        {/* Back Side Lights - Illuminate Tree Area */}
+        <pointLight
+          position={[0, 6.5, -8]}
+          intensity={getRoomLightIntensity('terrace') * 2.5}
+          color={isNight ? '#87CEEB' : '#B0E0E6'}
+          distance={22}
+          decay={2}
+        />
+        <pointLight
+          position={[-3.5, 6.5, -8]}
+          intensity={getRoomLightIntensity('terrace') * 2.0}
+          color={isNight ? '#B0E0E6' : '#E0FFFF'}
+          distance={20}
+          decay={2}
+        />
+        <pointLight
+          position={[3.5, 6.5, -8]}
+          intensity={getRoomLightIntensity('terrace') * 2.0}
+          color={isNight ? '#B0E0E6' : '#E0FFFF'}
+          distance={20}
+          decay={2}
+        />
+        <pointLight
+          position={[-5.5, 6.5, -6]}
+          intensity={getRoomLightIntensity('terrace') * 1.5}
+          color={isNight ? '#D6E8FF' : '#EAF4FF'}
+          distance={16}
+          decay={2}
+        />
+        <pointLight
+          position={[5.5, 6.5, -6]}
+          intensity={getRoomLightIntensity('terrace') * 1.5}
+          color={isNight ? '#D6E8FF' : '#EAF4FF'}
+          distance={16}
+          decay={2}
+        />
+        {/* Back Ground Level Lights */}
+        <pointLight
+          position={[-4, 1.5, -6]}
+          intensity={getRoomLightIntensity('terrace') * 1.2}
+          color={isNight ? '#D6E8FF' : '#EAF4FF'}
+          distance={10}
+          decay={2}
+        />
+        <pointLight
+          position={[4, 1.5, -6]}
+          intensity={getRoomLightIntensity('terrace') * 1.2}
+          color={isNight ? '#D6E8FF' : '#EAF4FF'}
+          distance={10}
+          decay={2}
+        />
+        <pointLight
+          position={[0, 1.5, -4]}
+          intensity={getRoomLightIntensity('terrace') * 1.2}
+          color={isNight ? '#DCEBFF' : '#EDF6FF'}
+          distance={10}
+          decay={2}
+        />
+        <pointLight
+          position={[-5, 1.5, -3]}
+          intensity={getRoomLightIntensity('terrace') * 1.0}
+          color={isNight ? '#D6E8FF' : '#EAF4FF'}
+          distance={9}
+          decay={2}
+        />
+        <pointLight
+          position={[5, 1.5, -3]}
+          intensity={getRoomLightIntensity('terrace') * 1.0}
+          color={isNight ? '#D6E8FF' : '#EAF4FF'}
+          distance={9}
+          decay={2}
+        />
+
+        {/* Side Lights - Full Width Coverage */}
+        <pointLight
+          position={[-6.5, 3, 0]}
+          intensity={getRoomLightIntensity('terrace') * 1.8}
+          color={isNight ? '#FFB347' : '#FFDAB9'}
+          distance={16}
+          decay={2}
+        />
+        <pointLight
+          position={[6.5, 3, 0]}
+          intensity={getRoomLightIntensity('terrace') * 1.8}
+          color={isNight ? '#DDA0DD' : '#EE82EE'}
+          distance={16}
           decay={2}
         />
 
