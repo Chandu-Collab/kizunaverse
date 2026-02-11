@@ -94,7 +94,7 @@ export default function StudyZone() {
                 currentRoom === 'bedroom' ? [0, 3, 6] :
                 currentRoom === 'kitchen' ? [0, 3, 6] :
                 currentRoom === 'washroom' ? [0, 3, 6] :
-                currentRoom === 'terrace' ? [0, 5, 8] :
+                currentRoom === 'terrace' ? [0, 8, 14] :
                 [0, 3, 6]
               ) : (
                 // Interior mode: Overview position to see entire 2-floor layout with proper separation
