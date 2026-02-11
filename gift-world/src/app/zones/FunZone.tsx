@@ -1,195 +1,125 @@
 'use client';
 
-import { Suspense, useState, useEffect, useRef } from 'react';
-import Scene from '@/components/3d/Scene';
+import { useState } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import Button from '@/components/ui/Button';
 import { useNavigation } from '@/hooks/useNavigation';
 import { motion } from 'framer-motion';
-import { Mesh, Vector3 } from 'three';
-import { useFrame, ThreeEvent } from '@react-three/fiber';
-import { Text } from '@react-three/drei';
+import FloatingBubblesGame from '@/components/3d/FloatingBubblesGame';
 
-interface Collectible {
+interface Game {
   id: number;
-  position: Vector3;
-  collected: boolean;
+  name: string;
+  emoji: string;
+  description: string;
+  component?: React.ComponentType<{ onGameEnd?: () => void }>;
 }
 
-function CollectibleObject({
-  position,
-  onCollect,
-  collected,
-}: {
-  position: Vector3;
-  onCollect: () => void;
-  collected: boolean;
-}) {
-  const meshRef = useRef<Mesh>(null);
-
-  useFrame((state) => {
-    if (meshRef.current && !collected) {
-      meshRef.current.rotation.y += 0.02;
-      meshRef.current.position.y = position.y + Math.sin(state.clock.elapsedTime * 2) * 0.3;
-    }
-  });
-
-  if (collected) return null;
-
-  return (
-    <mesh
-      ref={meshRef}
-      position={position}
-      onClick={(e: ThreeEvent<MouseEvent>) => {
-        e.stopPropagation();
-        onCollect();
-      }}
-      castShadow
-    >
-      <octahedronGeometry args={[0.3, 0]} />
-      <meshStandardMaterial
-        color="#FFD700"
-        emissive="#FFD700"
-        emissiveIntensity={0.5}
-        metalness={0.8}
-        roughness={0.2}
-      />
-    </mesh>
-  );
-}
-
-function GameScene({ score, onCollect, collectibles }: {
-  score: number;
-  onCollect: () => void;
-  collectibles: Collectible[];
-}) {
-  return (
-    <>
-      {collectibles.map((item) => (
-        <CollectibleObject
-          key={item.id}
-          position={item.position}
-          onCollect={onCollect}
-          collected={item.collected}
-        />
-      ))}
-      <Text
-        position={[0, 4, 0]}
-        fontSize={0.5}
-        color="white"
-        anchorX="center"
-        anchorY="middle"
-      >
-        Score: {score}
-      </Text>
-    </>
-  );
-}
+const GAMES: Game[] = [
+  { 
+    id: 1, 
+    name: 'Floating Bubbles', 
+    emoji: '🫧', 
+    description: 'Pop colorful bubbles - pure relaxation',
+    component: FloatingBubblesGame
+  },
+  { id: 2, name: 'Memory Lane', emoji: '🧠', description: 'Test your memory skills' },
+  { id: 3, name: 'Trivia Quest', emoji: '❓', description: 'Answer trivia questions' },
+  { id: 4, name: 'Flappy Run', emoji: '🚀', description: 'Jump and dash through obstacles' },
+  { id: 5, name: 'Color Match', emoji: '🎨', description: 'Match colors in sequences' },
+  { id: 6, name: 'Word Builder', emoji: '📝', description: 'Create words from letters' },
+  { id: 7, name: 'Pattern Play', emoji: '🔷', description: 'Complete visual patterns' },
+  { id: 8, name: 'Speed Racer', emoji: '🏁', description: 'Race against the clock' },
+  { id: 9, name: 'Block Breaker', emoji: '🧱', description: 'Break through blocks' },
+  { id: 10, name: 'Quest Adventure', emoji: '⚔️', description: 'Embark on an adventure' },
+];
 
 export default function FunZone() {
   const { navigateTo } = useNavigation();
-  const [score, setScore] = useState(0);
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(30);
-  const [collectibles, setCollectibles] = useState<Collectible[]>([]);
 
-  useEffect(() => {
-    if (isPlaying && timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-      return () => clearTimeout(timer);
-    } else if (timeLeft === 0) {
-      setIsPlaying(false);
-    }
-  }, [isPlaying, timeLeft]);
-
-  const startGame = () => {
-    setScore(0);
-    setTimeLeft(30);
+  const handlePlayGame = (game: Game) => {
+    setSelectedGame(game);
     setIsPlaying(true);
-    
-    // Generate collectibles
-    const newCollectibles: Collectible[] = Array.from({ length: 10 }, (_, i) => ({
-      id: i,
-      position: new Vector3(
-        (Math.random() - 0.5) * 8,
-        Math.random() * 3 + 1,
-        (Math.random() - 0.5) * 8
-      ),
-      collected: false,
-    }));
-    setCollectibles(newCollectibles);
   };
 
-  const handleCollect = () => {
-    const nextUncollected = collectibles.findIndex((c) => !c.collected);
-    if (nextUncollected !== -1) {
-      setScore(score + 10);
-      setCollectibles((prev) =>
-        prev.map((item, idx) =>
-          idx === nextUncollected ? { ...item, collected: true } : item
-        )
-      );
-    }
+  const handleGameEnd = () => {
+    setIsPlaying(false);
+    setSelectedGame(null);
   };
+
+  // If game is being played, show full screen game
+  if (isPlaying && selectedGame?.component) {
+    const GameComponent = selectedGame.component;
+    return (
+      <div className="relative w-full h-screen overflow-hidden">
+        <GameComponent onGameEnd={handleGameEnd} />
+        <Button
+          onClick={handleGameEnd}
+          variant="ghost"
+          size="lg"
+          className="absolute top-6 left-6 z-20"
+        >
+          ← Back to Games
+        </Button>
+      </div>
+    );
+  }
 
   return (
-    <div className="relative w-full h-screen overflow-hidden">
-      <Scene cameraPosition={[0, 3, 8]} enableControls={!isPlaying}>
-        <Suspense fallback={null}>
-          {isPlaying ? (
-            <GameScene
-              score={score}
-              onCollect={handleCollect}
-              collectibles={collectibles}
-            />
-          ) : (
-            <Text
-              position={[0, 0, 0]}
-              fontSize={0.8}
-              color="white"
-              anchorX="center"
-              anchorY="middle"
-            >
-              Click Start to Play!
-            </Text>
-          )}
-        </Suspense>
-      </Scene>
+    <div className="relative w-full min-h-screen bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-pink-900/20 overflow-hidden">
+      {/* Animated background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
+      </div>
 
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="pointer-events-auto max-w-md w-full px-4">
-          {!isPlaying ? (
-            <GlassCard className="text-center">
-              <h1 className="text-4xl font-bold text-white mb-4">🎮 Fun Zone</h1>
-              <p className="text-white/90 text-lg mb-6">
-                Collect the golden stars before time runs out!
-              </p>
-              <div className="flex gap-4 justify-center">
-                <Button onClick={startGame} variant="primary" size="lg">
-                  Start Game
-                </Button>
+      {/* Content */}
+      <div className="relative z-10 w-full h-full p-6 md:p-10">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-10">
+          <div>
+            <h1 className="text-5xl font-bold text-white mb-2">🎮 Fun Zone</h1>
+            <p className="text-white/70 text-lg">Choose a game and have fun!</p>
+          </div>
+          <Button
+            onClick={() => navigateTo('home')}
+            variant="ghost"
+            size="lg"
+          >
+            ← Back
+          </Button>
+        </div>
+
+        {/* Games Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-10">
+          {GAMES.map((game, index) => (
+            <motion.div
+              key={game.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              whileHover={{ y: -5 }}
+              className="cursor-pointer"
+            >
+              <GlassCard className="h-full flex flex-col justify-between p-6 text-center hover:border-blue-400/50 transition-all">
+                <div>
+                  <div className="text-5xl mb-3">{game.emoji}</div>
+                  <h3 className="text-xl font-bold text-white mb-2">{game.name}</h3>
+                  <p className="text-white/70 text-sm mb-4">{game.description}</p>
+                </div>
                 <Button
-                  onClick={() => navigateTo('home')}
-                  variant="ghost"
-                  size="lg"
+                  onClick={() => handlePlayGame(game)}
+                  variant="primary"
+                  size="sm"
+                  className="w-full"
                 >
-                  ← Back
+                  Play
                 </Button>
-              </div>
-            </GlassCard>
-          ) : (
-            <GlassCard className="text-center">
-              <h2 className="text-3xl font-bold text-white mb-2">Time: {timeLeft}s</h2>
-              <h3 className="text-2xl font-bold text-white mb-4">Score: {score}</h3>
-              <Button
-                onClick={() => setIsPlaying(false)}
-                variant="secondary"
-                size="md"
-              >
-                Pause
-              </Button>
-            </GlassCard>
-          )}
+              </GlassCard>
+            </motion.div>
+          ))}
         </div>
       </div>
     </div>
