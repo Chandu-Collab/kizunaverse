@@ -783,17 +783,101 @@ export function TerraceRoom({ position = [0, 0, 0] }: { position?: [number, numb
         <meshStandardMaterial color="#DC143C" />
       </mesh>
 
-      {/* Outdoor Lights */}
-      {[-4, 0, 4].map((x, i) => (
-        <mesh key={i} position={[x, 2.5, 3.5]} castShadow>
-          <sphereGeometry args={[0.1]} />
-          <meshStandardMaterial 
-            color={isNight ? '#FFD700' : '#FFFFFF'} 
-            emissive={isNight ? '#FFD700' : '#000000'}
-            emissiveIntensity={isNight ? 0.8 : 0}
-          />
-        </mesh>
-      ))}
+      {/* Outdoor Lights - Front Wall */}
+      {[-4, 0, 4].map((x, i) => {
+        const colors = ['#FFE4B5', '#FFF8DC', '#FFD700'];
+        const color = colors[i % colors.length];
+        return (
+          <group key={i}>
+            {/* Mounting Pole */}
+            <mesh position={[x, 1.5, 3.6]} castShadow>
+              <cylinderGeometry args={[0.05, 0.05, 2]} />
+              <meshStandardMaterial color="#2F2F2F" />
+            </mesh>
+            {/* Light Fixture */}
+            <mesh position={[x, 2.5, 3.5]} castShadow>
+              <sphereGeometry args={[0.15]} />
+              <meshStandardMaterial 
+                color={isNight ? color : '#FFFFFF'} 
+                emissive={isNight ? color : '#000000'}
+                emissiveIntensity={isNight ? 1.5 : 0}
+              />
+            </mesh>
+          </group>
+        );
+      })}
+
+      {/* Outdoor Lights - Back Wall (Tree Side) */}
+      {[-4, 0, 4].map((x, i) => {
+        const colors = ['#87CEEB', '#FFE4B5', '#B0E0E6'];
+        const color = colors[i % colors.length];
+        return (
+          <group key={`back-${i}`}>
+            {/* Mounting Pole */}
+            <mesh position={[x, 1.5, -3.6]} castShadow>
+              <cylinderGeometry args={[0.05, 0.05, 2]} />
+              <meshStandardMaterial color="#2F2F2F" />
+            </mesh>
+            {/* Light Fixture */}
+            <mesh position={[x, 2.5, -3.5]} castShadow>
+              <sphereGeometry args={[0.15]} />
+              <meshStandardMaterial 
+                color={isNight ? color : '#FFFFFF'} 
+                emissive={isNight ? color : '#000000'}
+                emissiveIntensity={isNight ? 1.5 : 0}
+              />
+            </mesh>
+          </group>
+        );
+      })}
+
+      {/* Side Wall Lights - Left Side */}
+      {[-3, 0, 3].map((z, i) => {
+        const colors = ['#FFB347', '#FFDAB9', '#FFA500'];
+        const color = colors[i % colors.length];
+        return (
+          <group key={`left-${i}`}>
+            {/* Mounting Bracket */}
+            <mesh position={[-5.7, 1.5, z]} castShadow>
+              <cylinderGeometry args={[0.05, 0.05, 2]} />
+              <meshStandardMaterial color="#2F2F2F" />
+            </mesh>
+            {/* Light Fixture */}
+            <mesh position={[-5.8, 2.5, z]} castShadow>
+              <sphereGeometry args={[0.15]} />
+              <meshStandardMaterial 
+                color={isNight ? color : '#FFFFFF'} 
+                emissive={isNight ? color : '#000000'}
+                emissiveIntensity={isNight ? 1.5 : 0}
+              />
+            </mesh>
+          </group>
+        );
+      })}
+
+      {/* Side Wall Lights - Right Side */}
+      {[-3, 0, 3].map((z, i) => {
+        const colors = ['#DDA0DD', '#EE82EE', '#9370DB'];
+        const color = colors[i % colors.length];
+        return (
+          <group key={`right-${i}`}>
+            {/* Mounting Bracket */}
+            <mesh position={[5.7, 1.5, z]} castShadow>
+              <cylinderGeometry args={[0.05, 0.05, 2]} />
+              <meshStandardMaterial color="#2F2F2F" />
+            </mesh>
+            {/* Light Fixture */}
+            <mesh position={[5.8, 2.5, z]} castShadow>
+              <sphereGeometry args={[0.15]} />
+              <meshStandardMaterial 
+                color={isNight ? color : '#FFFFFF'} 
+                emissive={isNight ? color : '#000000'}
+                emissiveIntensity={isNight ? 1.5 : 0}
+              />
+            </mesh>
+          </group>
+        );
+      })}
 
       {/* Mountain/City View Background */}
       <mesh position={[0, 2, 8]} receiveShadow>
