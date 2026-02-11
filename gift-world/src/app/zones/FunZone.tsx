@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button';
 import { useNavigation } from '@/hooks/useNavigation';
 import { motion } from 'framer-motion';
 import FloatingBubblesGame from '@/components/3d/FloatingBubblesGame';
+import GardenGrow from '@/components/3d/GardenGrow';
 
 interface Game {
   id: number;
@@ -23,7 +24,13 @@ const GAMES: Game[] = [
     description: 'Pop colorful bubbles - pure relaxation',
     component: FloatingBubblesGame
   },
-  { id: 2, name: 'Memory Lane', emoji: '🧠', description: 'Test your memory skills' },
+  { 
+    id: 2, 
+    name: 'Garden Grow', 
+    emoji: '🌱', 
+    description: 'Nurture & grow flowers - calm & therapeutic',
+    component: GardenGrow
+  },
   { id: 3, name: 'Trivia Quest', emoji: '❓', description: 'Answer trivia questions' },
   { id: 4, name: 'Flappy Run', emoji: '🚀', description: 'Jump and dash through obstacles' },
   { id: 5, name: 'Color Match', emoji: '🎨', description: 'Match colors in sequences' },
