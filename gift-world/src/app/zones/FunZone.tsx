@@ -10,6 +10,7 @@ import GardenGrow from '@/components/3d/GardenGrow';
 import MemoryTilesGame from '@/components/3d/MemoryTilesGame';
 import ColorFlowGame from '@/components/3d/ColorFlowGame';
 import WindLeavesGame from '@/components/3d/WindLeavesGame';
+import StarCollectGame from '@/components/3d/StarCollectGame';
 
 interface Game {
   id: number;
@@ -55,11 +56,13 @@ const GAMES: Game[] = [
     description: 'Move and watch leaves dance - pure meditation',
     component: WindLeavesGame
   },
-  { id: 6, name: 'Word Builder', emoji: '📝', description: 'Create words from letters' },
-  { id: 7, name: 'Pattern Play', emoji: '🔷', description: 'Complete visual patterns' },
-  { id: 8, name: 'Speed Racer', emoji: '🏁', description: 'Race against the clock' },
-  { id: 9, name: 'Block Breaker', emoji: '🧱', description: 'Break through blocks' },
-  { id: 10, name: 'Quest Adventure', emoji: '⚔️', description: 'Embark on an adventure' },
+  { 
+    id: 6, 
+    name: 'Star Collect', 
+    emoji: '⭐', 
+    description: 'Collect stars with positive words - uplifting and fun',
+    component: StarCollectGame
+  },
 ];
 
 export default function FunZone() {
