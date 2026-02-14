@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
-export type CharacterType = 'priya' | 'ururu';
+export type CharacterType = 'priya' | 'ururu' | 'galaxia';
 
 interface CharacterContextProps {
   selectedCharacter: CharacterType;
