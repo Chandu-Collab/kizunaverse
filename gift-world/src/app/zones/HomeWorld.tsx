@@ -35,6 +35,9 @@ import ThemeToggle from '@/components/ui/ThemeToggle';
 import { motion } from 'framer-motion';
 import { Html } from '@react-three/drei';
 
+// Ensure the updated CharacterType is imported
+import { CharacterType } from '@/hooks/useCharacter';
+
 export default function HomeWorld() {
   const { navigateTo } = useNavigation();
   const { isNight, toggleTheme } = useTheme();
@@ -133,7 +136,7 @@ export default function HomeWorld() {
           {/* Houses at ends of branch roads */}
           {/* Enhanced Houses with 8 realistic homes */}
           {(() => {
-            const housePositions = [
+            const housePositions: [number, number, number][] = [
               [-10, 0.01, 8],   // left front
               [10, 0.01, 8],    // right front
               [-10, 0.01, -8],  // left back
@@ -255,7 +258,7 @@ export default function HomeWorld() {
               
               {/* Enhanced road markers for clear house connections */}
               {housePositions.map((pos, i) => {
-                const connectionPoints = [
+                const connectionPoints: [number, number, number][] = [
                   [-1.5, 0.01, 6], [1.5, 0.01, 6], [-1.5, 0.01, -6], [1.5, 0.01, -6],
                   [-1, 0.01, 10], [1, 0.01, 10], [-1, 0.01, -10], [1, 0.01, -10]
                 ];
@@ -272,7 +275,7 @@ export default function HomeWorld() {
               })}
               
               {/* Flocking birds above houses */}
-              <FlockingBirds housePositions={housePositions} flockSize={7} />
+              <FlockingBirds housePositions={housePositions as [number, number, number][]} flockSize={7} />
             </>;
           })()}
 
