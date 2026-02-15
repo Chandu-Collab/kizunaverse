@@ -116,7 +116,8 @@ export default function YourSpace() {
     if (!isAutoEnvironmentEnabled) return;
     
     const seasons = ['spring', 'summer', 'autumn', 'winter'];
-    const weathers = ['sunny', 'cloudy', 'rainy', 'stormy', 'clear'];
+    // Only use WeatherType values
+    const weathers = ['sunny', 'cloudy', 'rainy', 'monsoon', 'winter'];
     
     const seasonTimer = setInterval(() => {
       const currentSeasonIndex = seasons.indexOf(season);
@@ -127,7 +128,7 @@ export default function YourSpace() {
     const weatherTimer = setInterval(() => {
       const currentWeatherIndex = weathers.indexOf(weather);
       const nextWeatherIndex = (currentWeatherIndex + 1) % weathers.length;
-      changeWeather(weathers[nextWeatherIndex]);
+      changeWeather(weathers[nextWeatherIndex] as any); // WeatherType enforced
     }, 30000); // 30 seconds
     
     return () => {
@@ -676,7 +677,6 @@ export default function YourSpace() {
                 <span className="text-lg">{getStreakBadge(writingStreak).emoji}</span>
                 <div>
                   <p className="text-sm font-semibold">{getStreakBadge(writingStreak).title}</p>
-                  <p className="text-xs text-gray-500">{getStreakBadge(writingStreak).description}</p>
                 </div>
               </div>
             </div>
@@ -1451,16 +1451,15 @@ export default function YourSpace() {
               </div>
             </div>
           }>
-            <Scene 
-              className="h-full"
-              camera={{ position: [0, 5, 10], fov: 60 }}
-            >
-              <GoaBeachScene 
-                season={season} 
-                weather={weather} 
-                character={selectedCharacter}
-              />
-            </Scene>
+            <div className="h-full">
+              <Scene cameraPosition={[0, 5, 10]}>
+                <GoaBeachScene 
+                  season={season} 
+                  weather={weather} 
+                  character={selectedCharacter}
+                />
+              </Scene>
+            </div>
           </Suspense>
           
           {/* Enhanced Beach Overlay with Character & Environment Controls */}
@@ -1565,8 +1564,6 @@ export default function YourSpace() {
                       {weather === 'sunny' && '☀️'}
                       {weather === 'rainy' && '🌧️'}
                       {weather === 'cloudy' && '☁️'}
-                      {weather === 'stormy' && '⛈️'}
-                      {weather === 'clear' && '🌅'}
                       {weather === 'monsoon' && '⛈️'}
                       {weather === 'winter' && '❄️'}
                     </span>
@@ -1647,12 +1644,6 @@ export default function YourSpace() {
               className={`transition-all duration-700 ${
                 isNight ? 'shadow-2xl shadow-purple-500/10' : 'shadow-xl shadow-blue-200/10'
               }`}
-              style={{
-                background: isNight 
-                  ? `linear-gradient(135deg, ${currentMoodTheme.glassBackground}, rgba(30, 27, 75, 0.3))`
-                  : currentMoodTheme.glassBackground,
-                border: `1px solid ${currentMoodTheme.particleColor}30`,
-              }}
             >
               <div className="relative">
                 {/* Mood Theme Indicator */}
