@@ -14,12 +14,12 @@ export interface Story {
 
 export const january18thStory: Story = {
   title: "A Day I Didn't Choose",
-  subtitle: "The complete story of how everything changed - Part 1 & 2", 
+  subtitle: "A Turning Point: The Day That Changed Everything", 
   date: "January 18, 2026",
   chapters: [
     {
       id: 1,
-      emoji: "🌱",
+      emoji: "",
       title: "A Day I Didn't Choose",
       content: [
         "January 18.",
@@ -41,7 +41,7 @@ export const january18thStory: Story = {
     },
     {
       id: 2,
-      emoji: "🌿",
+      emoji: "",
       title: "Reaching the Center",
       content: [
         "The journey wasn't easy.",
@@ -71,7 +71,7 @@ export const january18thStory: Story = {
     },
     {
       id: 3,
-      emoji: "🧩",
+      emoji: "",
       title: "When Everything Went Wrong",
       content: [
         "Inside the building,",
@@ -143,7 +143,7 @@ export const january18thStory: Story = {
     },
     {
       id: 5,
-      emoji: "🌤️",
+      emoji: "",
       title: "Waiting Without a Reason",
       content: [
         "I finished my exam early—",
@@ -184,7 +184,7 @@ export const january18thStory: Story = {
     },
     {
       id: 6,
-      emoji: "💬",
+      emoji: "",
       title: "The Conversation",
       content: [
         "She stopped near the gate.",
@@ -219,7 +219,7 @@ export const january18thStory: Story = {
     },
     {
       id: 7,
-      emoji: "🌼",
+      emoji: "",
       title: "A Stranger's Words",
       content: [
         "While we were talking,",
@@ -256,7 +256,7 @@ export const january18thStory: Story = {
     },
     {
       id: 8,
-      emoji: "⏰",
+      emoji: "",
       title: "An Hour That Didn't Feel Like One",
       content: [
         "We were standing in front of the campus.",
@@ -291,7 +291,7 @@ export const january18thStory: Story = {
     },
     {
       id: 9,
-      emoji: "🌿",
+      emoji: "",
       title: "The First Decision",
       content: [
         "She told me she wanted to go straight",
@@ -317,7 +317,7 @@ export const january18thStory: Story = {
     },
     {
       id: 10,
-      emoji: "🚶",
+      emoji: "",
       title: "Small Gestures",
       content: [
         "The road wasn't empty.",
@@ -338,7 +338,7 @@ export const january18thStory: Story = {
     },
     {
       id: 11,
-      emoji: "🧭",
+      emoji: "",
       title: "Where Paths Appear",
       content: [
         "As we walked and talked,",
@@ -394,7 +394,7 @@ export const january18thStory: Story = {
     },
     {
       id: 13,
-      emoji: "🌼",
+      emoji: "",
       title: "Walking Without Worry",
       content: [
         "She said that because of her,",
@@ -414,7 +414,7 @@ export const january18thStory: Story = {
     },
     {
       id: 14,
-      emoji: "🎓",
+      emoji: "",
       title: "Finding Similarities",
       content: [
         "As we walked,",
@@ -449,7 +449,7 @@ export const january18thStory: Story = {
     },
     {
       id: 15,
-      emoji: "💼",
+      emoji: "",
       title: "Career Talks → Invitation Transition (Smoothed)",
       content: [
         "She spoke about her learning journey.",
@@ -479,7 +479,7 @@ export const january18thStory: Story = {
     },
     {
       id: 16,
-      emoji: "😄",
+      emoji: "",
       title: "Lightness",
       content: [
         "I made things lighter by joking.",
@@ -499,7 +499,7 @@ export const january18thStory: Story = {
     },
     {
       id: 17,
-      emoji: "🌱",
+      emoji: "",
       title: "Her Story",
       content: [
         "She told me about her studies.",
@@ -530,7 +530,7 @@ export const january18thStory: Story = {
     },
     {
       id: 18,
-      emoji: "🐍",
+      emoji: "",
       title: "Choosing Herself",
       content: [
         "She spoke about her recent learning journey.",
@@ -607,7 +607,7 @@ export const january18thStory: Story = {
     },
     {
       id: 20,
-      emoji: "📱",
+      emoji: "",
       title: "Chapter 19 — The Number I Didn’t Ask For",
       content: [
         "As we continued walking,",
@@ -653,7 +653,7 @@ export const january18thStory: Story = {
     },
     {
       id: 21,
-      emoji: "🏔️",
+      emoji: "",
       title: "Chapter 20 — Ooty, Goa & Small Invitations",
       content: [
         "Somewhere in between, I mentioned",
@@ -701,7 +701,7 @@ export const january18thStory: Story = {
     },
     {
       id: 22,
-      emoji: "🏠",
+      emoji: "",
       title: "Chapter 21 — Being Introduced",
       content: [
         "Soon, we reached her friend’s house.",
@@ -748,7 +748,7 @@ export const january18thStory: Story = {
     },
     {
       id: 23,
-      emoji: "🥤",
+      emoji: "",
       title: "Chapter 22 — Juice & A Small Challenge",
       content: [
         "It was already lunchtime, and quite late.",
@@ -792,7 +792,7 @@ export const january18thStory: Story = {
     },
     {
       id: 24,
-      emoji: "🌇",
+      emoji: "",
       title: "Chapter 23 — When the Energy Softened",
       content: [
         "The laughter was light.",
@@ -816,7 +816,7 @@ export const january18thStory: Story = {
     },
     {
       id: 25,
-      emoji: "🚍",
+      emoji: "",
       title: "Chapter 24 — The Perfectly Timed Ending",
       content: [
         "They both asked where I was going.",
