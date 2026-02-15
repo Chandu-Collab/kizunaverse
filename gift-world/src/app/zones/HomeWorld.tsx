@@ -123,7 +123,6 @@ export default function HomeWorld() {
           className={`flex flex-col items-center focus:outline-none ${selectedCharacter === 'galaxia' ? 'ring-2 ring-purple-400' : ''}`}
           onClick={() => setSelectedCharacter('galaxia')}
         >
-          <img src="/galaxia-anime-girl/preview.png" alt="Galaxia" style={{ width: 48, height: 48, objectFit: 'contain' }} />
           <span className="text-white mt-1">Galaxia</span>
         </button>
       </div>
@@ -454,9 +453,9 @@ export default function HomeWorld() {
               setTimeout(() => setGreeting(null), 2000);
             };
             // Galaxia is a static model, so just show a message at center
-            const handleGalaxia = () => {
+            const handleGalaxia = (pos: [number, number, number]) => {
               setGreeting('Galaxia: Welcome to the universe!');
-              setGreetPos([0, 2.5, 6]);
+              setGreetPos([pos[0], pos[1] + 2.5, pos[2]]);
               setTimeout(() => setGreeting(null), 2000);
             };
             return <>
@@ -475,11 +474,11 @@ export default function HomeWorld() {
                 />
               )}
               {selectedCharacter === 'galaxia' && (
-                <Suspense fallback={null}>
-                  <group onClick={handleGalaxia}>
-                    <AnimatedGLBModel />
-                  </group>
-                </Suspense>
+                <AnimatedGLBModel
+                  initialPosition={[0, 1, 6]} // Ensure this prop is supported by AnimatedGLBModel
+                  roamRadius={4}
+                  onInteract={(pos: [number, number, number]) => handleGalaxia(pos || [0, 1, 6])} // Explicitly type 'pos'
+                />
               )}
               {greeting && greetPos && (
                 <Html position={greetPos} center style={{ pointerEvents: 'none' }}>
