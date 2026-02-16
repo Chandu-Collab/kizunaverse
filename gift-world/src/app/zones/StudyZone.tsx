@@ -23,7 +23,21 @@ const MOTIVATIONAL_QUOTES = [
   "🌅 Every day is a new opportunity to become better"
 ];
 
+// ...existing code...
+
 export default function StudyZone() {
+    // Listen for exitCareerJourney event to close the journey
+    useEffect(() => {
+      const handler = () => setShowCareerGuidance(false);
+      if (typeof window !== 'undefined') {
+        window.addEventListener('exitCareerJourney', handler);
+      }
+      return () => {
+        if (typeof window !== 'undefined') {
+          window.removeEventListener('exitCareerJourney', handler);
+        }
+      };
+    }, []);
   const { navigateTo } = useNavigation();
   const [isRunning, setIsRunning] = useState(false);
   const [timeLeft, setTimeLeft] = useState(25 * 60); // 25 minutes in seconds
@@ -332,37 +346,25 @@ export default function StudyZone() {
         <div className="relative min-h-screen">
           {/* Career Guidance System - Main Focus */}
           {showCareerGuidance ? (
-            <div className="content-overlay p-6">
-              <div className="max-w-7xl mx-auto">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mb-8"
-                >
-                  <div className="flex justify-between items-center mb-6">
-                    <div>
-                      <h1 className="text-4xl font-bold text-white mb-2">🎯 Career Discovery Journey</h1>
-                      <p className="text-white/70">Find your perfect path between Full Stack and Python AI</p>
-                    </div>
-                    <div className="flex gap-3">
-                      <Button
-                        onClick={() => { setShowStudyHome(true); setCurrentRoom('exterior'); }}
-                        variant="secondary"
-                        size="md"
-                      >
-                        🏛️ 3D Home
-                      </Button>
-                      <Button
-                        onClick={() => setShowCareerGuidance(false)}
-                        variant="ghost"
-                        size="md"
-                      >
-                        ← Study Tools
-                      </Button>
-                    </div>
-                  </div>
-                </motion.div>
+            <div className="w-full min-h-[calc(100vh-120px)] flex flex-col items-center justify-center px-2 md:px-8 py-8">
+              <div className="w-full max-w-3xl mx-auto flex flex-col items-center justify-center text-center">
                 <CareerGuidanceSystem />
+                <div className="flex gap-3 justify-center mt-8">
+                  <Button
+                    onClick={() => { setShowStudyHome(true); setCurrentRoom('exterior'); }}
+                    variant="secondary"
+                    size="md"
+                  >
+                    🏛️ 3D Home
+                  </Button>
+                  <Button
+                    onClick={() => setShowCareerGuidance(false)}
+                    variant="ghost"
+                    size="md"
+                  >
+                    ← Study Tools
+                  </Button>
+                </div>
               </div>
             </div>
           ) : (
@@ -389,202 +391,56 @@ export default function StudyZone() {
                   </div>
                 </motion.div>)
 
-                {/* Hero Career Guidance Section */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-                  {/* Main Career Guidance Card */}
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.1 }}
-                    className="lg:col-span-2"
-                  >
-                    <GlassCard className="p-8 h-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-300/30">
-                      <div className="text-center mb-6">
-                        <h2 className="text-3xl font-bold text-white mb-3">🎯 Career Path Discovery</h2>
-                        <p className="text-lg text-white/80 leading-relaxed">
-                          Confused between Full Stack Development and Python AI/Automation? 
-                          Let's explore both paths with guided decision-making tools.
-                        </p>
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-6 mb-8">
-                        <motion.div
-                          whileHover={{ scale: 1.02 }}
-                          className="p-6 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-xl border border-blue-300/30"
-                        >
-                          <div className="text-center">
-                            <div className="text-4xl mb-3">🌐</div>
-                            <h3 className="text-xl font-semibold text-white mb-2">Full Stack Development</h3>
-                            <p className="text-white/70 text-sm mb-4">Build complete web applications from frontend to backend</p>
-                            <div className="space-y-1 text-xs text-white/60">
-                              <div>• React, Next.js, Vue</div>
-                              <div>• Node.js, Express, APIs</div>
-                              <div>• Databases & DevOps</div>
-                            </div>
-                          </div>
-                        </motion.div>
-                        
-                        <motion.div
-                          whileHover={{ scale: 1.02 }}
-                          className="p-6 bg-gradient-to-br from-green-500/20 to-teal-500/20 rounded-xl border border-green-300/30"
-                        >
-                          <div className="text-center">
-                            <div className="text-4xl mb-3">🤖</div>
-                            <h3 className="text-xl font-semibold text-white mb-2">Python AI & Automation</h3>
-                            <p className="text-white/70 text-sm mb-4">Create intelligent systems and automated solutions</p>
-                            <div className="space-y-1 text-xs text-white/60">
-                              <div>• Machine Learning & AI</div>
-                              <div>• Automation Scripts</div>
-                              <div>• Agent Development</div>
-                            </div>
-                          </div>
-                        </motion.div>
-                      </div>
+                {/* Hero Career Guidance Section removed to prevent duplication */}
 
-                      <div className="text-center">
+                  {/* Only Career Path Discovery is shown, centered */}
+                  <div className="w-full min-h-[calc(100vh-120px)] flex flex-col items-center justify-center px-2 md:px-8 py-8">
+                    <div className="w-full max-w-6xl mx-auto flex flex-col items-center justify-center">
+                      <h2 className="text-5xl font-extrabold text-white mb-4 text-center drop-shadow-lg">🎯 Career Path Discovery</h2>
+                      <p className="text-2xl text-white/90 leading-relaxed mb-10 text-center max-w-3xl mx-auto">
+                        Unsure about your next step? Let’s make your career journey exciting and meaningful! Explore real-world paths, discover your strengths, and get inspired by what’s possible.
+                      </p>
+                      <div className="w-full flex flex-col md:flex-row gap-10 items-stretch justify-center">
+                        <div className="flex-1 flex flex-col items-center justify-between bg-blue-900/30 hover:bg-blue-800/40 transition rounded-3xl shadow-xl p-8 min-w-[260px] max-w-md mx-auto border border-blue-400/30">
+                          <div className="text-6xl mb-4">🌐</div>
+                          <h3 className="text-2xl font-bold text-white mb-3">Full Stack Development</h3>
+                          <ul className="text-white/90 text-lg mb-6 list-disc list-inside text-left w-full pl-4">
+                            <li>Build modern web & mobile apps</li>
+                            <li>Master React, Next.js, Node.js</li>
+                            <li>Work on real projects & portfolios</li>
+                            <li>Collaborate in teams, learn DevOps</li>
+                          </ul>
+                          <span className="inline-block bg-blue-700/90 text-white text-xs px-4 py-2 rounded-full mb-2">In-demand Career</span>
+                        </div>
+                        <div className="flex-1 flex flex-col items-center justify-between bg-green-900/30 hover:bg-green-800/40 transition rounded-3xl shadow-xl p-8 min-w-[260px] max-w-md mx-auto border border-green-400/30">
+                          <div className="text-6xl mb-4">🤖</div>
+                          <h3 className="text-2xl font-bold text-white mb-3">Python AI & Automation</h3>
+                          <ul className="text-white/90 text-lg mb-6 list-disc list-inside text-left w-full pl-4">
+                            <li>Build smart AI & automation tools</li>
+                            <li>Learn Python, ML, and data skills</li>
+                            <li>Automate boring tasks, solve real problems</li>
+                            <li>Innovate with agents & chatbots</li>
+                          </ul>
+                          <span className="inline-block bg-green-700/90 text-white text-xs px-4 py-2 rounded-full mb-2">Future-Proof Skills</span>
+                        </div>
+                      </div>
+                      <div className="flex flex-col md:flex-row gap-4 items-center justify-center mb-8 mt-8">
                         <Button
                           onClick={() => setShowCareerGuidance(true)}
                           variant="primary"
                           size="lg"
-                          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-lg px-8 py-4"
+                          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-lg px-10 py-5 shadow-lg"
                         >
                           🚀 Start Your Career Discovery Journey
                         </Button>
-                        <p className="text-white/60 text-sm mt-3">
-                          Interactive guidance system with market insights & project ideas
-                        </p>
                       </div>
-                    </GlassCard>
-                  </motion.div>
-
-                  {/* Compact Study Tools Sidebar */}
-                  <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    <GlassCard className="p-6 h-full">
-                      <h3 className="text-2xl font-bold text-white mb-4 text-center">⏱️ Focus Timer</h3>
-                      
-                      <div className="text-center mb-6">
-                        <div className="text-4xl font-bold text-white mb-2">
-                          {formatTime(timeLeft)}
-                        </div>
-                        <div className="text-sm text-white/80 mb-3">
-                          {sessionType === 'work' ? '🔥 Focus Time' : '☕ Break Time'}
-                        </div>
-                        <div className="text-xs text-white/60">
-                          Sessions completed: {completedPomodoros}
-                        </div>
+                      <div className="mt-6 text-center w-full">
+                        <div className="text-2xl text-white/80 italic animate-pulse mb-2">{currentQuote}</div>
+                        <p className="text-white/70 text-lg mt-2">You are not alone—millions have found their path. Let’s find yours together!</p>
                       </div>
-
-                      <div className="flex gap-2 justify-center mb-6">
-                        <Button
-                          onClick={() => setIsRunning(!isRunning)}
-                          variant="primary"
-                          size="sm"
-                          className="px-4"
-                        >
-                          {isRunning ? '⏸' : '▶'}
-                        </Button>
-                        <Button onClick={resetTimer} variant="secondary" size="sm" className="px-4">
-                          ↻
-                        </Button>
-                      </div>
-
-                      {/* Progress Bar */}
-                      <div className="mb-4">
-                        <div className="w-full bg-white/10 rounded-full h-2">
-                          <div 
-                            className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300" 
-                            style={{ width: `${Math.min((completedPomodoros / 8) * 100, 100)}%` }}
-                          ></div>
-                        </div>
-                        <p className="text-white/70 text-xs text-center mt-1">
-                          {completedPomodoros}/8 daily goal
-                        </p>
-                      </div>
-
-                      {/* Quick Study Modes */}
-                      <div className="space-y-2">
-                        <h4 className="text-sm font-semibold text-white mb-2">Quick Modes:</h4>
-                        <button 
-                          className="w-full p-2 text-xs text-white/80 hover:text-white hover:bg-white/10 rounded transition-colors"
-                          onClick={() => { setTimeLeft(25 * 60); setSessionType('work'); }}
-                        >
-                          📚 25min Focus
-                        </button>
-                        <button 
-                          className="w-full p-2 text-xs text-white/80 hover:text-white hover:bg-white/10 rounded transition-colors"
-                          onClick={() => { setTimeLeft(5 * 60); setSessionType('break'); }}
-                        >
-                          ☕ 5min Break
-                        </button>
-                      </div>
-                    </GlassCard>
-                  </motion.div>
-                </div>)
-
-                {/* Optional Expandable Study Tools */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="mb-8"
-                >
-                  <details className="group">
-                    <summary className="cursor-pointer list-none">
-                      <GlassCard className="p-4 text-center hover:bg-white/5 transition-colors">
-                        <h3 className="text-lg font-semibold text-white group-open:hidden">📝 Additional Study Tools ▼</h3>
-                        <h3 className="text-lg font-semibold text-white hidden group-open:block">📝 Additional Study Tools ▲</h3>
-                        <p className="text-white/60 text-sm group-open:hidden">Click to expand notes, achievements, and more tools</p>
-                      </GlassCard>
-                    </summary>
-                    
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6"
-                    >
-                      {/* Compact Notes */}
-                      <GlassCard>
-                        <h4 className="text-xl font-bold text-white mb-3">📝 Quick Notes</h4>
-                        <textarea
-                          value={notes}
-                          onChange={(e) => setNotes(e.target.value)}
-                          placeholder="Jot down your thoughts..."
-                          className="w-full h-32 p-3 rounded-lg glass-strong text-white placeholder-white/50 resize-none focus:outline-none focus:ring-2 focus:ring-white/30 text-sm"
-                          style={{ background: 'rgba(255, 255, 255, 0.1)' }}
-                        />
-                        <div className="mt-2 flex justify-between items-center">
-                          <span className="text-xs text-white/60">{notes.length} characters</span>
-                          <Button onClick={() => setNotes('')} variant="ghost" size="sm" className="text-xs">
-                            Clear
-                          </Button>
-                        </div>
-                      </GlassCard>
-
-                      {/* Achievements */}
-                      <GlassCard>
-                        <h4 className="text-xl font-bold text-white mb-3">🏆 Today's Progress</h4>
-                        <div className="space-y-3">
-                          <div className={`flex items-center p-2 rounded ${completedPomodoros >= 1 ? 'bg-white/20' : 'bg-white/5'}`}>
-                            <span className="mr-2 text-lg">{completedPomodoros >= 1 ? '🏅' : '⭕'}</span>
-                            <span className="text-sm text-white">First Session</span>
-                          </div>
-                          <div className={`flex items-center p-2 rounded ${completedPomodoros >= 4 ? 'bg-white/20' : 'bg-white/5'}`}>
-                            <span className="mr-2 text-lg">{completedPomodoros >= 4 ? '🔥' : '⭕'}</span>
-                            <span className="text-sm text-white">Study Streak</span>
-                          </div>
-                          <div className={`flex items-center p-2 rounded ${completedPomodoros >= 8 ? 'bg-white/20' : 'bg-white/5'}`}>
-                            <span className="mr-2 text-lg">{completedPomodoros >= 8 ? '🌟' : '⭕'}</span>
-                            <span className="text-sm text-white">Daily Goal</span>
-                          </div>
-                        </div>
-                      </GlassCard>
-                    </motion.div>
-                  </details>
-                </motion.div>)
+                    </div>
+                  </div>
+                {/* Removed Additional Study Tools section */}
 
                 {/* Navigation */}
                 <div className="text-center">

@@ -206,6 +206,21 @@ export default function CareerGuidanceSystem() {
 
   return (
     <div className="min-h-screen max-h-screen p-6 relative overflow-x-hidden overflow-y-auto">
+      {/* Exit/Back Button */}
+      <div className="absolute top-6 right-8 z-30">
+        <button
+          onClick={() => {
+            if (typeof window !== 'undefined') {
+              // Try to close the journey and go back to Study Tools or Home
+              const evt = new CustomEvent('exitCareerJourney');
+              window.dispatchEvent(evt);
+            }
+          }}
+          className="bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 text-white font-bold px-6 py-2 rounded-full shadow-lg text-lg"
+        >
+          ← Back to Study Zone
+        </button>
+      </div>
       {/* Beautiful Animated Background */}
       <div className="absolute inset-0 pointer-events-none fixed">
         <motion.div 
@@ -370,45 +385,43 @@ export default function CareerGuidanceSystem() {
             </div>
 
             {/* Navigation Buttons */}
-            <div className="fixed bottom-4 left-1/2 z-20 w-[min(100%,72rem)] -translate-x-1/2 px-6">
+            <div className="relative mt-8 w-full">
               <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/20 bg-black/30 backdrop-blur-md px-4 py-4 shadow-xl">
-              <button
-                onClick={() => setCurrentSection(Math.max(0, currentSection - 1))}
-                disabled={currentSection === 0}
-                className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
-                  currentSection === 0
-                    ? 'text-white/40 cursor-not-allowed'
-                    : 'text-white bg-white/10 hover:bg-white/20 hover:scale-105'
-                }`}
-              >
-                ← Previous
-              </button>
-              
-              <div className="text-center flex-1 min-w-[220px]">
                 <button
-                  onClick={() => handleSectionComplete(currentSection)}
-                  disabled={completedSections.has(currentSection)}
-                  className={`w-full px-6 py-3 rounded-full font-bold transition-all duration-300 ${
-                    completedSections.has(currentSection)
-                      ? 'bg-green-500 text-white cursor-default'
-                      : 'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white hover:scale-105 shadow-lg'
+                  onClick={() => setCurrentSection(Math.max(0, currentSection - 1))}
+                  disabled={currentSection === 0}
+                  className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
+                    currentSection === 0
+                      ? 'text-white/40 cursor-not-allowed'
+                      : 'text-white bg-white/10 hover:bg-white/20 hover:scale-105'
                   }`}
                 >
-                  {completedSections.has(currentSection) ? '✓ Completed' : '✨ Mark Complete'}
+                  ← Previous
                 </button>
-              </div>
-
-              <button
-                onClick={() => setCurrentSection(Math.min(sections.length - 1, currentSection + 1))}
-                disabled={currentSection === sections.length - 1 || !sections[currentSection + 1]?.isUnlocked}
-                className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
-                  currentSection === sections.length - 1 || !sections[currentSection + 1]?.isUnlocked
-                    ? 'text-white/40 cursor-not-allowed'
-                    : 'text-white bg-white/10 hover:bg-white/20 hover:scale-105'
-                }`}
-              >
-                Next →
-              </button>
+                <div className="text-center flex-1 min-w-[220px]">
+                  <button
+                    onClick={() => handleSectionComplete(currentSection)}
+                    disabled={completedSections.has(currentSection)}
+                    className={`w-full px-6 py-3 rounded-full font-bold transition-all duration-300 ${
+                      completedSections.has(currentSection)
+                        ? 'bg-green-500 text-white cursor-default'
+                        : 'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white hover:scale-105 shadow-lg'
+                    }`}
+                  >
+                    {completedSections.has(currentSection) ? '✓ Completed' : '✨ Mark Complete'}
+                  </button>
+                </div>
+                <button
+                  onClick={() => setCurrentSection(Math.min(sections.length - 1, currentSection + 1))}
+                  disabled={currentSection === sections.length - 1 || !sections[currentSection + 1]?.isUnlocked}
+                  className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
+                    currentSection === sections.length - 1 || !sections[currentSection + 1]?.isUnlocked
+                      ? 'text-white/40 cursor-not-allowed'
+                      : 'text-white bg-white/10 hover:bg-white/20 hover:scale-105'
+                  }`}
+                >
+                  Next →
+                </button>
               </div>
             </div>
           </motion.div>
