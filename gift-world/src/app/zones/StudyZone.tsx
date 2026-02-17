@@ -389,7 +389,7 @@ export default function StudyZone() {
                       🏛️ Explore 3D Study Home
                     </Button>
                   </div>
-                </motion.div>)
+                </motion.div>
 
                 {/* Hero Career Guidance Section removed to prevent duplication */}
 
