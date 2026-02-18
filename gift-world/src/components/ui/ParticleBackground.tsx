@@ -2,7 +2,12 @@
 
 import { useEffect, useRef } from 'react';
 
-export default function ParticleBackground() {
+interface ParticleBackgroundProps {
+  weather?: string;
+  isNight?: boolean;
+}
+
+export default function ParticleBackground({ weather = 'sunny', isNight = false }: ParticleBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -28,16 +33,41 @@ export default function ParticleBackground() {
       opacity: number;
     }> = [];
 
-    const particleCount = 50;
+    // Weather-based particle style
+    let particleCount = 50;
+    let color = isNight ? '180,200,255' : '255,255,255';
+    let minRadius = 1, maxRadius = 4;
+    let opacityBase = 0.2, opacityVar = 0.5;
+    let vxRange = 0.5, vyRange = 0.5;
+
+    if (weather === 'rainy' || weather === 'monsoon') {
+      particleCount = 80;
+      color = isNight ? '80,110,180' : '120,130,180'; // bluish raindrops
+      minRadius = 0.5; maxRadius = 1.5;
+      opacityBase = 0.3; opacityVar = 0.4;
+      vxRange = 0.1; vyRange = 1.5;
+    } else if (weather === 'cloudy') {
+      particleCount = 40;
+      color = isNight ? '120,120,160' : '200,200,200'; // grayish
+      minRadius = 2; maxRadius = 5;
+      opacityBase = 0.15; opacityVar = 0.3;
+      vxRange = 0.2; vyRange = 0.2;
+    } else if (weather === 'winter') {
+      particleCount = 60;
+      color = isNight ? '180,200,255' : '220,240,255'; // snow
+      minRadius = 1.5; maxRadius = 3.5;
+      opacityBase = 0.3; opacityVar = 0.5;
+      vxRange = 0.2; vyRange = 0.7;
+    } // sunny: default
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        radius: Math.random() * 3 + 1,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
-        opacity: Math.random() * 0.5 + 0.2,
+        radius: Math.random() * (maxRadius - minRadius) + minRadius,
+        vx: (Math.random() - 0.5) * vxRange,
+        vy: (Math.random() - 0.5) * vyRange,
+        opacity: Math.random() * opacityVar + opacityBase,
       });
     }
 
@@ -53,7 +83,7 @@ export default function ParticleBackground() {
 
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${particle.opacity})`;
+        ctx.fillStyle = `rgba(${color}, ${particle.opacity})`;
         ctx.fill();
       });
 
@@ -65,7 +95,7 @@ export default function ParticleBackground() {
     return () => {
       window.removeEventListener('resize', resize);
     };
-  }, []);
+  }, [weather]);
 
   return (
     <canvas

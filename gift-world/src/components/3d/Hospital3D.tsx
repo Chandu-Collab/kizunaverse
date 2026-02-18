@@ -16,15 +16,28 @@ import PetDog3D from "./PetDog3D";
 
 interface Hospital3DProps {
   position?: [number, number, number];
+  isNight?: boolean;
 }
 
-function HospitalContent() {
+function HospitalContent({ isNight = false }: { isNight?: boolean }) {
   // All hooks must be at the top level and only called once
   const groupRef = useRef<THREE.Group>(null);
-  const windowMaterial = useRef(new THREE.MeshStandardMaterial({ color: "#b3e5fc", transparent: true, opacity: 0.7 })).current;
+  // Window material: day is blue, night is glowing yellow
+  const windowMaterial = useRef(new THREE.MeshStandardMaterial({
+    color: isNight ? "#ffe066" : "#b3e5fc",
+    emissive: isNight ? "#ffe066" : "#000000",
+    emissiveIntensity: isNight ? 0.55 : 0,
+    transparent: true,
+    opacity: isNight ? 0.92 : 0.7
+  })).current;
   const benchMaterial = useRef(new THREE.MeshStandardMaterial({ color: "#a1887f" })).current;
   const lampPostMaterial = useRef(new THREE.MeshStandardMaterial({ color: "#757575", metalness: 0.6, roughness: 0.4 })).current;
-  const lampHeadMaterial = useRef(new THREE.MeshStandardMaterial({ color: "#fffde7", emissive: "#fffde7", emissiveIntensity: 0.8 })).current;
+  // Lamp head: stronger emissive at night
+  const lampHeadMaterial = useRef(new THREE.MeshStandardMaterial({
+    color: "#fffde7",
+    emissive: "#fffde7",
+    emissiveIntensity: isNight ? 1.1 : 0.2
+  })).current;
   const treeTrunkMaterial = useRef(new THREE.MeshStandardMaterial({ color: "#8d6e63" })).current;
   const treeLeafMaterial = useRef(new THREE.MeshStandardMaterial({ color: "#388e3c", roughness: 0.8 })).current;
   const shrubMaterial = useRef(new THREE.MeshStandardMaterial({ color: "#43a047" })).current;
@@ -42,24 +55,49 @@ function HospitalContent() {
   return (
     <group ref={groupRef}>
       {/* Sky and Environment */}
-      <Sky azimuth={0.3} inclination={0.5} distance={1000} />
+      <Sky
+        azimuth={0.3}
+        inclination={0.5}
+        distance={1000}
+        sunPosition={isNight ? [0, -1, 0] : [0, 1, 0]}
+        turbidity={isNight ? 0.8 : 2}
+        rayleigh={isNight ? 0.2 : 2}
+        mieCoefficient={isNight ? 0.001 : 0.005}
+        mieDirectionalG={isNight ? 0.7 : 0.8}
+      />
       {/* Realistic Lighting */}
-      <ambientLight intensity={0.6} color="#e0f7fa" />
+      <ambientLight intensity={isNight ? 0.13 : 0.6} color={isNight ? "#1a1a2e" : "#e0f7fa"} />
       <directionalLight
         position={[20, 30, 10]}
-        intensity={1.2}
-        color="#ffffff"
+        intensity={isNight ? 0.13 : 1.2}
+        color={isNight ? "#b0c4de" : "#ffffff"}
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
       />
+      {/* Night: subtle blue overlay for sky, stars, and glowing lights */}
+      {isNight && (
+        <>
+          {/* Star field (simple points) */}
+          {Array.from({ length: 80 }).map((_, i) => (
+            <mesh key={i} position={[
+              (Math.random() - 0.5) * 80,
+              18 + Math.random() * 10,
+              (Math.random() - 0.5) * 80
+            ]}>
+              <sphereGeometry args={[0.08 + Math.random() * 0.07, 6, 6]} />
+              <meshStandardMaterial color="#fff" emissive="#fff" emissiveIntensity={0.7 + Math.random() * 0.5} />
+            </mesh>
+          ))}
+        </>
+      )}
       {/* Hospital Exterior Structure */}
       <Float speed={0.15} rotationIntensity={0.03} floatIntensity={0.03}>
         <group>
           {/* Main Building Block */}
           <mesh position={[0, 4, 0]} castShadow receiveShadow>
             <boxGeometry args={[18, 8, 12]} />
-            <meshStandardMaterial color="#e3eafc" roughness={0.4} metalness={0.1} />
+            <meshStandardMaterial color={isNight ? "#232b3b" : "#e3eafc"} roughness={0.4} metalness={0.1} />
           </mesh>
           {/* Rooftop HVAC vents (smaller, at corners, flush on roof) */}
           {[[-7.5, 8.04, 4.5], [7.5, 8.04, -4.5], [-7.5, 8.04, -4.5], [7.5, 8.04, 4.5]].map(([x, y, z], i) => (
@@ -71,8 +109,43 @@ function HospitalContent() {
           {/* Helipad (centered, large H, border) */}
           <mesh position={[0, 8.09, 0]} receiveShadow>
             <cylinderGeometry args={[3.2, 3.2, 0.08, 48]} />
-            <meshStandardMaterial color="#e0e0e0" />
+            <meshStandardMaterial color={isNight ? "#b0bec5" : "#e0e0e0"} />
           </mesh>
+          {/* Glowing window/lamp/porch lights at night */}
+          {isNight && (
+            <>
+              {/* Main entrance lamp */}
+              <pointLight position={[0, 6.5, 7.2]} intensity={1.1} color="#fffde7" distance={10} decay={2} />
+              <mesh position={[0, 6.5, 7.1]}>
+                <sphereGeometry args={[0.22, 10, 10]} />
+                <meshStandardMaterial color="#fffde7" emissive="#fffde7" emissiveIntensity={1.2} />
+              </mesh>
+              {/* Extra glow for entrance */}
+              <mesh position={[0, 6.5, 7.1]}>
+                <sphereGeometry args={[0.32, 10, 10]} />
+                <meshStandardMaterial color="#fffde7" transparent opacity={0.18} emissive="#fffde7" emissiveIntensity={0.25} />
+              </mesh>
+              {/* Porch/side lamps */}
+              <pointLight position={[-7.5, 3.5, 7.2]} intensity={0.7} color="#fffde7" distance={7} decay={2} />
+              <mesh position={[-7.5, 3.5, 7.1]}>
+                <sphereGeometry args={[0.13, 8, 8]} />
+                <meshStandardMaterial color="#fffde7" emissive="#fffde7" emissiveIntensity={1.0} />
+              </mesh>
+              <mesh position={[-7.5, 3.5, 7.1]}>
+                <sphereGeometry args={[0.22, 8, 8]} />
+                <meshStandardMaterial color="#fffde7" transparent opacity={0.15} emissive="#fffde7" emissiveIntensity={0.18} />
+              </mesh>
+              <pointLight position={[7.5, 3.5, 7.2]} intensity={0.7} color="#fffde7" distance={7} decay={2} />
+              <mesh position={[7.5, 3.5, 7.1]}>
+                <sphereGeometry args={[0.13, 8, 8]} />
+                <meshStandardMaterial color="#fffde7" emissive="#fffde7" emissiveIntensity={1.0} />
+              </mesh>
+              <mesh position={[7.5, 3.5, 7.1]}>
+                <sphereGeometry args={[0.22, 8, 8]} />
+                <meshStandardMaterial color="#fffde7" transparent opacity={0.15} emissive="#fffde7" emissiveIntensity={0.18} />
+              </mesh>
+            </>
+          )}
           {/* Helipad border */}
           <mesh position={[0, 8.13, 0]}>
             <cylinderGeometry args={[3.35, 3.2, 0.03, 48]} />
@@ -624,15 +697,17 @@ function HospitalContent() {
                 <sphereGeometry args={[0.45, 16, 16]} />
                 <meshStandardMaterial color="#fffbe7" transparent opacity={0.12} emissive="#fffbe7" emissiveIntensity={0.18} />
               </mesh>
-              {/* Light Source */}
-              <pointLight
-                position={[0, 2.3, 0]}
-                intensity={1.5}
-                distance={16}
-                color="#fffbe7"
-                castShadow
-                decay={2}
-              />
+              {/* Light Source - only at night */}
+              {isNight && (
+                <pointLight
+                  position={[0, 2.3, 0]}
+                  intensity={1.5}
+                  distance={16}
+                  color="#fffbe7"
+                  castShadow
+                  decay={2}
+                />
+              )}
             </group>
           ))}
         </group>
@@ -659,11 +734,11 @@ function HospitalContent() {
   );
 }
 
-export default function Hospital3D({ position = [0, 0, 0] }: Hospital3DProps) {
+export default function Hospital3D({ position = [0, 0, 0], isNight = false }: Hospital3DProps) {
   return (
     <group position={position}>
       <Suspense fallback={null}>
-        <HospitalContent />
+        <HospitalContent isNight={isNight} />
       </Suspense>
     </group>
   );
