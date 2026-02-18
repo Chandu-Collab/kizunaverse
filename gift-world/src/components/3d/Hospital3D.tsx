@@ -3,7 +3,7 @@
     "use client";
 
 
-import { useRef, Suspense } from "react";
+import { useRef, useState, useEffect, Suspense } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Environment, Float, Text, Sky, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
@@ -20,6 +20,75 @@ interface Hospital3DProps {
 }
 
 function HospitalContent({ isNight = false }: { isNight?: boolean }) {
+  // Side emergency exit door animation state
+  const [sideExitDoorOpen, setSideExitDoorOpen] = useState(false);
+  const [sideExitDoorAnim, setSideExitDoorAnim] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => setSideExitDoorOpen(open => !open), 5000);
+    return () => clearInterval(interval);
+  }, []);
+  useFrame(() => {
+    setSideExitDoorAnim(prev => {
+      const target = sideExitDoorOpen ? 1 : 0;
+      const speed = 0.08;
+      if (Math.abs(prev - target) < 0.01) return target;
+      return prev + (target - prev) * speed;
+    });
+  });
+                  // Back entrance door animation state (sync with front for simplicity)
+                  const [backDoorOpen, setBackDoorOpen] = useState(false);
+                  const [backDoorAnim, setBackDoorAnim] = useState(0);
+                  useEffect(() => {
+                    const interval = setInterval(() => setBackDoorOpen(open => !open), 5000);
+                    return () => clearInterval(interval);
+                  }, []);
+                  useFrame(() => {
+                    setBackDoorAnim(prev => {
+                      const target = backDoorOpen ? 1 : 0;
+                      const speed = 0.08;
+                      if (Math.abs(prev - target) < 0.01) return target;
+                      return prev + (target - prev) * speed;
+                    });
+                  });
+                {/* Back wall vents (main building, above windows, not overlapping) */}
+                {[-4.8, -1.6, 1.6, 4.8].map((x, i) => (
+                  <mesh key={`back-vent-main-${i}`} position={[x, 9.1, -6.01]}>
+                    <boxGeometry args={[1.2, 0.7, 0.18]} />
+                    <meshStandardMaterial color="#90a4ae" />
+                  </mesh>
+                ))}
+      // Side building door animation state (sync with main for simplicity)
+      const [sideDoorOpen, setSideDoorOpen] = useState(false);
+      const [sideDoorAnim, setSideDoorAnim] = useState(0);
+      useEffect(() => {
+        const interval = setInterval(() => setSideDoorOpen(open => !open), 5000);
+        return () => clearInterval(interval);
+      }, []);
+      useFrame(() => {
+        setSideDoorAnim(prev => {
+          const target = sideDoorOpen ? 1 : 0;
+          const speed = 0.08;
+          if (Math.abs(prev - target) < 0.01) return target;
+          return prev + (target - prev) * speed;
+        });
+      });
+    // Door animation state
+    const [doorOpen, setDoorOpen] = useState(false);
+    const [doorAnim, setDoorAnim] = useState(0); // 0 = closed, 1 = open
+    // Toggle door every 5 seconds
+    useEffect(() => {
+      const interval = setInterval(() => setDoorOpen(open => !open), 5000);
+      return () => clearInterval(interval);
+    }, []);
+    // Animate doorAnim smoothly
+    useFrame(() => {
+      setDoorAnim(prev => {
+        const target = doorOpen ? 1 : 0;
+        const speed = 0.08;
+        if (Math.abs(prev - target) < 0.01) return target;
+        return prev + (target - prev) * speed;
+      });
+    });
   // All hooks must be at the top level and only called once
   const groupRef = useRef<THREE.Group>(null);
   // Window material: day is blue, night is glowing yellow
@@ -32,6 +101,10 @@ function HospitalContent({ isNight = false }: { isNight?: boolean }) {
   })).current;
   const benchMaterial = useRef(new THREE.MeshStandardMaterial({ color: "#a1887f" })).current;
   const lampPostMaterial = useRef(new THREE.MeshStandardMaterial({ color: "#757575", metalness: 0.6, roughness: 0.4 })).current;
+  // Realistic window/door frame and handle materials
+  const frameMaterial = useRef(new THREE.MeshStandardMaterial({ color: "#FFFFFF", roughness: 0.3 })).current;
+  const crossbarMaterial = useRef(new THREE.MeshStandardMaterial({ color: "#8B4513" })).current;
+  const handleMaterial = useRef(new THREE.MeshStandardMaterial({ color: "#DAA520", roughness: 0.1, metalness: 0.9 })).current;
   // Lamp head: stronger emissive at night
   const lampHeadMaterial = useRef(new THREE.MeshStandardMaterial({
     color: "#fffde7",
@@ -54,6 +127,27 @@ function HospitalContent({ isNight = false }: { isNight?: boolean }) {
 
   return (
     <group ref={groupRef}>
+      {/* Lighting for Emergency Exits and Entrances (all buildings, front and back) */}
+      <>
+        {/* Central Building - Front Entrance */}
+        <pointLight position={[0, 3.2, 7.2]} intensity={isNight ? 1.2 : 0.3} color="#ff5252" distance={7} decay={2} />
+        {/* Central Building - Back Entrance */}
+        <pointLight position={[0, 3.2, -7.2]} intensity={isNight ? 1.2 : 0.3} color="#ff5252" distance={7} decay={2} />
+        {/* Central Building - Emergency Exit (Back) */}
+        <pointLight position={[0, 2.7, -6.07]} intensity={isNight ? 1.3 : 0.3} color="#ff5252" distance={5} decay={2} />
+        {/* Left Side Building - Front Entrance */}
+        <pointLight position={[-12, 2.2, 7.2]} intensity={isNight ? 1.1 : 0.25} color="#ff5252" distance={5.5} decay={2} />
+        {/* Left Side Building - Back Entrance */}
+        <pointLight position={[-12, 2.2, -7.2]} intensity={isNight ? 1.1 : 0.25} color="#ff5252" distance={5.5} decay={2} />
+        {/* Left Side Building - Emergency Exit (Side) */}
+        <pointLight position={[-15.07, 3.2, 0]} intensity={isNight ? 1.1 : 0.25} color="#ff5252" distance={5} decay={2} />
+        {/* Right Side Building - Front Entrance */}
+        <pointLight position={[12, 2.2, 7.2]} intensity={isNight ? 1.1 : 0.25} color="#ff5252" distance={5.5} decay={2} />
+        {/* Right Side Building - Back Entrance */}
+        <pointLight position={[12, 2.2, -7.2]} intensity={isNight ? 1.1 : 0.25} color="#ff5252" distance={5.5} decay={2} />
+        {/* Right Side Building - Emergency Exit (Side) */}
+        <pointLight position={[15.07, 3.2, 0]} intensity={isNight ? 1.1 : 0.25} color="#ff5252" distance={5} decay={2} />
+      </>
       {/* Sky and Environment */}
       <Sky
         azimuth={0.3}
@@ -99,6 +193,97 @@ function HospitalContent({ isNight = false }: { isNight?: boolean }) {
             <boxGeometry args={[18, 8, 12]} />
             <meshStandardMaterial color={isNight ? "#232b3b" : "#e3eafc"} roughness={0.4} metalness={0.1} />
           </mesh>
+          {/* Spacious Back Windows - Central Building (2 rows, 4 columns) */}
+                    {/* Back Entrance - Central Building (auto-opening double doors) */}
+                    {/* Left Door (slides left, flush with building) */}
+                    <group position={[-0.7 - 0.5 * backDoorAnim, 1.2, -6.01]}>
+                      {/* Frame */}
+                      <mesh>
+                        <boxGeometry args={[0.74, 1.64, 0.09]} />
+                        <primitive object={frameMaterial} attach="material" />
+                      </mesh>
+                      {/* Glass */}
+                      <mesh position={[0, 0, -0.05]}>
+                        <boxGeometry args={[0.66, 1.54, 0.03]} />
+                        <meshStandardMaterial color="#e3f2fd" transparent opacity={0.6} metalness={0.4} />
+                      </mesh>
+                      {/* Crossbars */}
+                      <mesh position={[0, 0, -0.07]}>
+                        <boxGeometry args={[0.05, 1.54, 0.01]} />
+                        <primitive object={crossbarMaterial} attach="material" />
+                      </mesh>
+                      <mesh position={[0, 0, -0.07]}>
+                        <boxGeometry args={[0.66, 0.05, 0.01]} />
+                        <primitive object={crossbarMaterial} attach="material" />
+                      </mesh>
+                      {/* Handle */}
+                      <mesh position={[0.25, 0, -0.12]} ref={el => { if (el) el.rotation.set(Math.PI / 2, 0, 0); }}>
+                        <cylinderGeometry args={[0.03, 0.03, 0.18, 16]} />
+                        <primitive object={handleMaterial} attach="material" />
+                      </mesh>
+                    </group>
+                    {/* Right Door (slides right, flush with building) */}
+                    <group position={[0.7 + 0.5 * backDoorAnim, 1.2, -6.01]}>
+                      {/* Frame */}
+                      <mesh>
+                        <boxGeometry args={[0.74, 1.64, 0.09]} />
+                        <primitive object={frameMaterial} attach="material" />
+                      </mesh>
+                      {/* Glass */}
+                      <mesh position={[0, 0, -0.05]}>
+                        <boxGeometry args={[0.66, 1.54, 0.03]} />
+                        <meshStandardMaterial color="#e3f2fd" transparent opacity={0.6} metalness={0.4} />
+                      </mesh>
+                      {/* Crossbars */}
+                      <mesh position={[0, 0, -0.07]}>
+                        <boxGeometry args={[0.05, 1.54, 0.01]} />
+                        <primitive object={crossbarMaterial} attach="material" />
+                      </mesh>
+                      <mesh position={[0, 0, -0.07]}>
+                        <boxGeometry args={[0.66, 0.05, 0.01]} />
+                        <primitive object={crossbarMaterial} attach="material" />
+                      </mesh>
+                      {/* Handle */}
+                      <mesh position={[-0.25, 0, -0.12]} ref={el => { if (el) el.rotation.set(Math.PI / 2, 0, 0); }}>
+                        <cylinderGeometry args={[0.03, 0.03, 0.18, 16]} />
+                        <primitive object={handleMaterial} attach="material" />
+                      </mesh>
+                    </group>
+          {Array.from({ length: 2 }).map((_, floor) =>
+            Array.from({ length: 4 }).map((_, col) => {
+              const x = -4.8 + col * 3.2;
+              const y = 7.2 - floor * 2.5;
+              return (
+                <group key={`central-back-window-${floor}-${col}`}>
+                  {/* Window Frame */}
+                  <mesh position={[x, y, -6.1]}>
+                    <boxGeometry args={[2.6, 1.4, 0.13]} />
+                    <primitive object={frameMaterial} attach="material" />
+                  </mesh>
+                  {/* Window Glass */}
+                  <mesh position={[x, y, -6.16]}>
+                    <boxGeometry args={[2.5, 1.3, 0.03]} />
+                    <meshStandardMaterial
+                      color={isNight ? '#ffe066' : '#b3e5fc'}
+                      emissive={isNight ? '#ffe066' : '#000000'}
+                      emissiveIntensity={isNight ? 0.55 : 0}
+                      transparent
+                      opacity={isNight ? 0.92 : 0.7}
+                    />
+                  </mesh>
+                  {/* Window Crossbars */}
+                  <mesh position={[x, y, -6.18]}>
+                    <boxGeometry args={[0.08, 1.3, 0.01]} />
+                    <primitive object={crossbarMaterial} attach="material" />
+                  </mesh>
+                  <mesh position={[x, y, -6.18]}>
+                    <boxGeometry args={[2.5, 0.08, 0.01]} />
+                    <primitive object={crossbarMaterial} attach="material" />
+                  </mesh>
+                </group>
+              );
+            })
+          )}
           {/* Rooftop HVAC vents (smaller, at corners, flush on roof) */}
           {[[-7.5, 8.04, 4.5], [7.5, 8.04, -4.5], [-7.5, 8.04, -4.5], [7.5, 8.04, 4.5]].map(([x, y, z], i) => (
             <mesh key={`hvac-vent-${i}`} position={[x, y, z]} castShadow>
@@ -175,110 +360,227 @@ function HospitalContent({ isNight = false }: { isNight?: boolean }) {
               <meshStandardMaterial color="#90a4ae" />
             </mesh>
           ))}
-          {/* Back wall vents (main building, flush with wall) */}
-          {[-4, 0, 4].map((x, i) => (
-            <mesh key={`back-vent-main-${i}`} position={[x, 5.5, -6.01]}>
-              <boxGeometry args={[1.2, 0.7, 0.18]} />
-              <meshStandardMaterial color="#90a4ae" />
-            </mesh>
-          ))}
+          {/* Back wall vents removed to avoid overlap with new windows */}
           {/* Front wall vents removed for clean facade */}
-          {/* Emergency Exit Doors (back and sides, with red sign, at wall level) */}
+          {/* Emergency Exit Doors (back and sides, with red sign, flush and clearly visible) */}
           {/* Back exit */}
-          <group position={[0, 1.1, -12.11]}>
+          <group position={[0, 1.1, -6.07]}>
             <mesh>
               <boxGeometry args={[1.1, 2.1, 0.13]} />
               <meshStandardMaterial color="#e0e0e0" />
             </mesh>
-            <mesh position={[0, 1.2, 0.09]}>
+            <mesh position={[0, 1.2, 0.13]}>
               <boxGeometry args={[0.9, 0.32, 0.04]} />
               <meshStandardMaterial color="#c62828" />
             </mesh>
-            <mesh position={[0, 1.2, 0.13]}>
+            <mesh position={[0, 1.2, 0.17]}>
               <boxGeometry args={[0.7, 0.18, 0.04]} />
               <meshStandardMaterial color="#fff" />
             </mesh>
             <Text
-              position={[0, 1.2, 0.13]}
-              fontSize={0.18}
+              position={[0, 1.2, 0.19]}
+              fontSize={0.22}
               color="#c62828"
               anchorX="center"
               anchorY="middle"
               outlineColor="#fff"
-              outlineWidth={0.02}
+              outlineWidth={0.025}
               rotation={[0, 0, 0]}
             >
               EMERGENCY EXIT
             </Text>
           </group>
-          {/* Left side exit */}
-          <group position={[-15.9, 1.1, 6]} rotation={[0, Math.PI/2, 0]}>
-            <mesh>
-              <boxGeometry args={[1.1, 2.1, 0.13]} />
-              <meshStandardMaterial color="#e0e0e0" />
-            </mesh>
-            <mesh position={[0, 1.2, 0.09]}>
-              <boxGeometry args={[0.9, 0.32, 0.04]} />
-              <meshStandardMaterial color="#c62828" />
-            </mesh>
-            <mesh position={[0, 1.2, 0.13]}>
-              <boxGeometry args={[0.7, 0.18, 0.04]} />
-              <meshStandardMaterial color="#fff" />
-            </mesh>
-            <Text
-              position={[0, 1.2, 0.13]}
-              fontSize={0.18}
-              color="#c62828"
-              anchorX="center"
-              anchorY="middle"
-              outlineColor="#fff"
-              outlineWidth={0.02}
-              rotation={[0, 0, 0]}
-            >
-              EMERGENCY EXIT
-            </Text>
+          {/* Left side exit with animated auto-opening doors and lighting */}
+          <group position={[-15.07, 1.1, 0]} rotation={[0, Math.PI/2, 0]}>
+            {/* Left Door (slides left) */}
+            <group position={[-0.28 - 0.25 * sideExitDoorAnim, 0, 0.065]}>
+              <mesh>
+                <boxGeometry args={[0.55, 2.1, 0.13]} />
+                <meshStandardMaterial color="#e0e0e0" />
+              </mesh>
+              <mesh position={[0, 1.2, 0.13]}>
+                <boxGeometry args={[0.45, 0.32, 0.04]} />
+                <meshStandardMaterial color="#c62828" />
+              </mesh>
+              <mesh position={[0, 1.2, 0.17]}>
+                <boxGeometry args={[0.35, 0.18, 0.04]} />
+                <meshStandardMaterial color="#fff" />
+              </mesh>
+              <Text
+                position={[0, 1.2, 0.19]}
+                fontSize={0.22}
+                color="#c62828"
+                anchorX="center"
+                anchorY="middle"
+                outlineColor="#fff"
+                outlineWidth={0.025}
+                rotation={[0, 0, 0]}
+              >
+                EMERGENCY EXIT
+              </Text>
+            </group>
+            {/* Right Door (slides right) */}
+            <group position={[0.28 + 0.25 * sideExitDoorAnim, 0, 0.065]}>
+              <mesh>
+                <boxGeometry args={[0.55, 2.1, 0.13]} />
+                <meshStandardMaterial color="#e0e0e0" />
+              </mesh>
+              <mesh position={[0, 1.2, 0.13]}>
+                <boxGeometry args={[0.45, 0.32, 0.04]} />
+                <meshStandardMaterial color="#c62828" />
+              </mesh>
+              <mesh position={[0, 1.2, 0.17]}>
+                <boxGeometry args={[0.35, 0.18, 0.04]} />
+                <meshStandardMaterial color="#fff" />
+              </mesh>
+              <Text
+                position={[0, 1.2, 0.19]}
+                fontSize={0.22}
+                color="#c62828"
+                anchorX="center"
+                anchorY="middle"
+                outlineColor="#fff"
+                outlineWidth={0.025}
+                rotation={[0, 0, 0]}
+              >
+                EMERGENCY EXIT
+              </Text>
+            </group>
           </group>
-          {/* Right side exit */}
-          <group position={[15.9, 1.1, -6]} rotation={[0, -Math.PI/2, 0]}>
-            <mesh>
-              <boxGeometry args={[1.1, 2.1, 0.13]} />
-              <meshStandardMaterial color="#e0e0e0" />
-            </mesh>
-            <mesh position={[0, 1.2, 0.09]}>
-              <boxGeometry args={[0.9, 0.32, 0.04]} />
-              <meshStandardMaterial color="#c62828" />
-            </mesh>
-            <mesh position={[0, 1.2, 0.13]}>
-              <boxGeometry args={[0.7, 0.18, 0.04]} />
-              <meshStandardMaterial color="#fff" />
-            </mesh>
-            <Text
-              position={[0, 1.2, 0.13]}
-              fontSize={0.18}
-              color="#c62828"
-              anchorX="center"
-              anchorY="middle"
-              outlineColor="#fff"
-              outlineWidth={0.02}
-              rotation={[0, 0, 0]}
-            >
-              EMERGENCY EXIT
-            </Text>
+          {/* Right side exit with animated auto-opening doors and lighting */}
+          <group position={[15.07, 1.1, 0]} rotation={[0, -Math.PI/2, 0]}>
+            {/* Left Door (slides left) */}
+            <group position={[-0.28 - 0.25 * sideExitDoorAnim, 0, 0.065]}>
+              <mesh>
+                <boxGeometry args={[0.55, 2.1, 0.13]} />
+                <meshStandardMaterial color="#e0e0e0" />
+              </mesh>
+              <mesh position={[0, 1.2, 0.13]}>
+                <boxGeometry args={[0.45, 0.32, 0.04]} />
+                <meshStandardMaterial color="#c62828" />
+              </mesh>
+              <mesh position={[0, 1.2, 0.17]}>
+                <boxGeometry args={[0.35, 0.18, 0.04]} />
+                <meshStandardMaterial color="#fff" />
+              </mesh>
+              <Text
+                position={[0, 1.2, 0.19]}
+                fontSize={0.22}
+                color="#c62828"
+                anchorX="center"
+                anchorY="middle"
+                outlineColor="#fff"
+                outlineWidth={0.025}
+                rotation={[0, 0, 0]}
+              >
+                EMERGENCY EXIT
+              </Text>
+            </group>
+            {/* Right Door (slides right) */}
+            <group position={[0.28 + 0.25 * sideExitDoorAnim, 0, 0.065]}>
+              <mesh>
+                <boxGeometry args={[0.55, 2.1, 0.13]} />
+                <meshStandardMaterial color="#e0e0e0" />
+              </mesh>
+              <mesh position={[0, 1.2, 0.13]}>
+                <boxGeometry args={[0.45, 0.32, 0.04]} />
+                <meshStandardMaterial color="#c62828" />
+              </mesh>
+              <mesh position={[0, 1.2, 0.17]}>
+                <boxGeometry args={[0.35, 0.18, 0.04]} />
+                <meshStandardMaterial color="#fff" />
+              </mesh>
+              <Text
+                position={[0, 1.2, 0.19]}
+                fontSize={0.22}
+                color="#c62828"
+                anchorX="center"
+                anchorY="middle"
+                outlineColor="#fff"
+                outlineWidth={0.025}
+                rotation={[0, 0, 0]}
+              >
+                EMERGENCY EXIT
+              </Text>
+            </group>
           </group>
           {/* Extended Entrance Canopy for Vehicle Drop-off (pillars attach flush) */}
           <mesh position={[0, 3.2, 8.5]} castShadow receiveShadow>
             <boxGeometry args={[9, 0.7, 5]} />
             <meshStandardMaterial color="#b3c6e7" metalness={0.22} roughness={0.28} />
           </mesh>
-          {/* Glass Doors (flush with building, below windows) */}
-          <mesh position={[-0.7, 1.2, 6.61]}>
-            <boxGeometry args={[0.7, 1.6, 0.05]} />
-            <meshStandardMaterial color="#e3f2fd" transparent opacity={0.6} metalness={0.4} />
-          </mesh>
-          <mesh position={[0.7, 1.2, 6.61]}>
-            <boxGeometry args={[0.7, 1.6, 0.05]} />
-            <meshStandardMaterial color="#e3f2fd" transparent opacity={0.6} metalness={0.4} />
-          </mesh>
+          {/* Entrance Lighting - Central Building (Front) */}
+          <pointLight position={[0, 3.2, 7.2]} intensity={isNight ? 1.2 : 0.3} color="#fffde7" distance={8} decay={2} />
+          {isNight && (
+            <mesh position={[0, 3.2, 7.1]}>
+              <sphereGeometry args={[0.18, 10, 10]} />
+              <meshStandardMaterial color="#fffde7" emissive="#fffde7" emissiveIntensity={1.1} />
+            </mesh>
+          )}
+          {/* Realistic Main Entrance Doors (double doors with frames, glass, crossbars, handles) */}
+                    {/* Entrance Lighting - Central Building (Back) */}
+                    <pointLight position={[0, 3.2, -7.2]} intensity={isNight ? 1.2 : 0.3} color="#fffde7" distance={8} decay={2} />
+                    {isNight && (
+                      <mesh position={[0, 3.2, -7.1]}>
+                        <sphereGeometry args={[0.18, 10, 10]} />
+                        <meshStandardMaterial color="#fffde7" emissive="#fffde7" emissiveIntensity={1.1} />
+                      </mesh>
+                    )}
+          {/* Animated Auto-Opening Main Entrance Doors */}
+          {/* Left Door (slides left) */}
+          <group position={[-0.7 - 0.5 * doorAnim, 1.2, 6.61]}>
+            {/* Frame */}
+            <mesh>
+              <boxGeometry args={[0.74, 1.64, 0.09]} />
+              <primitive object={frameMaterial} attach="material" />
+            </mesh>
+            {/* Glass */}
+            <mesh position={[0, 0, 0.05]}>
+              <boxGeometry args={[0.66, 1.54, 0.03]} />
+              <meshStandardMaterial color="#e3f2fd" transparent opacity={0.6} metalness={0.4} />
+            </mesh>
+            {/* Crossbars */}
+            <mesh position={[0, 0, 0.07]}>
+              <boxGeometry args={[0.05, 1.54, 0.01]} />
+              <primitive object={crossbarMaterial} attach="material" />
+            </mesh>
+            <mesh position={[0, 0, 0.07]}>
+              <boxGeometry args={[0.66, 0.05, 0.01]} />
+              <primitive object={crossbarMaterial} attach="material" />
+            </mesh>
+            {/* Handle */}
+            <mesh position={[0.25, 0, 0.12]} ref={el => { if (el) el.rotation.set(Math.PI / 2, 0, 0); }}>
+              <cylinderGeometry args={[0.03, 0.03, 0.18, 16]} />
+              <primitive object={handleMaterial} attach="material" />
+            </mesh>
+          </group>
+          {/* Right Door (slides right) */}
+          <group position={[0.7 + 0.5 * doorAnim, 1.2, 6.61]}>
+            {/* Frame */}
+            <mesh>
+              <boxGeometry args={[0.74, 1.64, 0.09]} />
+              <primitive object={frameMaterial} attach="material" />
+            </mesh>
+            {/* Glass */}
+            <mesh position={[0, 0, 0.05]}>
+              <boxGeometry args={[0.66, 1.54, 0.03]} />
+              <meshStandardMaterial color="#e3f2fd" transparent opacity={0.6} metalness={0.4} />
+            </mesh>
+            {/* Crossbars */}
+            <mesh position={[0, 0, 0.07]}>
+              <boxGeometry args={[0.05, 1.54, 0.01]} />
+              <primitive object={crossbarMaterial} attach="material" />
+            </mesh>
+            <mesh position={[0, 0, 0.07]}>
+              <boxGeometry args={[0.66, 0.05, 0.01]} />
+              <primitive object={crossbarMaterial} attach="material" />
+            </mesh>
+            {/* Handle */}
+            <mesh position={[-0.25, 0, 0.12]} ref={el => { if (el) el.rotation.set(Math.PI / 2, 0, 0); }}>
+              <cylinderGeometry args={[0.03, 0.03, 0.18, 16]} />
+              <primitive object={handleMaterial} attach="material" />
+            </mesh>
+          </group>
           {/* Entrance Steps (directly in front of doors, below canopy) */}
           <mesh position={[0, 0.25, 7.1]} receiveShadow>
             <boxGeometry args={[4.5, 0.2, 0.8]} />
@@ -360,8 +662,8 @@ function HospitalContent({ isNight = false }: { isNight?: boolean }) {
             </Text>
           </group>
 
-          {/* Emergency Sign: attached board with bold style */}
-          <group position={[-10, 2.2, 15.5]} rotation={[0, Math.PI/4, 0]}>
+          {/* Emergency Sign: attached board with bold style (moved forward for full visibility) */}
+          <group position={[-10, 2.2, 18]} rotation={[0, Math.PI/8, 0]}>
             <mesh>
               <boxGeometry args={[2.6, 0.7, 0.13]} />
               <meshStandardMaterial color="#c62828" />
@@ -379,8 +681,8 @@ function HospitalContent({ isNight = false }: { isNight?: boolean }) {
             </Text>
           </group>
 
-          {/* Directional Sign: Parking */}
-          <group position={[8, 1.5, 18.5]} rotation={[0, -Math.PI/8, 0]}>
+          {/* Directional Sign: Parking (moved forward for full visibility) */}
+          <group position={[8, 1.5, 20]} rotation={[0, -Math.PI/12, 0]}>
             <mesh>
               <boxGeometry args={[1.7, 0.45, 0.09]} />
               <meshStandardMaterial color="#388e3c" />
@@ -396,15 +698,15 @@ function HospitalContent({ isNight = false }: { isNight?: boolean }) {
             </Text>
           </group>
 
-          {/* Directional Sign: Pharmacy */}
-          <group position={[14.5, 2, -6]} rotation={[0, Math.PI/2.2, 0]}>
-            <mesh>
+          {/* Directional Sign: Pharmacy (attached to building corner, flush with wall) */}
+          <group position={[15.05, 3.2, -6]} rotation={[0, Math.PI/2, 0]}>
+            <mesh position={[0.13, 0, 0]}>
               <boxGeometry args={[1.7, 0.45, 0.09]} />
               <meshStandardMaterial color="#00897b" />
             </mesh>
             <Text
-              position={[0, 0.01, 0.05]}
-              fontSize={0.28}
+              position={[0.13, 0.01, 0.05]}
+              fontSize={0.32}
               color="#fff"
               anchorX="center"
               anchorY="middle"
@@ -413,14 +715,14 @@ function HospitalContent({ isNight = false }: { isNight?: boolean }) {
             </Text>
           </group>
 
-          {/* Directional Sign: Wards */}
-          <group position={[-14.5, 2, -6]} rotation={[0, -Math.PI/2.2, 0]}>
-            <mesh>
+          {/* Directional Sign: Wards (attached to building corner, flush with wall) */}
+          <group position={[-15.05, 2, -6]} rotation={[0, -Math.PI/2, 0]}>
+            <mesh position={[-0.13, 0, 0]}>
               <boxGeometry args={[1.7, 0.45, 0.09]} />
               <meshStandardMaterial color="#5e35b1" />
             </mesh>
             <Text
-              position={[0, 0.01, 0.05]}
+              position={[-0.13, 0.01, 0.05]}
               fontSize={0.28}
               color="#fff"
               anchorX="center"
@@ -429,27 +731,505 @@ function HospitalContent({ isNight = false }: { isNight?: boolean }) {
               WARDS
             </Text>
           </group>
-          {/* Windows - grid pattern (restored full row above entrance) */}
+          {/* Realistic Front Windows - with frames, glass, crossbars */}
           {Array.from({ length: 3 }).map((_, floor) =>
-            Array.from({ length: 6 }).map((_, col) => (
-              <mesh
-                key={`window-${floor}-${col}`}
-                position={[-6 + col * 2.4, 7.2 - floor * 2.5, 6.1]}
-                material={windowMaterial}
-              >
-                <boxGeometry args={[1.5, 1.2, 0.1]} />
-              </mesh>
-            ))
+            Array.from({ length: 6 }).map((_, col) => {
+              const x = -6 + col * 2.4;
+              const y = 7.2 - floor * 2.5;
+              return (
+                <group key={`window-${floor}-${col}`}>
+                  {/* Window Frame */}
+                  <mesh position={[x, y, 6.1]}>
+                    <boxGeometry args={[1.54, 1.24, 0.13]} />
+                    <primitive object={frameMaterial} attach="material" />
+                  </mesh>
+                  {/* Window Glass */}
+                  <mesh position={[x, y, 6.16]}>
+                    <boxGeometry args={[1.44, 1.14, 0.03]} />
+                    <meshStandardMaterial
+                      color={isNight ? '#ffe066' : '#b3e5fc'}
+                      emissive={isNight ? '#ffe066' : '#000000'}
+                      emissiveIntensity={isNight ? 0.55 : 0}
+                      transparent
+                      opacity={isNight ? 0.92 : 0.7}
+                    />
+                  </mesh>
+                  {/* Window Crossbars */}
+                  <mesh position={[x, y, 6.18]}>
+                    <boxGeometry args={[0.06, 1.14, 0.01]} />
+                    <primitive object={crossbarMaterial} attach="material" />
+                  </mesh>
+                  <mesh position={[x, y, 6.18]}>
+                    <boxGeometry args={[1.44, 0.06, 0.01]} />
+                    <primitive object={crossbarMaterial} attach="material" />
+                  </mesh>
+                </group>
+              );
+            })
           )}
           {/* Side Wings (reduced height, visually matching center block) */}
-          <mesh position={[-12, 3.5, 0]} castShadow receiveShadow>
-            <boxGeometry args={[6, 7, 12]} />
-            <meshStandardMaterial color="#e3eafc" />
-          </mesh>
-          <mesh position={[12, 3.5, 0]} castShadow receiveShadow>
-            <boxGeometry args={[6, 7, 12]} />
-            <meshStandardMaterial color="#e3eafc" />
-          </mesh>
+          {/* Entrance Lighting - Left Side Building (Front) */}
+          <pointLight position={[-12, 2.2, 7.2]} intensity={isNight ? 1.1 : 0.25} color="#fffde7" distance={7} decay={2} />
+          {isNight && (
+            <mesh position={[-12, 2.2, 7.1]}>
+              <sphereGeometry args={[0.14, 8, 8]} />
+              <meshStandardMaterial color="#fffde7" emissive="#fffde7" emissiveIntensity={1.0} />
+            </mesh>
+          )}
+          {/* Entrance Lighting - Left Side Building (Back) */}
+          <pointLight position={[-12, 2.2, -7.2]} intensity={isNight ? 1.1 : 0.25} color="#fffde7" distance={7} decay={2} />
+          {isNight && (
+            <mesh position={[-12, 2.2, -7.1]}>
+              <sphereGeometry args={[0.14, 8, 8]} />
+              <meshStandardMaterial color="#fffde7" emissive="#fffde7" emissiveIntensity={1.0} />
+            </mesh>
+          )}
+                      {/* Back Entrance - Left Side Building (auto-opening double doors) */}
+                      {/* Left Door (slides left) */}
+                      <group position={[-0.7 - 0.5 * backDoorAnim, -2.3, -6.1]}>
+                        <mesh>
+                          <boxGeometry args={[0.74, 1.64, 0.09]} />
+                          <primitive object={frameMaterial} attach="material" />
+                        </mesh>
+                        <mesh position={[0, 0, -0.05]}>
+                          <boxGeometry args={[0.66, 1.54, 0.03]} />
+                          <meshStandardMaterial color="#e3f2fd" transparent opacity={0.6} metalness={0.4} />
+                        </mesh>
+                        <mesh position={[0, 0, -0.07]}>
+                          <boxGeometry args={[0.05, 1.54, 0.01]} />
+                          <primitive object={crossbarMaterial} attach="material" />
+                        </mesh>
+                        <mesh position={[0, 0, -0.07]}>
+                          <boxGeometry args={[0.66, 0.05, 0.01]} />
+                          <primitive object={crossbarMaterial} attach="material" />
+                        </mesh>
+                        <mesh position={[0.25, 0, -0.12]} ref={el => { if (el) el.rotation.set(Math.PI / 2, 0, 0); }}>
+                          <cylinderGeometry args={[0.03, 0.03, 0.18, 16]} />
+                          <primitive object={handleMaterial} attach="material" />
+                        </mesh>
+                      </group>
+                      {/* Right Door (slides right) */}
+                      <group position={[0.7 + 0.5 * backDoorAnim, -2.3, -6.1]}>
+                        <mesh>
+                          <boxGeometry args={[0.74, 1.64, 0.09]} />
+                          <primitive object={frameMaterial} attach="material" />
+                        </mesh>
+                        <mesh position={[0, 0, -0.05]}>
+                          <boxGeometry args={[0.66, 1.54, 0.03]} />
+                          <meshStandardMaterial color="#e3f2fd" transparent opacity={0.6} metalness={0.4} />
+                        </mesh>
+                        <mesh position={[0, 0, -0.07]}>
+                          <boxGeometry args={[0.05, 1.54, 0.01]} />
+                          <primitive object={crossbarMaterial} attach="material" />
+                        </mesh>
+                        <mesh position={[0, 0, -0.07]}>
+                          <boxGeometry args={[0.66, 0.05, 0.01]} />
+                          <primitive object={crossbarMaterial} attach="material" />
+                        </mesh>
+                        <mesh position={[-0.25, 0, -0.12]} ref={el => { if (el) el.rotation.set(Math.PI / 2, 0, 0); }}>
+                          <cylinderGeometry args={[0.03, 0.03, 0.18, 16]} />
+                          <primitive object={handleMaterial} attach="material" />
+                        </mesh>
+                      </group>
+          <group position={[-12, 3.5, 0]}>
+            {/* Main block */}
+            <mesh castShadow receiveShadow>
+              <boxGeometry args={[6, 7, 12]} />
+              <meshStandardMaterial color="#e3eafc" />
+            </mesh>
+            {/* Spacious Back Windows - Left Side Building (2 rows, 2 columns) */}
+            {Array.from({ length: 2 }).map((_, floor) =>
+              Array.from({ length: 2 }).map((_, col) => {
+                const x = -1.5 + col * 3;
+                const y = 2.2 - floor * 2.5;
+                return (
+                  <group key={`side-left-back-window-${floor}-${col}`}>
+                    {/* Window Frame */}
+                    <mesh position={[x, y, -6.1]}>
+                      <boxGeometry args={[2.2, 1.4, 0.13]} />
+                      <primitive object={frameMaterial} attach="material" />
+                    </mesh>
+                    {/* Window Glass */}
+                    <mesh position={[x, y, -6.16]}>
+                      <boxGeometry args={[2.1, 1.3, 0.03]} />
+                      <meshStandardMaterial
+                        color={isNight ? '#ffe066' : '#b3e5fc'}
+                        emissive={isNight ? '#ffe066' : '#000000'}
+                        emissiveIntensity={isNight ? 0.55 : 0}
+                        transparent
+                        opacity={isNight ? 0.92 : 0.7}
+                      />
+                    </mesh>
+                    {/* Window Crossbars */}
+                    <mesh position={[x, y, -6.18]}>
+                      <boxGeometry args={[0.08, 1.3, 0.01]} />
+                      <primitive object={crossbarMaterial} attach="material" />
+                    </mesh>
+                    <mesh position={[x, y, -6.18]}>
+                      <boxGeometry args={[2.1, 0.08, 0.01]} />
+                      <primitive object={crossbarMaterial} attach="material" />
+                    </mesh>
+                  </group>
+                );
+              })
+            )}
+            {/* Realistic Windows - 2 rows, 3 columns (front) */}
+            {Array.from({ length: 2 }).map((_, floor) =>
+              Array.from({ length: 3 }).map((_, col) => {
+                const x = -1.8 + col * 1.8;
+                const y = 2.2 - floor * 2.5;
+                return (
+                  <group key={`side-left-window-front-${floor}-${col}`}>
+                    {/* Window Frame */}
+                    <mesh position={[x, y, 6.1]}>
+                      <boxGeometry args={[1.54, 1.24, 0.13]} />
+                      <primitive object={frameMaterial} attach="material" />
+                    </mesh>
+                    {/* Window Glass */}
+                    <mesh position={[x, y, 6.16]}>
+                      <boxGeometry args={[1.44, 1.14, 0.03]} />
+                      <meshStandardMaterial
+                        color={isNight ? '#ffe066' : '#b3e5fc'}
+                        emissive={isNight ? '#ffe066' : '#000000'}
+                        emissiveIntensity={isNight ? 0.55 : 0}
+                        transparent
+                        opacity={isNight ? 0.92 : 0.7}
+                      />
+                    </mesh>
+                    {/* Window Crossbars */}
+                    <mesh position={[x, y, 6.18]}>
+                      <boxGeometry args={[0.06, 1.14, 0.01]} />
+                      <primitive object={crossbarMaterial} attach="material" />
+                    </mesh>
+                    <mesh position={[x, y, 6.18]}>
+                      <boxGeometry args={[1.44, 0.06, 0.01]} />
+                      <primitive object={crossbarMaterial} attach="material" />
+                    </mesh>
+                  </group>
+                );
+              })
+            )}
+            {/* Realistic Windows - 2 rows, 2 columns (left side) */}
+            {Array.from({ length: 2 }).map((_, floor) =>
+              Array.from({ length: 2 }).map((_, col) => {
+                const z = -3 + col * 6;
+                const y = 2.2 - floor * 2.5;
+                return (
+                  <group key={`side-left-window-left-${floor}-${col}`}>
+                    {/* Window Frame */}
+                    <mesh position={[-3.11, y, z]} rotation={[0, Math.PI / 2, 0]}>
+                      <boxGeometry args={[1.54, 1.24, 0.13]} />
+                      <primitive object={frameMaterial} attach="material" />
+                    </mesh>
+                    {/* Window Glass */}
+                    <mesh position={[-3.16, y, z]} rotation={[0, Math.PI / 2, 0]}>
+                      <boxGeometry args={[1.44, 1.14, 0.03]} />
+                      <meshStandardMaterial
+                        color={isNight ? '#ffe066' : '#b3e5fc'}
+                        emissive={isNight ? '#ffe066' : '#000000'}
+                        emissiveIntensity={isNight ? 0.55 : 0}
+                        transparent
+                        opacity={isNight ? 0.92 : 0.7}
+                      />
+                    </mesh>
+                    {/* Window Crossbars */}
+                    <mesh position={[-3.18, y, z]} rotation={[0, Math.PI / 2, 0]}>
+                      <boxGeometry args={[0.06, 1.14, 0.01]} />
+                      <primitive object={crossbarMaterial} attach="material" />
+                    </mesh>
+                    <mesh position={[-3.18, y, z]} rotation={[0, Math.PI / 2, 0]}>
+                      <boxGeometry args={[1.44, 0.06, 0.01]} />
+                      <primitive object={crossbarMaterial} attach="material" />
+                    </mesh>
+                  </group>
+                );
+              })
+            )}
+            {/* Animated Auto-Opening Entrance Doors for Side Building */}
+            {/* Left Door (slides left, flush with building) */}
+            <group position={[-0.7 - 0.5 * sideDoorAnim, -2.3, 6.01]}>
+              {/* Frame */}
+              <mesh>
+                <boxGeometry args={[0.74, 1.64, 0.09]} />
+                <primitive object={frameMaterial} attach="material" />
+              </mesh>
+              {/* Glass */}
+              <mesh position={[0, 0, 0.05]}>
+                <boxGeometry args={[0.66, 1.54, 0.03]} />
+                <meshStandardMaterial color="#e3f2fd" transparent opacity={0.6} metalness={0.4} />
+              </mesh>
+              {/* Crossbars */}
+              <mesh position={[0, 0, 0.07]}>
+                <boxGeometry args={[0.05, 1.54, 0.01]} />
+                <primitive object={crossbarMaterial} attach="material" />
+              </mesh>
+              <mesh position={[0, 0, 0.07]}>
+                <boxGeometry args={[0.66, 0.05, 0.01]} />
+                <primitive object={crossbarMaterial} attach="material" />
+              </mesh>
+              {/* Handle */}
+              <mesh position={[0.25, 0, 0.12]} ref={el => { if (el) el.rotation.set(Math.PI / 2, 0, 0); }}>
+                <cylinderGeometry args={[0.03, 0.03, 0.18, 16]} />
+                <primitive object={handleMaterial} attach="material" />
+              </mesh>
+            </group>
+            {/* Right Door (slides right, flush with building, no gap) */}
+            <group position={[0.7 + 0.5 * sideDoorAnim, -2.3, 6.0]}>
+              {/* Frame */}
+              <mesh>
+                <boxGeometry args={[0.74, 1.64, 0.09]} />
+                <primitive object={frameMaterial} attach="material" />
+              </mesh>
+              {/* Glass */}
+              <mesh position={[0, 0, 0.05]}>
+                <boxGeometry args={[0.66, 1.54, 0.03]} />
+                <meshStandardMaterial color="#e3f2fd" transparent opacity={0.6} metalness={0.4} />
+              </mesh>
+              {/* Crossbars */}
+              <mesh position={[0, 0, 0.07]}>
+                <boxGeometry args={[0.05, 1.54, 0.01]} />
+                <primitive object={crossbarMaterial} attach="material" />
+              </mesh>
+              <mesh position={[0, 0, 0.07]}>
+                <boxGeometry args={[0.66, 0.05, 0.01]} />
+                <primitive object={crossbarMaterial} attach="material" />
+              </mesh>
+              {/* Handle */}
+              <mesh position={[-0.25, 0, 0.12]} ref={el => { if (el) el.rotation.set(Math.PI / 2, 0, 0); }}>
+                <cylinderGeometry args={[0.03, 0.03, 0.18, 16]} />
+                <primitive object={handleMaterial} attach="material" />
+              </mesh>
+            </group>
+          </group>
+          {/* Entrance Lighting - Right Side Building (Front) */}
+          <pointLight position={[12, 2.2, 7.2]} intensity={isNight ? 1.1 : 0.25} color="#fffde7" distance={7} decay={2} />
+          {isNight && (
+            <mesh position={[12, 2.2, 7.1]}>
+              <sphereGeometry args={[0.14, 8, 8]} />
+              <meshStandardMaterial color="#fffde7" emissive="#fffde7" emissiveIntensity={1.0} />
+            </mesh>
+          )}
+          {/* Entrance Lighting - Right Side Building (Back) */}
+          <pointLight position={[12, 2.2, -7.2]} intensity={isNight ? 1.1 : 0.25} color="#fffde7" distance={7} decay={2} />
+          {isNight && (
+            <mesh position={[12, 2.2, -7.1]}>
+              <sphereGeometry args={[0.14, 8, 8]} />
+              <meshStandardMaterial color="#fffde7" emissive="#fffde7" emissiveIntensity={1.0} />
+            </mesh>
+          )}
+                      {/* Back Entrance - Right Side Building (auto-opening double doors) */}
+                      {/* Left Door (slides left) */}
+                      <group position={[-0.7 - 0.5 * backDoorAnim, -2.3, -6.1]}>
+                        <mesh>
+                          <boxGeometry args={[0.74, 1.64, 0.09]} />
+                          <primitive object={frameMaterial} attach="material" />
+                        </mesh>
+                        <mesh position={[0, 0, -0.05]}>
+                          <boxGeometry args={[0.66, 1.54, 0.03]} />
+                          <meshStandardMaterial color="#e3f2fd" transparent opacity={0.6} metalness={0.4} />
+                        </mesh>
+                        <mesh position={[0, 0, -0.07]}>
+                          <boxGeometry args={[0.05, 1.54, 0.01]} />
+                          <primitive object={crossbarMaterial} attach="material" />
+                        </mesh>
+                        <mesh position={[0, 0, -0.07]}>
+                          <boxGeometry args={[0.66, 0.05, 0.01]} />
+                          <primitive object={crossbarMaterial} attach="material" />
+                        </mesh>
+                        <mesh position={[0.25, 0, -0.12]} ref={el => { if (el) el.rotation.set(Math.PI / 2, 0, 0); }}>
+                          <cylinderGeometry args={[0.03, 0.03, 0.18, 16]} />
+                          <primitive object={handleMaterial} attach="material" />
+                        </mesh>
+                      </group>
+                      {/* Right Door (slides right) */}
+                      <group position={[0.7 + 0.5 * backDoorAnim, -2.3, -6.1]}>
+                        <mesh>
+                          <boxGeometry args={[0.74, 1.64, 0.09]} />
+                          <primitive object={frameMaterial} attach="material" />
+                        </mesh>
+                        <mesh position={[0, 0, -0.05]}>
+                          <boxGeometry args={[0.66, 1.54, 0.03]} />
+                          <meshStandardMaterial color="#e3f2fd" transparent opacity={0.6} metalness={0.4} />
+                        </mesh>
+                        <mesh position={[0, 0, -0.07]}>
+                          <boxGeometry args={[0.05, 1.54, 0.01]} />
+                          <primitive object={crossbarMaterial} attach="material" />
+                        </mesh>
+                        <mesh position={[0, 0, -0.07]}>
+                          <boxGeometry args={[0.66, 0.05, 0.01]} />
+                          <primitive object={crossbarMaterial} attach="material" />
+                        </mesh>
+                        <mesh position={[-0.25, 0, -0.12]} ref={el => { if (el) el.rotation.set(Math.PI / 2, 0, 0); }}>
+                          <cylinderGeometry args={[0.03, 0.03, 0.18, 16]} />
+                          <primitive object={handleMaterial} attach="material" />
+                        </mesh>
+                      </group>
+          <group position={[12, 3.5, 0]}>
+            {/* Main block */}
+            <mesh castShadow receiveShadow>
+              <boxGeometry args={[6, 7, 12]} />
+              <meshStandardMaterial color="#e3eafc" />
+            </mesh>
+            {/* Spacious Back Windows - Right Side Building (2 rows, 2 columns) */}
+            {Array.from({ length: 2 }).map((_, floor) =>
+              Array.from({ length: 2 }).map((_, col) => {
+                const x = -1.5 + col * 3;
+                const y = 2.2 - floor * 2.5;
+                return (
+                  <group key={`side-right-back-window-${floor}-${col}`}>
+                    {/* Window Frame */}
+                    <mesh position={[x, y, -6.1]}>
+                      <boxGeometry args={[2.2, 1.4, 0.13]} />
+                      <primitive object={frameMaterial} attach="material" />
+                    </mesh>
+                    {/* Window Glass */}
+                    <mesh position={[x, y, -6.16]}>
+                      <boxGeometry args={[2.1, 1.3, 0.03]} />
+                      <meshStandardMaterial
+                        color={isNight ? '#ffe066' : '#b3e5fc'}
+                        emissive={isNight ? '#ffe066' : '#000000'}
+                        emissiveIntensity={isNight ? 0.55 : 0}
+                        transparent
+                        opacity={isNight ? 0.92 : 0.7}
+                      />
+                    </mesh>
+                    {/* Window Crossbars */}
+                    <mesh position={[x, y, -6.18]}>
+                      <boxGeometry args={[0.08, 1.3, 0.01]} />
+                      <primitive object={crossbarMaterial} attach="material" />
+                    </mesh>
+                    <mesh position={[x, y, -6.18]}>
+                      <boxGeometry args={[2.1, 0.08, 0.01]} />
+                      <primitive object={crossbarMaterial} attach="material" />
+                    </mesh>
+                  </group>
+                );
+              })
+            )}
+            {/* Realistic Windows - 2 rows, 3 columns (front) */}
+            {Array.from({ length: 2 }).map((_, floor) =>
+              Array.from({ length: 3 }).map((_, col) => {
+                const x = -1.8 + col * 1.8;
+                const y = 2.2 - floor * 2.5;
+                return (
+                  <group key={`side-right-window-front-${floor}-${col}`}>
+                    {/* Window Frame */}
+                    <mesh position={[x, y, 6.1]}>
+                      <boxGeometry args={[1.54, 1.24, 0.13]} />
+                      <primitive object={frameMaterial} attach="material" />
+                    </mesh>
+                    {/* Window Glass */}
+                    <mesh position={[x, y, 6.16]}>
+                      <boxGeometry args={[1.44, 1.14, 0.03]} />
+                      <meshStandardMaterial
+                        color={isNight ? '#ffe066' : '#b3e5fc'}
+                        emissive={isNight ? '#ffe066' : '#000000'}
+                        emissiveIntensity={isNight ? 0.55 : 0}
+                        transparent
+                        opacity={isNight ? 0.92 : 0.7}
+                      />
+                    </mesh>
+                    {/* Window Crossbars */}
+                    <mesh position={[x, y, 6.18]}>
+                      <boxGeometry args={[0.06, 1.14, 0.01]} />
+                      <primitive object={crossbarMaterial} attach="material" />
+                    </mesh>
+                    <mesh position={[x, y, 6.18]}>
+                      <boxGeometry args={[1.44, 0.06, 0.01]} />
+                      <primitive object={crossbarMaterial} attach="material" />
+                    </mesh>
+                  </group>
+                );
+              })
+            )}
+            {/* Realistic Windows - 2 rows, 2 columns (right side) */}
+            {Array.from({ length: 2 }).map((_, floor) =>
+              Array.from({ length: 2 }).map((_, col) => {
+                const z = -3 + col * 6;
+                const y = 2.2 - floor * 2.5;
+                return (
+                  <group key={`side-right-window-right-${floor}-${col}`}>
+                    {/* Window Frame */}
+                    <mesh position={[3.11, y, z]} rotation={[0, -Math.PI / 2, 0]}>
+                      <boxGeometry args={[1.54, 1.24, 0.13]} />
+                      <primitive object={frameMaterial} attach="material" />
+                    </mesh>
+                    {/* Window Glass */}
+                    <mesh position={[3.16, y, z]} rotation={[0, -Math.PI / 2, 0]}>
+                      <boxGeometry args={[1.44, 1.14, 0.03]} />
+                      <meshStandardMaterial
+                        color={isNight ? '#ffe066' : '#b3e5fc'}
+                        emissive={isNight ? '#ffe066' : '#000000'}
+                        emissiveIntensity={isNight ? 0.55 : 0}
+                        transparent
+                        opacity={isNight ? 0.92 : 0.7}
+                      />
+                    </mesh>
+                    {/* Window Crossbars */}
+                    <mesh position={[3.18, y, z]} rotation={[0, -Math.PI / 2, 0]}>
+                      <boxGeometry args={[0.06, 1.14, 0.01]} />
+                      <primitive object={crossbarMaterial} attach="material" />
+                    </mesh>
+                    <mesh position={[3.18, y, z]} rotation={[0, -Math.PI / 2, 0]}>
+                      <boxGeometry args={[1.44, 0.06, 0.01]} />
+                      <primitive object={crossbarMaterial} attach="material" />
+                    </mesh>
+                  </group>
+                );
+              })
+            )}
+            {/* Animated Auto-Opening Entrance Doors for Side Building */}
+            {/* Left Door (slides left, at bottom entrance) */}
+            <group position={[-0.7 - 0.5 * sideDoorAnim, -2.3, 6.01]}>
+              {/* Frame */}
+              <mesh>
+                <boxGeometry args={[0.74, 1.64, 0.09]} />
+                <primitive object={frameMaterial} attach="material" />
+              </mesh>
+              {/* Glass */}
+              <mesh position={[0, 0, 0.05]}>
+                <boxGeometry args={[0.66, 1.54, 0.03]} />
+                <meshStandardMaterial color="#e3f2fd" transparent opacity={0.6} metalness={0.4} />
+              </mesh>
+              {/* Crossbars */}
+              <mesh position={[0, 0, 0.07]}>
+                <boxGeometry args={[0.05, 1.54, 0.01]} />
+                <primitive object={crossbarMaterial} attach="material" />
+              </mesh>
+              <mesh position={[0, 0, 0.07]}>
+                <boxGeometry args={[0.66, 0.05, 0.01]} />
+                <primitive object={crossbarMaterial} attach="material" />
+              </mesh>
+              {/* Handle */}
+              <mesh position={[0.25, 0, 0.12]} ref={el => { if (el) el.rotation.set(Math.PI / 2, 0, 0); }}>
+                <cylinderGeometry args={[0.03, 0.03, 0.18, 16]} />
+                <primitive object={handleMaterial} attach="material" />
+              </mesh>
+            </group>
+            {/* Right Door (slides right) */}
+            <group position={[0.7 + 0.5 * sideDoorAnim, -2.3, 6.01]}>
+              <mesh>
+                <boxGeometry args={[0.74, 1.64, 0.09]} />
+                <primitive object={frameMaterial} attach="material" />
+              </mesh>
+              <mesh position={[0, 0, 0.05]}>
+                <boxGeometry args={[0.66, 1.54, 0.03]} />
+                <meshStandardMaterial color="#e3f2fd" transparent opacity={0.6} metalness={0.4} />
+              </mesh>
+              <mesh position={[0, 0, 0.07]}>
+                <boxGeometry args={[0.05, 1.54, 0.01]} />
+                <primitive object={crossbarMaterial} attach="material" />
+              </mesh>
+              <mesh position={[0, 0, 0.07]}>
+                <boxGeometry args={[0.66, 0.05, 0.01]} />
+                <primitive object={crossbarMaterial} attach="material" />
+              </mesh>
+              <mesh position={[-0.25, 0, 0.12]} ref={el => { if (el) el.rotation.set(Math.PI / 2, 0, 0); }}>
+                <cylinderGeometry args={[0.03, 0.03, 0.18, 16]} />
+                <primitive object={handleMaterial} attach="material" />
+              </mesh>
+            </group>
+          </group>
           {/* Side Wing Windows - Left (3 rows, 2 columns, matching center block style) */}
           {Array.from({ length: 3 }).map((_, floor) =>
             Array.from({ length: 2 }).map((_, col) => (
