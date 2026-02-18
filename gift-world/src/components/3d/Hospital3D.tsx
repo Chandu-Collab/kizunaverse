@@ -832,6 +832,61 @@ function HospitalContent({ isNight = false }: { isNight?: boolean }) {
                         </mesh>
                       </group>
           <group position={[-12, 3.5, 0]}>
+                        {/* Back Entrance - Left Side Building (auto-opening double doors, flush with wall) */}
+                        {/* Left Door (slides left) */}
+                        <group position={[-0.7 - 0.5 * backDoorAnim, -2.3, -6.1]}>
+                          {/* Frame */}
+                          <mesh>
+                            <boxGeometry args={[0.74, 1.64, 0.09]} />
+                            <primitive object={frameMaterial} attach="material" />
+                          </mesh>
+                          {/* Glass */}
+                          <mesh position={[0, 0, -0.05]}>
+                            <boxGeometry args={[0.66, 1.54, 0.03]} />
+                            <meshStandardMaterial color="#e3f2fd" transparent opacity={0.6} metalness={0.4} />
+                          </mesh>
+                          {/* Crossbars */}
+                          <mesh position={[0, 0, -0.07]}>
+                            <boxGeometry args={[0.05, 1.54, 0.01]} />
+                            <primitive object={crossbarMaterial} attach="material" />
+                          </mesh>
+                          <mesh position={[0, 0, -0.07]}>
+                            <boxGeometry args={[0.66, 0.05, 0.01]} />
+                            <primitive object={crossbarMaterial} attach="material" />
+                          </mesh>
+                          {/* Handle */}
+                          <mesh position={[0.25, 0, -0.12]} ref={el => { if (el) el.rotation.set(Math.PI / 2, 0, 0); }}>
+                            <cylinderGeometry args={[0.03, 0.03, 0.18, 16]} />
+                            <primitive object={handleMaterial} attach="material" />
+                          </mesh>
+                        </group>
+                        {/* Right Door (slides right) */}
+                        <group position={[0.7 + 0.5 * backDoorAnim, -2.3, -6.1]}>
+                          {/* Frame */}
+                          <mesh>
+                            <boxGeometry args={[0.74, 1.64, 0.09]} />
+                            <primitive object={frameMaterial} attach="material" />
+                          </mesh>
+                          {/* Glass */}
+                          <mesh position={[0, 0, -0.05]}>
+                            <boxGeometry args={[0.66, 1.54, 0.03]} />
+                            <meshStandardMaterial color="#e3f2fd" transparent opacity={0.6} metalness={0.4} />
+                          </mesh>
+                          {/* Crossbars */}
+                          <mesh position={[0, 0, -0.07]}>
+                            <boxGeometry args={[0.05, 1.54, 0.01]} />
+                            <primitive object={crossbarMaterial} attach="material" />
+                          </mesh>
+                          <mesh position={[0, 0, -0.07]}>
+                            <boxGeometry args={[0.66, 0.05, 0.01]} />
+                            <primitive object={crossbarMaterial} attach="material" />
+                          </mesh>
+                          {/* Handle */}
+                          <mesh position={[-0.25, 0, -0.12]} ref={el => { if (el) el.rotation.set(Math.PI / 2, 0, 0); }}>
+                            <cylinderGeometry args={[0.03, 0.03, 0.18, 16]} />
+                            <primitive object={handleMaterial} attach="material" />
+                          </mesh>
+                        </group>
             {/* Main block */}
             <mesh castShadow receiveShadow>
               <boxGeometry args={[6, 7, 12]} />
@@ -1065,6 +1120,61 @@ function HospitalContent({ isNight = false }: { isNight?: boolean }) {
                         </mesh>
                       </group>
           <group position={[12, 3.5, 0]}>
+                        {/* Back Entrance - Right Side Building (auto-opening double doors, flush with wall) */}
+                        {/* Left Door (slides left) */}
+                        <group position={[-0.7 - 0.5 * backDoorAnim, -2.3, -6.1]}>
+                          {/* Frame */}
+                          <mesh>
+                            <boxGeometry args={[0.74, 1.64, 0.09]} />
+                            <primitive object={frameMaterial} attach="material" />
+                          </mesh>
+                          {/* Glass */}
+                          <mesh position={[0, 0, -0.05]}>
+                            <boxGeometry args={[0.66, 1.54, 0.03]} />
+                            <meshStandardMaterial color="#e3f2fd" transparent opacity={0.6} metalness={0.4} />
+                          </mesh>
+                          {/* Crossbars */}
+                          <mesh position={[0, 0, -0.07]}>
+                            <boxGeometry args={[0.05, 1.54, 0.01]} />
+                            <primitive object={crossbarMaterial} attach="material" />
+                          </mesh>
+                          <mesh position={[0, 0, -0.07]}>
+                            <boxGeometry args={[0.66, 0.05, 0.01]} />
+                            <primitive object={crossbarMaterial} attach="material" />
+                          </mesh>
+                          {/* Handle */}
+                          <mesh position={[0.25, 0, -0.12]} ref={el => { if (el) el.rotation.set(Math.PI / 2, 0, 0); }}>
+                            <cylinderGeometry args={[0.03, 0.03, 0.18, 16]} />
+                            <primitive object={handleMaterial} attach="material" />
+                          </mesh>
+                        </group>
+                        {/* Right Door (slides right) */}
+                        <group position={[0.7 + 0.5 * backDoorAnim, -2.3, -6.1]}>
+                          {/* Frame */}
+                          <mesh>
+                            <boxGeometry args={[0.74, 1.64, 0.09]} />
+                            <primitive object={frameMaterial} attach="material" />
+                          </mesh>
+                          {/* Glass */}
+                          <mesh position={[0, 0, -0.05]}>
+                            <boxGeometry args={[0.66, 1.54, 0.03]} />
+                            <meshStandardMaterial color="#e3f2fd" transparent opacity={0.6} metalness={0.4} />
+                          </mesh>
+                          {/* Crossbars */}
+                          <mesh position={[0, 0, -0.07]}>
+                            <boxGeometry args={[0.05, 1.54, 0.01]} />
+                            <primitive object={crossbarMaterial} attach="material" />
+                          </mesh>
+                          <mesh position={[0, 0, -0.07]}>
+                            <boxGeometry args={[0.66, 0.05, 0.01]} />
+                            <primitive object={crossbarMaterial} attach="material" />
+                          </mesh>
+                          {/* Handle */}
+                          <mesh position={[-0.25, 0, -0.12]} ref={el => { if (el) el.rotation.set(Math.PI / 2, 0, 0); }}>
+                            <cylinderGeometry args={[0.03, 0.03, 0.18, 16]} />
+                            <primitive object={handleMaterial} attach="material" />
+                          </mesh>
+                        </group>
             {/* Main block */}
             <mesh castShadow receiveShadow>
               <boxGeometry args={[6, 7, 12]} />
