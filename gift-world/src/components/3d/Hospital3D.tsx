@@ -7,6 +7,8 @@ import { useRef, useState, useEffect, Suspense } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Environment, Float, Text, Sky, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
+import StoreRoom3D from "./StoreRoom3D";
+import GeneratorRoom3D from "./GeneratorRoom3D";
 import { ReceptionRoom, WardRoom, OperationTheater, PharmacyRoom } from "./HospitalRooms";
 import Ambulance3D from "./Ambulance3D";
 import ParkedCar3D from "./ParkedCar3D";
@@ -193,6 +195,191 @@ function HospitalContent({ isNight = false }: { isNight?: boolean }) {
             <boxGeometry args={[18, 8, 12]} />
             <meshStandardMaterial color={isNight ? "#232b3b" : "#e3eafc"} roughness={0.4} metalness={0.1} />
           </mesh>
+          {/* Rooftop Additions */}
+          {/* Store Room (Detailed) */}
+          <StoreRoom3D position={[-6.5, 9, 3.5]} />
+          {/* Water Tanks (flush on roof, with base) */}
+          <group>
+            {/* Label for Water Tanks */}
+            <Text position={[7.25, 10.3, 4.5]} fontSize={0.34} color="#1976d2" anchorX="center" anchorY="middle" outlineColor="#fff" outlineWidth={0.03}>
+              Water Tanks
+            </Text>
+            {/* Tank 1 */}
+            <mesh position={[6.5, 8.6, 4.5]} castShadow>
+              {/* Base */}
+              <cylinderGeometry args={[0.8, 0.8, 0.18, 24]} />
+              <meshStandardMaterial color="#616161" />
+            </mesh>
+            <mesh position={[6.5, 8.8 + 0.6, 4.5]} castShadow>
+              {/* Tank */}
+              <cylinderGeometry args={[0.7, 0.7, 1.2, 24]} />
+              <meshStandardMaterial color="#1976d2" />
+            </mesh>
+            {/* Tank 2 */}
+            <mesh position={[8, 8.6, 4.5]} castShadow>
+              {/* Base */}
+              <cylinderGeometry args={[0.8, 0.8, 0.18, 24]} />
+              <meshStandardMaterial color="#616161" />
+            </mesh>
+            <mesh position={[8, 8.8 + 0.6, 4.5]} castShadow>
+              {/* Tank */}
+              <cylinderGeometry args={[0.7, 0.7, 1.2, 24]} />
+              <meshStandardMaterial color="#1976d2" />
+            </mesh>
+          </group>
+          {/* Solar Panels on Left Building */}
+          <group>
+            {/* Label for Solar Panels (Left) */}
+            <Text position={[-12.5, 9.5, 0]} fontSize={0.28} color="#388e3c" anchorX="center" anchorY="middle" outlineColor="#fff" outlineWidth={0.02}>
+              Solar Panels
+            </Text>
+            {[0, 1].map(i => (
+              <mesh
+                key={i}
+                position={[-12.5, 8.09, -2.5 + i * 3]}
+                rotation={[-Math.PI/7, 0, 0]}
+                castShadow
+                receiveShadow
+              >
+                <boxGeometry args={[1.2, 0.08, 2.2]} />
+                <meshStandardMaterial color="#263238" />
+              </mesh>
+            ))}
+          </group>
+          {/* Solar Panels on Right Building */}
+          <group>
+            {/* Label for Solar Panels (Right) */}
+            <Text position={[12.5, 9.5, 0]} fontSize={0.28} color="#388e3c" anchorX="center" anchorY="middle" outlineColor="#fff" outlineWidth={0.02}>
+              Solar Panels
+            </Text>
+            {[0, 1].map(i => (
+              <mesh
+                key={i}
+                position={[12.5, 8.09, -2.5 + i * 3]}
+                rotation={[-Math.PI/7, 0, 0]}
+                castShadow
+                receiveShadow
+              >
+                <boxGeometry args={[1.2, 0.08, 2.2]} />
+                <meshStandardMaterial color="#263238" />
+              </mesh>
+            ))}
+          </group>
+          {/* Generator Room */}
+          {/* Generator Room (Detailed) */}
+          <GeneratorRoom3D position={[6.5, 9, -4.5]} />
+          {/* Staff Rest Area (enhanced with roof and rain protection) */}
+          <group position={[-7.5, 8.1, -4.5]}>
+            {/* Label for Staff Rest Area */}
+            <Text position={[0, 1.7, 0]} fontSize={0.32} color="#6d4c41" anchorX="center" anchorY="middle" outlineColor="#fff" outlineWidth={0.02}>
+              Staff Rest Area
+            </Text>
+            {/* Roof */}
+            <mesh position={[0, 1.15, 0]} castShadow receiveShadow>
+              <boxGeometry args={[2.6, 0.14, 2.2]} />
+              <meshStandardMaterial color="#b0bec5" metalness={0.4} roughness={0.3} />
+            </mesh>
+            {/* Roof support pillars */}
+            <mesh position={[-1.15, 0.6, 1]} rotation={[0,0,0]}>
+              <cylinderGeometry args={[0.06, 0.06, 1.2, 12]} />
+              <meshStandardMaterial color="#757575" />
+            </mesh>
+            <mesh position={[1.15, 0.6, 1]} rotation={[0,0,0]}>
+              <cylinderGeometry args={[0.06, 0.06, 1.2, 12]} />
+              <meshStandardMaterial color="#757575" />
+            </mesh>
+            <mesh position={[-1.15, 0.6, -1]} rotation={[0,0,0]}>
+              <cylinderGeometry args={[0.06, 0.06, 1.2, 12]} />
+              <meshStandardMaterial color="#757575" />
+            </mesh>
+            <mesh position={[1.15, 0.6, -1]} rotation={[0,0,0]}>
+              <cylinderGeometry args={[0.06, 0.06, 1.2, 12]} />
+              <meshStandardMaterial color="#757575" />
+            </mesh>
+            {/* Table */}
+            <mesh position={[0, 0.4, 0]}>
+              <cylinderGeometry args={[0.7, 0.7, 0.18, 18]} />
+              <meshStandardMaterial color="#fffde7" />
+            </mesh>
+            {/* Benches - spread out for more space */}
+            <mesh position={[-1.3, 0.2, 0.7]}>
+              <boxGeometry args={[0.3, 0.18, 1.2]} />
+              <meshStandardMaterial color="#a1887f" />
+            </mesh>
+            <mesh position={[1.3, 0.2, 0.7]}>
+              <boxGeometry args={[0.3, 0.18, 1.2]} />
+              <meshStandardMaterial color="#a1887f" />
+            </mesh>
+            <mesh position={[-1.3, 0.2, -0.7]}>
+              <boxGeometry args={[0.3, 0.18, 1.2]} />
+              <meshStandardMaterial color="#a1887f" />
+            </mesh>
+            <mesh position={[1.3, 0.2, -0.7]}>
+              <boxGeometry args={[0.3, 0.18, 1.2]} />
+              <meshStandardMaterial color="#a1887f" />
+            </mesh>
+            {/* Stretcher near entrance */}
+            <group position={[0, 0.25, 1.5]}>
+              {/* Bed frame */}
+              <mesh>
+                <boxGeometry args={[1.2, 0.12, 0.45]} />
+                <meshStandardMaterial color="#90caf9" />
+              </mesh>
+              {/* Mattress */}
+              <mesh position={[0, 0.08, 0]}>
+                <boxGeometry args={[1.1, 0.08, 0.38]} />
+                <meshStandardMaterial color="#e3eafc" />
+              </mesh>
+              {/* Legs */}
+              <mesh position={[-0.5, -0.12, -0.18]}>
+                <cylinderGeometry args={[0.04, 0.04, 0.18, 10]} />
+                <meshStandardMaterial color="#757575" />
+              </mesh>
+              <mesh position={[0.5, -0.12, -0.18]}>
+                <cylinderGeometry args={[0.04, 0.04, 0.18, 10]} />
+                <meshStandardMaterial color="#757575" />
+              </mesh>
+              <mesh position={[-0.5, -0.12, 0.18]}>
+                <cylinderGeometry args={[0.04, 0.04, 0.18, 10]} />
+                <meshStandardMaterial color="#757575" />
+              </mesh>
+              <mesh position={[0.5, -0.12, 0.18]}>
+                <cylinderGeometry args={[0.04, 0.04, 0.18, 10]} />
+                <meshStandardMaterial color="#757575" />
+              </mesh>
+              {/* Wheels */}
+              <mesh position={[-0.5, -0.22, -0.18]}>
+                <sphereGeometry args={[0.05, 8, 8]} />
+                <meshStandardMaterial color="#212121" />
+              </mesh>
+              <mesh position={[0.5, -0.22, -0.18]}>
+                <sphereGeometry args={[0.05, 8, 8]} />
+                <meshStandardMaterial color="#212121" />
+              </mesh>
+              <mesh position={[-0.5, -0.22, 0.18]}>
+                <sphereGeometry args={[0.05, 8, 8]} />
+                <meshStandardMaterial color="#212121" />
+              </mesh>
+              <mesh position={[0.5, -0.22, 0.18]}>
+                <sphereGeometry args={[0.05, 8, 8]} />
+                <meshStandardMaterial color="#212121" />
+              </mesh>
+              {/* Side rails */}
+              <mesh position={[-0.6, 0.08, 0]} rotation={[0,0,Math.PI/2]}>
+                <cylinderGeometry args={[0.02, 0.02, 0.38, 8]} />
+                <meshStandardMaterial color="#1976d2" />
+              </mesh>
+              <mesh position={[0.6, 0.08, 0]} rotation={[0,0,Math.PI/2]}>
+                <cylinderGeometry args={[0.02, 0.02, 0.38, 8]} />
+                <meshStandardMaterial color="#1976d2" />
+              </mesh>
+            </group>
+            {/* Plants */}
+            <mesh position={[0, 0.18, 0.9]}>
+              <cylinderGeometry args={[0.13, 0.13, 0.32, 8]} />
+              <meshStandardMaterial color="#388e3c" />
+            </mesh>
+          </group>
           {/* Spacious Back Windows - Central Building (2 rows, 4 columns) */}
                     {/* Back Entrance - Central Building (auto-opening double doors) */}
                     {/* Left Door (slides left, flush with building) */}
