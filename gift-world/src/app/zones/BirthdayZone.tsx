@@ -5,6 +5,8 @@
 import dynamic from "next/dynamic";
 import React, { Suspense, useState } from "react";
 const Hospital3D = dynamic(() => import("@/components/3d/Hospital3D"), { ssr: false });
+const HospitalInterior3D = dynamic(() => import("@/components/3d/HospitalInterior3D"), { ssr: false });
+
 import Scene from "@/components/3d/Scene";
 import ParticleBackground from "@/components/ui/ParticleBackground";
 import WeatherControls from "@/components/ui/WeatherControls";
@@ -12,15 +14,22 @@ import WeatherSystem from "@/components/3d/weather/WeatherSystem";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useTheme } from "@/hooks/useTheme";
 
+type WeatherType = 'sunny' | 'rainy' | 'cloudy' | 'monsoon' | 'winter';
+
 export default function BirthdayZone() {
   // Weather state management (pattern from YourSpace)
-  const [weather, setWeather] = useState('sunny');
+  const [weather, setWeather] = useState<WeatherType>('sunny');
   const [autoWeather, setAutoWeather] = useState(true);
   const { isNight, toggleTheme } = useTheme();
   const [isAutoCycle, setIsAutoCycle] = useState(true);
 
+
+  // Hospital view state
+  const [viewMode, setViewMode] = useState<'exterior' | 'interior'>('exterior');
+  const [currentRoom, setCurrentRoom] = useState<'reception' | 'ward' | 'operation' | 'pharmacy' | 'store' | 'generator' | 'staffRest' | 'exterior'>('exterior');
+
   // Handler for WeatherControls
-  const handleWeatherChange = (newWeather) => {
+  const handleWeatherChange = (newWeather: WeatherType) => {
     setWeather(newWeather);
     setAutoWeather(false);
   };
@@ -66,12 +75,61 @@ export default function BirthdayZone() {
         onToggleAuto={handleToggleAuto}
       />
 
+      {/* Hospital 3D View Controls */}
+      <div className="absolute top-4 left-4 z-40">
+        <div className="bg-black/60 rounded-lg p-4 flex flex-col gap-2 shadow">
+          <div className="flex gap-2 mb-2">
+            <button
+              onClick={() => {
+                setViewMode('exterior');
+                setCurrentRoom('exterior');
+              }}
+              className={`px-3 py-1 rounded text-xs border transition-colors ${
+                viewMode === 'exterior'
+                  ? 'bg-white/30 text-white border-white/50'
+                  : 'bg-white/10 text-white/80 hover:bg-white/20'
+              }`}
+            >
+              🏥 Exterior View
+            </button>
+            <button
+              onClick={() => {
+                setViewMode('interior');
+                setCurrentRoom('reception');
+              }}
+              className={`px-3 py-1 rounded text-xs border transition-colors ${
+                viewMode === 'interior'
+                  ? 'bg-white/30 text-white border-white/50'
+                  : 'bg-white/10 text-white/80 hover:bg-white/20'
+              }`}
+            >
+              🏛️ Interior View
+            </button>
+          </div>
+          {viewMode === 'interior' && (
+            <div className="grid grid-cols-3 gap-1 text-xs">
+              <button onClick={() => setCurrentRoom('reception')} className={`p-1 rounded ${currentRoom==='reception'?'bg-blue-500/50 text-white border border-blue-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Reception</button>
+              <button onClick={() => setCurrentRoom('ward')} className={`p-1 rounded ${currentRoom==='ward'?'bg-green-500/50 text-white border border-green-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Ward</button>
+              <button onClick={() => setCurrentRoom('operation')} className={`p-1 rounded ${currentRoom==='operation'?'bg-purple-500/50 text-white border border-purple-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Operation</button>
+              <button onClick={() => setCurrentRoom('pharmacy')} className={`p-1 rounded ${currentRoom==='pharmacy'?'bg-orange-500/50 text-white border border-orange-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Pharmacy</button>
+              <button onClick={() => setCurrentRoom('store')} className={`p-1 rounded ${currentRoom==='store'?'bg-cyan-500/50 text-white border border-cyan-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Store</button>
+              <button onClick={() => setCurrentRoom('generator')} className={`p-1 rounded ${currentRoom==='generator'?'bg-emerald-500/50 text-white border border-emerald-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Generator</button>
+              <button onClick={() => setCurrentRoom('staffRest')} className={`p-1 rounded ${currentRoom==='staffRest'?'bg-yellow-500/50 text-white border border-yellow-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Staff Rest</button>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* 3D Scene with weather system, pass isNight for lighting */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <Scene cameraPosition={[0, 12, 32]} enableControls enableShadows isNight={isNight}>
+        <Scene cameraPosition={[0, 12, 32]} enableControls enableShadows>
           {/* Weather system overlays (rain, clouds, sun, etc.) */}
           <WeatherSystem weatherType={weather} autoChange={autoWeather} />
-          <Hospital3D position={[0, 0, 0]} isNight={isNight} />
+          {viewMode === 'exterior' ? (
+            <Hospital3D position={[0, 0, 0]} isNight={isNight} />
+          ) : (
+            <HospitalInterior3D position={[0, 0, 0]} currentRoom={currentRoom} viewMode={viewMode} isNight={isNight} />
+          )}
         </Scene>
       </div>
     </div>
