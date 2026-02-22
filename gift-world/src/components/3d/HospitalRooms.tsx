@@ -283,21 +283,139 @@ export function WaitingAreaRoom({ position = [0, 0, 0], isNight = false }: { pos
     <group position={position}>
       {/* Enhanced lighting for realism, dynamic for day/night */}
       <ambientLight intensity={isNight ? 0.22 : 0.45} />
-      <spotLight
-        position={[0, 3.5, 0]}
-        angle={Math.PI / 5}
-        penumbra={0.5}
-        intensity={isNight ? 0.7 : 1.1}
-        castShadow
-        color={isNight ? "#b3c6ff" : "#fffbe7"}
-        distance={10}
-      />
-      <pointLight
-        position={[0, 1.5, 2.2]}
-        intensity={isNight ? 0.18 : 0.3}
-        color={isNight ? "#b3c6ff" : "#b3e5fc"}
-        distance={6}
-      />
+      <spotLight position={[0, 3.5, 0]} angle={Math.PI / 5} penumbra={0.5} intensity={isNight ? 0.7 : 1.1} castShadow color={isNight ? "#b3c6ff" : "#fffbe7"} distance={10} />
+      <pointLight position={[0, 1.5, 2.2]} intensity={isNight ? 0.18 : 0.3} color={isNight ? "#b3c6ff" : "#b3e5fc"} distance={6} />
+      {/* Sofa seating for visitors */}
+      <mesh position={[-3.5, 0.35, 3.5]}>
+        <boxGeometry args={[3, 0.7, 1.2]} />
+        <meshStandardMaterial color="#90caf9" />
+      </mesh>
+      {/* Extra chairs for visitors */}
+      <mesh position={[3.5, 0.35, 3.5]}>
+        <boxGeometry args={[0.7, 0.7, 0.7]} />
+        <meshStandardMaterial color="#ffe082" />
+      </mesh>
+      <mesh position={[4.5, 0.35, 3.5]}>
+        <boxGeometry args={[0.7, 0.7, 0.7]} />
+        <meshStandardMaterial color="#ffcc80" />
+      </mesh>
+      {/* Coffee Table */}
+      <mesh position={[0, 0.35, 3.5]}>
+        <cylinderGeometry args={[1.2, 1.2, 0.18, 16]} />
+        <meshStandardMaterial color="#ffe082" />
+      </mesh>
+      {/* TV Screen for announcements */}
+      <mesh position={[0, 2.2, -depth/2+0.3]}>
+        <boxGeometry args={[2.2, 1.2, 0.12]} />
+        <meshStandardMaterial color="#222" />
+      </mesh>
+      {/* Water Dispenser */}
+      <mesh position={[width/2-0.7, 0.7, -depth/2+1.2]}>
+        <cylinderGeometry args={[0.18, 0.18, 0.7, 16]} />
+        <meshStandardMaterial color="#90caf9" />
+      </mesh>
+      {/* Potted Plant for decor */}
+      <mesh position={[-width / 2 + 0.5, 0.3, depth / 2 - 0.7]} castShadow>
+        <cylinderGeometry args={[0.18, 0.18, 0.3, 16]} />
+        <meshStandardMaterial color="#8d6748" />
+      </mesh>
+      <mesh position={[-width / 2 + 0.5, 0.6, depth / 2 - 0.7]} castShadow>
+        <sphereGeometry args={[0.28, 16, 16]} />
+        <meshStandardMaterial color="#3fa34d" />
+      </mesh>
+      {/* Info Kiosk / Digital Display */}
+      <mesh position={[0, 1.1, 5]}>
+        <boxGeometry args={[1.2, 2, 0.18]} />
+        <meshStandardMaterial color="#90caf9" />
+      </mesh>
+      {/* Children's Play Area */}
+      <mesh position={[-4.5, 0.07, -3.5]}>
+        <cylinderGeometry args={[1.2, 1.2, 0.04, 32]} />
+        <meshStandardMaterial color="#ffe082" opacity={0.18} transparent />
+      </mesh>
+      {/* Charging Station */}
+      <mesh position={[width/2-1.2, 0.7, 2.2]}>
+        <boxGeometry args={[0.5, 0.3, 0.18]} />
+        <meshStandardMaterial color="#607d8b" />
+      </mesh>
+      {/* Wheelchair Parking Area */}
+      <group position={[width / 2 - 1.2, 0.3, depth / 2 - 0.7]}>
+        <mesh>
+          <boxGeometry args={[0.5, 0.18, 0.5]} />
+          <meshStandardMaterial color="#757575" />
+        </mesh>
+        <mesh position={[0, 0.18, -0.18]}>
+          <boxGeometry args={[0.5, 0.18, 0.14]} />
+          <meshStandardMaterial color="#90caf9" />
+        </mesh>
+        <mesh position={[-0.18, -0.09, 0.18]}>
+          <cylinderGeometry args={[0.09, 0.09, 0.08, 16]} />
+          <meshStandardMaterial color="#222" />
+        </mesh>
+        <mesh position={[0.18, -0.09, 0.18]}>
+          <cylinderGeometry args={[0.09, 0.09, 0.08, 16]} />
+          <meshStandardMaterial color="#222" />
+        </mesh>
+      </group>
+      {/* Security staff */}
+      <Human position={[-5, 0.75, 4]} color="#607d8b" height={1.3} />
+      {/* Helper staff */}
+      <Human position={[5, 0.75, 4]} color="#388e3c" height={1.3} />
+      {/* Partition/Glass Divider */}
+      <mesh position={[0, 1.2, 2.5]}>
+        <boxGeometry args={[8, 2.2, 0.08]} />
+        <meshStandardMaterial color="#b3e5fc" transparent opacity={0.35} />
+      </mesh>
+      {/* Notice Board */}
+      <mesh position={[-width / 2 + 1.1, 1.5, -depth / 2 + 0.09]}>
+        <boxGeometry args={[1.2, 0.7, 0.06]} />
+        <meshStandardMaterial color="#388e3c" />
+      </mesh>
+      {/* Trash Bin */}
+      <mesh position={[width / 2 - 0.5, 0.2, -depth / 2 + 0.5]} castShadow>
+        <cylinderGeometry args={[0.13, 0.13, 0.35, 16]} />
+        <meshStandardMaterial color="#607d8b" />
+      </mesh>
+      {/* Recycling Bin */}
+      <mesh position={[width / 2 - 0.7, 0.2, -depth / 2 + 1]} castShadow>
+        <cylinderGeometry args={[0.13, 0.13, 0.35, 16]} />
+        <meshStandardMaterial color="#43a047" />
+      </mesh>
+      {/* Wall Clock */}
+      <mesh position={[width / 2 - 1.2, 2.3, -depth / 2 + 0.09]}>
+        <cylinderGeometry args={[0.22, 0.22, 0.06, 24]} />
+        <meshStandardMaterial color="#fff" />
+      </mesh>
+      {/* Directional Signage */}
+      <Text position={[0, 2.7, depth / 2 - 0.1]} fontSize={0.28} color="#1976d2" anchorX="center" anchorY="middle">Reception ←</Text>
+      <Text position={[0, 2.4, depth / 2 - 0.1]} fontSize={0.28} color="#d32f2f" anchorX="center" anchorY="middle">→ Emergency</Text>
+      {/* Rug/Carpet for decor */}
+      <mesh position={[0, 0.07, 3.5]}>
+        <cylinderGeometry args={[3.2, 3.2, 0.04, 32]} />
+        <meshStandardMaterial color="#ffe082" opacity={0.18} transparent />
+      </mesh>
+      {/* Ceiling Fan */}
+      <group position={[0, height - 0.08, 0]}>
+        <mesh>
+          <cylinderGeometry args={[0.13, 0.13, 0.08, 16]} />
+          <meshStandardMaterial color="#888" />
+        </mesh>
+        <mesh position={[0, -0.18, 0]}>
+          <cylinderGeometry args={[0.04, 0.04, 0.36, 12]} />
+          <meshStandardMaterial color="#888" />
+        </mesh>
+        {[0, 1, 2].map(i => (
+          <mesh key={i} rotation={[0, (i * Math.PI * 2) / 3, 0]} position={[0, -0.36, 0]}>
+            <boxGeometry args={[1.5, 0.07, 0.18]} />
+            <meshStandardMaterial color="#444" />
+          </mesh>
+        ))}
+      </group>
+      {/* AC Vent (side wall, high up) */}
+      <mesh position={[width / 2 - 0.7, height - 0.06, 0]}>
+        <boxGeometry args={[0.7, 0.12, 0.18]} />
+        <meshStandardMaterial color="#b0bec5" />
+      </mesh>
       {/* Ceiling Fan */}
       <group position={[0, height - 0.08, 0]}>
         {/* Fan base */}
@@ -637,10 +755,63 @@ export function ReceptionRoom({ position = [0, 0, 0], isNight = false }: { posit
       </mesh>
         {/* Receptionist standing in front of desk */}
         <Human position={[0, 0.75, -2.2]} color="#1976d2" height={1.3} />
+        {/* Security staff */}
+        <Human position={[-5, 0.75, 4]} color="#607d8b" height={1.3} />
+        {/* Helper staff */}
+        <Human position={[5, 0.75, 4]} color="#388e3c" height={1.3} />
       {/* Reception Desk */}
       <mesh position={[0, 0.6, -1.5]} castShadow>
         <boxGeometry args={[2.5, 1.2, 0.8]} />
         <meshStandardMaterial color="#bdbdbd" />
+      </mesh>
+      {/* Info Kiosk / Digital Display */}
+      <mesh position={[0, 1.1, 5]}>
+        <boxGeometry args={[1.2, 2, 0.18]} />
+        <meshStandardMaterial color="#90caf9" />
+      </mesh>
+      {/* TV Screen for announcements */}
+      <mesh position={[0, 2.2, -depth/2+0.3]}>
+        <boxGeometry args={[2.2, 1.2, 0.12]} />
+        <meshStandardMaterial color="#222" />
+      </mesh>
+      {/* Partition/Glass Divider */}
+      <mesh position={[0, 1.2, 2.5]}>
+        <boxGeometry args={[8, 2.2, 0.08]} />
+        <meshStandardMaterial color="#b3e5fc" transparent opacity={0.35} />
+      </mesh>
+      {/* File Cabinet */}
+      <mesh position={[-width/2+1.2, 0.7, 2.2]}>
+        <boxGeometry args={[1.2, 1.1, 0.5]} />
+        <meshStandardMaterial color="#bdbdbd" />
+      </mesh>
+      {/* Shelf for storage */}
+      <mesh position={[width/2-1.2, 1.5, 2.2]}>
+        <boxGeometry args={[1.2, 0.3, 0.5]} />
+        <meshStandardMaterial color="#ffe082" />
+      </mesh>
+      {/* Sofa seating for visitors */}
+      <mesh position={[-3.5, 0.35, 3.5]}>
+        <boxGeometry args={[3, 0.7, 1.2]} />
+        <meshStandardMaterial color="#90caf9" />
+      </mesh>
+      {/* Extra chairs for visitors */}
+      <mesh position={[3.5, 0.35, 3.5]}>
+        <boxGeometry args={[0.7, 0.7, 0.7]} />
+        <meshStandardMaterial color="#ffe082" />
+      </mesh>
+      <mesh position={[4.5, 0.35, 3.5]}>
+        <boxGeometry args={[0.7, 0.7, 0.7]} />
+        <meshStandardMaterial color="#ffcc80" />
+      </mesh>
+      {/* Water Dispenser */}
+      <mesh position={[width/2-0.7, 0.7, -depth/2+1.2]}>
+        <cylinderGeometry args={[0.18, 0.18, 0.7, 16]} />
+        <meshStandardMaterial color="#90caf9" />
+      </mesh>
+      {/* Rug/Carpet for decor */}
+      <mesh position={[0, 0.07, 3.5]}>
+        <cylinderGeometry args={[3.2, 3.2, 0.04, 32]} />
+        <meshStandardMaterial color="#ffe082" opacity={0.18} transparent />
       </mesh>
       {/* Computer/Monitor on Desk */}
       <mesh position={[0, 1.2, -1.1]} castShadow>
@@ -657,10 +828,10 @@ export function ReceptionRoom({ position = [0, 0, 0], isNight = false }: { posit
         <boxGeometry args={[0.18, 0.08, 0.18]} />
         <meshStandardMaterial color="#444" />
       </mesh>
-      {/* Queue Token Machine */}
-      <mesh position={[width / 2 - 0.6, 0.7, depth / 2 - 1.2]} castShadow>
-        <boxGeometry args={[0.3, 0.7, 0.3]} />
-        <meshStandardMaterial color="#d32f2f" />
+      {/* Queue Token Machine (right side of door, does not cover) */}
+      <mesh position={[doorWidth / 2 + 1.2, 0.5, depth / 2 - 0.25]} castShadow>
+        <boxGeometry args={[0.18, 0.45, 0.18]} />
+        <meshStandardMaterial color="#607d8b" />
       </mesh>
       {/* Wall Clock */}
       <mesh position={[width / 2 - 1.2, 2.3, -depth / 2 + 0.09]}>
@@ -751,8 +922,8 @@ export function ReceptionRoom({ position = [0, 0, 0], isNight = false }: { posit
             <cylinderGeometry args={[0.32, 0.32, 0.08, 24]} />
             <meshStandardMaterial color="#fffde7" emissive="#fffde7" emissiveIntensity={0.7} />
           </mesh>
-          {/* AC Vent */}
-          <mesh position={[width / 2 - 1.2, height - 0.06, -depth / 2 + 1.2]}>
+          {/* AC Vent (moved to right wall, high up) */}
+          <mesh position={[width / 2 - 0.7, height - 0.06, 0]}>
             <boxGeometry args={[0.7, 0.12, 0.18]} />
             <meshStandardMaterial color="#b0bec5" />
           </mesh>
