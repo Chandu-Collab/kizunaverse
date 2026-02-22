@@ -26,7 +26,7 @@ export default function BirthdayZone() {
 
   // Hospital view state
   const [viewMode, setViewMode] = useState<'exterior' | 'interior'>('exterior');
-  const [currentRoom, setCurrentRoom] = useState<'reception' | 'ward' | 'operation' | 'pharmacy' | 'store' | 'generator' | 'staffRest' | 'exterior'>('exterior');
+  const [currentRoom, setCurrentRoom] = useState<'reception' | 'waiting' | 'consultation' | 'ward' | 'operation' | 'pharmacy' | 'store' | 'generator' | 'staffRest' | 'exterior'>('exterior');
 
   // Handler for WeatherControls
   const handleWeatherChange = (newWeather: WeatherType) => {
@@ -109,6 +109,8 @@ export default function BirthdayZone() {
           {viewMode === 'interior' && (
             <div className="grid grid-cols-3 gap-1 text-xs">
               <button onClick={() => setCurrentRoom('reception')} className={`p-1 rounded ${currentRoom==='reception'?'bg-blue-500/50 text-white border border-blue-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Reception</button>
+              <button onClick={() => setCurrentRoom('waiting')} className={`p-1 rounded ${currentRoom==='waiting'?'bg-indigo-500/50 text-white border border-indigo-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Waiting Area</button>
+              <button onClick={() => setCurrentRoom('consultation')} className={`p-1 rounded ${currentRoom==='consultation'?'bg-pink-500/50 text-white border border-pink-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Consultation</button>
               <button onClick={() => setCurrentRoom('ward')} className={`p-1 rounded ${currentRoom==='ward'?'bg-green-500/50 text-white border border-green-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Ward</button>
               <button onClick={() => setCurrentRoom('operation')} className={`p-1 rounded ${currentRoom==='operation'?'bg-purple-500/50 text-white border border-purple-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Operation</button>
               <button onClick={() => setCurrentRoom('pharmacy')} className={`p-1 rounded ${currentRoom==='pharmacy'?'bg-orange-500/50 text-white border border-orange-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Pharmacy</button>

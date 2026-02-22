@@ -9,7 +9,7 @@ import { Environment, Float, Text, Sky, ContactShadows } from "@react-three/drei
 import * as THREE from "three";
 import StoreRoom3D from "./StoreRoom3D";
 import GeneratorRoom3D from "./GeneratorRoom3D";
-import { ReceptionRoom, WardRoom, OperationTheater, PharmacyRoom } from "./HospitalRooms";
+import { ReceptionRoom, WardRoom, OperationTheater } from "./HospitalRooms";
 import Ambulance3D from "./Ambulance3D";
 import ParkedCar3D from "./ParkedCar3D";
 import Male3D from "./Male3D";
@@ -1798,8 +1798,8 @@ function HospitalContent({ isNight = false }: { isNight?: boolean }) {
         <WardRoom position={[5.5, 0, 0]} beds={3} />
         {/* Operation Theater at back left */}
         <OperationTheater position={[-5.5, 0, -5]} />
-        {/* Pharmacy at back right */}
-        <PharmacyRoom position={[5.5, 0, -5]} />
+        {/* Pharmacy at back right (not implemented) */}
+        {/* <PharmacyRoom position={[5.5, 0, -5]} /> */}
       </group>
       {/* Ground and Shadows */}
       <mesh position={[0, -0.1, 0]} receiveShadow>
