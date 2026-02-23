@@ -1,6 +1,6 @@
 
 import { FC } from "react";
-import { ReceptionRoom, WaitingAreaRoom, ConsultationRoom, WardRoom, OperationTheater } from "./HospitalRooms";
+import { ReceptionRoom, WaitingAreaRoom, ConsultationRoom, WardRoom, OperationTheater, EmergencyRoom, ICURoom, PreOpPostOpRoom, LaboratoryRoom, PharmacyRoom } from "./HospitalRooms";
 import { Sky, Environment } from "@react-three/drei";
 
 interface HospitalInterior3DProps {
@@ -44,6 +44,11 @@ const HospitalInterior3D: FC<HospitalInterior3DProps> = ({
       {currentRoom === "consultation" && <ConsultationRoom position={[0, 0, 0]} isNight={isNight} />}
       {currentRoom === "ward" && <WardRoom position={[0, 0, 0]} isNight={isNight} />}
       {currentRoom === "operation" && <OperationTheater position={[0, 0, 0]} />}
+      {currentRoom === "emergency" && <EmergencyRoom position={[0, 0, 0]} isNight={isNight} />}
+      {currentRoom === "icu" && <ICURoom position={[0, 0, 0]} isNight={isNight} />}
+      {currentRoom === "recovery" && <PreOpPostOpRoom position={[0, 0, 0]} isNight={isNight} />}
+      {currentRoom === "laboratory" && <LaboratoryRoom position={[0, 0, 0]} isNight={isNight} />}
+      {currentRoom === "pharmacy" && <PharmacyRoom position={[0, 0, 0]} isNight={isNight} />}
       {/* Add more rooms here as you build them */}
     </group>
   );
