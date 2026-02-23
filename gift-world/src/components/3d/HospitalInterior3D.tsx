@@ -1,6 +1,8 @@
+import { AdministrativeOffices, CafeteriaCanteen, AmbulanceBayEntrance, PhysiotherapyRehabRoom, BloodBankRoom, MortuaryRoom, ChapelPrayerRoom } from "./HospitalRooms";
 
 import { FC } from "react";
-import { ReceptionRoom, WaitingAreaRoom, ConsultationRoom, WardRoom, OperationTheater, EmergencyRoom, ICURoom, PreOpPostOpRoom, LaboratoryRoom, PharmacyRoom, RadiologyRoom, MaternityDeliveryRoom, PediatricWardRoom, IsolationRoom } from "./HospitalRooms";
+import { ReceptionRoom, WaitingAreaRoom, ConsultationRoom, WardRoom, OperationTheater, EmergencyRoom, ICURoom, PreOpPostOpRoom, LaboratoryRoom, PharmacyRoom, RadiologyRoom, MaternityDeliveryRoom, PediatricWardRoom, IsolationRoom, StaffRestRoom, GeneratorRoom, StoreRoom, NurseStation } from "./HospitalRooms";
+import { BathroomRestroom } from "./HospitalRooms";
 import { Sky, Environment } from "@react-three/drei";
 
 interface HospitalInterior3DProps {
@@ -53,6 +55,18 @@ const HospitalInterior3D: FC<HospitalInterior3DProps> = ({
       {currentRoom === "maternity" && <MaternityDeliveryRoom position={[0, 0, 0]} isNight={isNight} />}
       {currentRoom === "pediatric" && <PediatricWardRoom position={[0, 0, 0]} isNight={isNight} />}
       {currentRoom === "isolation" && <IsolationRoom position={[0, 0, 0]} isNight={isNight} />}
+      {currentRoom === "staffRest" && <StaffRestRoom position={[0, 0, 0]} isNight={isNight} />}
+      {currentRoom === "generator" && <GeneratorRoom position={[0, 0, 0]} isNight={isNight} />}
+      {currentRoom === "store" && <StoreRoom position={[0, 0, 0]} isNight={isNight} />}
+      {currentRoom === "nurseStations" && <NurseStation position={[0, 0, 0]} isNight={isNight} />}
+      {currentRoom === "bathroomRestroom" && <BathroomRestroom position={[0, 0, 0]} isNight={isNight} />}
+      {currentRoom === "cafeteriaCanteen" && <CafeteriaCanteen position={[0, 0, 0]} isNight={isNight} />}
+      {currentRoom === "administrativeOffices" && <AdministrativeOffices position={[0, 0, 0]} isNight={isNight} />}
+      {currentRoom === "ambulanceBayEntrance" && <AmbulanceBayEntrance position={[0, 0, 0]} isNight={isNight} />}
+      {currentRoom === "physiotherapyRehab" && <PhysiotherapyRehabRoom position={[0, 0, 0]} isNight={isNight} />}
+      {currentRoom === "bloodBank" && <BloodBankRoom position={[0, 0, 0]} isNight={isNight} />}
+      {currentRoom === "mortuary" && <MortuaryRoom position={[0, 0, 0]} isNight={isNight} />}
+      {currentRoom === "chapelPrayerRoom" && <ChapelPrayerRoom position={[0, 0, 0]} isNight={isNight} />}
       {/* Add more rooms here as you build them */}
     </group>
   );
