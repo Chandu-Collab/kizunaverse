@@ -1,3 +1,448 @@
+// Maternity and Delivery Suite
+interface MaternityDeliveryRoomProps {
+  position?: [number, number, number];
+  isNight?: boolean;
+}
+
+export const MaternityDeliveryRoom: React.FC<MaternityDeliveryRoomProps> = ({ position = [0, 0, 0], isNight = false }) => {
+  const width = 12;
+  const depth = 8.5;
+  const height = 4.2;
+  // Simple human figure for staff
+  const Human: React.FC<{ position: [number, number, number]; color?: string; height?: number }> = ({ position, color = "#607d8b", height = 1.3 }) => (
+    <group position={position}>
+      <mesh position={[0, height / 2 - 0.18, 0]}>
+        <cylinderGeometry args={[0.16, 0.19, height - 0.3, 16]} />
+        <meshStandardMaterial color={color} />
+      </mesh>
+      <mesh position={[0, height - 0.18, 0]}>
+        <sphereGeometry args={[0.22, 16, 16]} />
+        <meshStandardMaterial color="#ffe0b2" />
+      </mesh>
+    </group>
+  );
+  return (
+    <group position={position}>
+      {/* Lighting for realism, dynamic for day/night */}
+      <ambientLight intensity={isNight ? 0.22 : 0.45} />
+      <spotLight
+        position={[0, 3.2, 0]}
+        angle={Math.PI / 5}
+        penumbra={0.5}
+        intensity={isNight ? 0.7 : 1.1}
+        castShadow
+        color={isNight ? "#b3c6ff" : "#fffbe7"}
+        distance={10}
+      />
+      {/* Adjustable Spotlight for Delivery */}
+      <spotLight
+        position={[0, 4.1, -1.2]}
+        angle={Math.PI / 8}
+        penumbra={0.7}
+        intensity={isNight ? 0.8 : 1.3}
+        color={isNight ? "#b3c6ff" : "#fffbe7"}
+        distance={6}
+      />
+      {/* Floor */}
+      <Floor position={[0, 0, 0]} width={width} depth={depth} />
+      {/* Ceiling */}
+      <Ceiling position={[0, height, 0]} width={width} depth={depth} />
+      {/* Walls */}
+      <Wall position={[0, height / 2, -depth / 2]} width={width} height={height} depth={0.12} />
+      <Wall position={[-width / 2, height / 2, 0]} width={0.12} height={height} depth={depth} />
+      <Wall position={[width / 2, height / 2, 0]} width={0.12} height={height} depth={depth} />
+      {/* Entry Door */}
+      <group position={[0, 1, depth / 2 - 0.06]}>
+        <Door position={[0, 0, 0]} width={1.2} height={2.2} color="#8d6748" />
+        {/* Door Handle */}
+        <mesh position={[0.45, 0, 0.09]}>
+          <boxGeometry args={[0.08, 0.18, 0.06]} />
+          <meshStandardMaterial color="#ffd600" />
+        </mesh>
+        {/* Maternity Sign */}
+        <mesh position={[0, 1.4, 0.18]}>
+          <boxGeometry args={[1.6, 0.32, 0.06]} />
+          <meshStandardMaterial color="#f06292" />
+        </mesh>
+      </group>
+      {/* Delivery Bed (adjustable) */}
+      <mesh position={[0, 0.55, -1.2]}>
+        <boxGeometry args={[2.2, 0.32, 0.7]} />
+        <meshStandardMaterial color="#fffde7" />
+      </mesh>
+      {/* Fetal Monitor */}
+      <mesh position={[0.7, 1.1, -1.2]}>
+        <boxGeometry args={[0.32, 0.18, 0.09]} />
+        <meshStandardMaterial color="#bdbdbd" />
+      </mesh>
+      {/* Wall-mounted Vital Signs Monitor */}
+      <mesh position={[0, 1.7, -depth / 2 + 0.3]}>
+        <boxGeometry args={[0.38, 0.22, 0.06]} />
+        <meshStandardMaterial color="#222" />
+      </mesh>
+      {/* IV Stand and Infusion Pump */}
+      <mesh position={[-0.9, 1.1, -1.2]}>
+        <cylinderGeometry args={[0.04, 0.04, 1.1, 12]} />
+        <meshStandardMaterial color="#bdbdbd" />
+      </mesh>
+      <mesh position={[-0.9, 1.7, -1.2]}>
+        <boxGeometry args={[0.13, 0.13, 0.09]} />
+        <meshStandardMaterial color="#90caf9" />
+      </mesh>
+      {/* Oxygen Supply and Suction Unit */}
+      <mesh position={[width / 2 - 0.3, 1.1, -1.2]}>
+        <cylinderGeometry args={[0.09, 0.09, 0.32, 16]} />
+        <meshStandardMaterial color="#81d4fa" />
+      </mesh>
+      <mesh position={[width / 2 - 0.3, 1.4, -1.2]}>
+        <boxGeometry args={[0.13, 0.13, 0.09]} />
+        <meshStandardMaterial color="#bdbdbd" />
+      </mesh>
+      {/* Emergency Crash Cart (with defibrillator) */}
+      <mesh position={[width / 2 - 1.2, 0.55, 1.2]}>
+        <boxGeometry args={[0.7, 0.32, 0.5]} />
+        <meshStandardMaterial color="#e57373" />
+      </mesh>
+      {/* Neonatal Resuscitation Equipment */}
+      <mesh position={[2.2, 1.3, -1.2]}>
+        <boxGeometry args={[0.32, 0.13, 0.22]} />
+        <meshStandardMaterial color="#fff176" />
+      </mesh>
+      {/* Wall-mounted Glove Dispenser */}
+      <mesh position={[width / 2 - 0.08, 1.7, 0.7]} rotation={[0, Math.PI / 2, 0]}>
+        <boxGeometry args={[0.04, 0.22, 0.32]} />
+        <meshStandardMaterial color="#fff" />
+      </mesh>
+      {/* Wall-mounted PPE Dispenser */}
+      <mesh position={[width / 2 - 0.08, 1.7, 1.2]} rotation={[0, Math.PI / 2, 0]}>
+        <boxGeometry args={[0.04, 0.22, 0.32]} />
+        <meshStandardMaterial color="#bdbdbd" />
+      </mesh>
+      {/* Wall-mounted Sanitizer Dispenser */}
+      <mesh position={[width / 2 - 0.08, 1.5, 0.3]} rotation={[0, Math.PI / 2, 0]}>
+        <boxGeometry args={[0.04, 0.18, 0.08]} />
+        <meshStandardMaterial color="#81d4fa" />
+      </mesh>
+      {/* Movable Privacy Partition */}
+      <mesh position={[-2.8, 1.7, 0.7]}>
+        <boxGeometry args={[0.18, 1.6, 2.2]} />
+        <meshStandardMaterial color="#f8bbd0" transparent opacity={0.7} />
+      </mesh>
+      {/* Wall-mounted Medical Gas Outlets */}
+      <mesh position={[width / 2 - 0.08, 1.1, -0.7]} rotation={[0, Math.PI / 2, 0]}>
+        <boxGeometry args={[0.04, 0.13, 0.32]} />
+        <meshStandardMaterial color="#43a047" />
+      </mesh>
+      {/* Extra Family/Support Seating */}
+      <mesh position={[width / 2 - 1.2, 0.38, depth / 2 - 0.3]}>
+        <boxGeometry args={[0.7, 0.28, 0.5]} />
+        <meshStandardMaterial color="#bdbdbd" />
+      </mesh>
+      {/* Whiteboard/Info Board for Staff */}
+      <mesh position={[-width / 2 + 0.2, 2.2, depth / 2 - 1.2]}>
+        <boxGeometry args={[0.32, 0.32, 0.04]} />
+        <meshStandardMaterial color="#fffde7" />
+      </mesh>
+      {/* Potted Plant for Calming Decor */}
+      <mesh position={[width / 2 - 1.7, 1.18, -depth / 2 + 2.1]}>
+        <cylinderGeometry args={[0.09, 0.09, 0.13, 12]} />
+        <meshStandardMaterial color="#8d6e63" />
+      </mesh>
+      <mesh position={[width / 2 - 1.7, 1.28, -depth / 2 + 2.1]}>
+        <sphereGeometry args={[0.11, 12, 12]} />
+        <meshStandardMaterial color="#388e3c" />
+      </mesh>
+      {/* Storage for Linens and Baby Supplies */}
+      <mesh position={[-width / 2 + 0.7, 0.7, -depth / 2 + 1.2]}>
+        <boxGeometry args={[0.5, 0.7, 0.4]} />
+        <meshStandardMaterial color="#90caf9" />
+      </mesh>
+      {/* Emergency Lighting/Backup Power Indicator */}
+      <mesh position={[width / 2 - 0.18, 3.7, 0]}>
+        <boxGeometry args={[0.13, 0.13, 0.04]} />
+        <meshStandardMaterial color="#43a047" />
+      </mesh>
+      {/* Infant Warmer/Radiant Heater */}
+      <mesh position={[2.2, 1.1, -1.2]}>
+        <boxGeometry args={[0.7, 0.18, 0.5]} />
+        <meshStandardMaterial color="#ffe082" />
+      </mesh>
+      {/* Bassinet for Newborn */}
+      <mesh position={[2.2, 0.55, -1.2]}>
+        <boxGeometry args={[0.5, 0.22, 0.32]} />
+        <meshStandardMaterial color="#90caf9" />
+      </mesh>
+      {/* Medical Equipment Cart */}
+      <mesh position={[-2.2, 0.55, -1.2]}>
+        <boxGeometry args={[0.7, 0.32, 0.5]} />
+        <meshStandardMaterial color="#bdbdbd" />
+      </mesh>
+      {/* Privacy Curtain */}
+      <mesh position={[0, 1.7, -0.2]}>
+        <boxGeometry args={[3.2, 1.6, 0.04]} />
+        <meshStandardMaterial color="#f8bbd0" transparent opacity={0.7} />
+      </mesh>
+      {/* Storage Cabinets/Drawers */}
+      <mesh position={[width / 2 - 1.2, 0.7, -depth / 2 + 1.2]}>
+        <boxGeometry args={[1.2, 0.7, 0.5]} />
+        <meshStandardMaterial color="#a1887f" />
+      </mesh>
+      {/* Sink and Handwash Area */}
+      <mesh position={[width / 2 - 0.5, 0.85, -1.2]}>
+        <cylinderGeometry args={[0.13, 0.13, 0.09, 16]} />
+        <meshStandardMaterial color="#fff" />
+      </mesh>
+      <mesh position={[width / 2 - 0.5, 0.95, -1.2]}>
+        <cylinderGeometry args={[0.02, 0.02, 0.13, 8]} />
+        <meshStandardMaterial color="#bdbdbd" />
+      </mesh>
+      {/* Comfortable Chair for Family */}
+      <mesh position={[width / 2 - 1.2, 0.38, depth / 2 - 1.2]}>
+        <boxGeometry args={[0.7, 0.28, 0.5]} />
+        <meshStandardMaterial color="#bdbdbd" />
+      </mesh>
+      {/* Emergency Call Button */}
+      <mesh position={[0.7, 1.1, -1.2]}>
+        <cylinderGeometry args={[0.04, 0.04, 0.04, 12]} />
+        <meshStandardMaterial color="#ffb300" />
+      </mesh>
+      {/* Waste Bins (regular and biohazard) */}
+      <mesh position={[width / 2 - 0.4, 0.18, -1.2]}>
+        <cylinderGeometry args={[0.11, 0.11, 0.28, 16]} />
+        <meshStandardMaterial color="#d32f2f" />
+      </mesh>
+      <mesh position={[width / 2 - 0.7, 0.18, -1.2]}>
+        <cylinderGeometry args={[0.11, 0.11, 0.28, 16]} />
+        <meshStandardMaterial color="#607d8b" />
+      </mesh>
+      {/* Wall Clock */}
+      <mesh position={[width / 2 - 0.08, 3.2, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <cylinderGeometry args={[0.18, 0.18, 0.04, 24]} />
+        <meshStandardMaterial color="#fff" />
+      </mesh>
+      {/* Birth Info Poster */}
+      <mesh position={[width / 2 - 0.08, 2.2, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <boxGeometry args={[0.04, 1.2, 1.2]} />
+        <meshStandardMaterial color="#e1bee7" />
+      </mesh>
+      {/* Staff (Obstetrician) */}
+      <Human position={[-1.2, 0.7, -1.2]} color="#1976d2" height={1.2} />
+      {/* Staff (Nurse) */}
+      <Human position={[1.2, 0.7, -1.2]} color="#388e3c" height={1.18} />
+      {/* Staff (Pediatrician) */}
+      <Human position={[0, 0.7, -2.2]} color="#fbc02d" height={1.18} />
+    </group>
+  );
+};
+// Radiology/Imaging Room
+interface RadiologyRoomProps {
+  position?: [number, number, number];
+  isNight?: boolean;
+}
+
+export const RadiologyRoom: React.FC<RadiologyRoomProps> = ({ position = [0, 0, 0], isNight = false }) => {
+  const width = 12;
+  const depth = 8.5;
+  const height = 4.2;
+  // Simple human figure for staff
+  const Human: React.FC<{ position: [number, number, number]; color?: string; height?: number }> = ({ position, color = "#607d8b", height = 1.3 }) => (
+    <group position={position}>
+      <mesh position={[0, height / 2 - 0.18, 0]}>
+        <cylinderGeometry args={[0.16, 0.19, height - 0.3, 16]} />
+        <meshStandardMaterial color={color} />
+      </mesh>
+      <mesh position={[0, height - 0.18, 0]}>
+        <sphereGeometry args={[0.22, 16, 16]} />
+        <meshStandardMaterial color="#ffe0b2" />
+      </mesh>
+    </group>
+  );
+  return (
+    <group position={position}>
+      {/* Lighting for realism, dynamic for day/night */}
+      <ambientLight intensity={isNight ? 0.22 : 0.45} />
+      <spotLight
+        position={[0, 3.2, 0]}
+        angle={Math.PI / 5}
+        penumbra={0.5}
+        intensity={isNight ? 0.7 : 1.1}
+        castShadow
+        color={isNight ? "#b3c6ff" : "#fffbe7"}
+        distance={10}
+      />
+      {/* Floor Markings for Machine Movement/Safety Zones */}
+      <mesh position={[0, 0.01, -1.2]}>
+        <boxGeometry args={[2.8, 0.01, 0.08]} />
+        <meshStandardMaterial color="#ffb300" opacity={0.7} transparent />
+      </mesh>
+      <mesh position={[0, 0.01, 0.7]}>
+        <boxGeometry args={[2.8, 0.01, 0.08]} />
+        <meshStandardMaterial color="#ffb300" opacity={0.7} transparent />
+      </mesh>
+      {/* Floor */}
+      <Floor position={[0, 0, 0]} width={width} depth={depth} />
+      {/* Ceiling */}
+      <Ceiling position={[0, height, 0]} width={width} depth={depth} />
+      {/* Lead-lined Walls */}
+      <Wall position={[0, height / 2, -depth / 2]} width={width} height={height} depth={0.18} color="#b0bec5" />
+      <Wall position={[-width / 2, height / 2, 0]} width={0.18} height={height} depth={depth} color="#b0bec5" />
+      <Wall position={[width / 2, height / 2, 0]} width={0.18} height={height} depth={depth} color="#b0bec5" />
+      {/* Entry Door */}
+      <group position={[0, 1, depth / 2 - 0.09]}>
+        <Door position={[0, 0, 0]} width={1.2} height={2.2} color="#8d6748" />
+        {/* Door Handle */}
+        <mesh position={[0.45, 0, 0.09]}>
+          <boxGeometry args={[0.08, 0.18, 0.06]} />
+          <meshStandardMaterial color="#ffd600" />
+        </mesh>
+        {/* Radiation Warning Sign */}
+        <mesh position={[0, 1.4, 0.18]}>
+          <boxGeometry args={[0.7, 0.32, 0.06]} />
+          <meshStandardMaterial color="#fbc02d" />
+        </mesh>
+        {/* Extra Warning Signage */}
+        <mesh position={[0.7, 1.1, 0.18]}>
+          <boxGeometry args={[0.4, 0.18, 0.04]} />
+          <meshStandardMaterial color="#e53935" />
+        </mesh>
+      </group>
+      {/* Imaging Machine (CT/MRI style) */}
+      <group position={[0, 0.9, -1.5]}>
+        <mesh>
+          <cylinderGeometry args={[1.1, 1.1, 1.2, 32]} />
+          <meshStandardMaterial color="#e0e0e0" />
+        </mesh>
+        <mesh position={[0, 0, 0.6]}>
+          <cylinderGeometry args={[0.7, 0.7, 0.1, 32]} />
+          <meshStandardMaterial color="#b3e5fc" />
+        </mesh>
+      </group>
+      {/* Patient Bed/Table (movable) */}
+      <mesh position={[0, 0.55, -0.7]}>
+        <boxGeometry args={[2.2, 0.32, 0.7]} />
+        <meshStandardMaterial color="#fffde7" />
+      </mesh>
+      {/* Movable Lead Shield/Screen */}
+      <mesh position={[-1.8, 1.1, -0.7]}>
+        <boxGeometry args={[0.18, 1.6, 1.2]} />
+        <meshStandardMaterial color="#90caf9" />
+      </mesh>
+      {/* Control Console (behind glass) */}
+      <group position={[0, 0, depth / 2 - 2.1]}>
+        {/* Glass Partition */}
+        <mesh position={[0, 1.25, 0.25]}>
+          <boxGeometry args={[3.2, 1.8, 0.04]} />
+          <meshStandardMaterial color="#b3e5fc" transparent opacity={0.45} />
+        </mesh>
+        {/* Console Desk */}
+        <mesh position={[0, 0.7, 0]}>
+          <boxGeometry args={[2.2, 0.7, 0.5]} />
+          <meshStandardMaterial color="#bdbdbd" />
+        </mesh>
+        {/* Computer/Monitors */}
+        <mesh position={[-0.5, 1.1, 0.2]}>
+          <boxGeometry args={[0.5, 0.3, 0.1]} />
+          <meshStandardMaterial color="#222" />
+        </mesh>
+        <mesh position={[0.5, 1.1, 0.2]}>
+          <boxGeometry args={[0.5, 0.3, 0.1]} />
+          <meshStandardMaterial color="#222" />
+        </mesh>
+        {/* Emergency Stop Button */}
+        <mesh position={[1, 1.1, 0.2]}>
+          <cylinderGeometry args={[0.06, 0.06, 0.04, 16]} />
+          <meshStandardMaterial color="#e53935" />
+        </mesh>
+        {/* Intercom/Microphone */}
+        <mesh position={[-1, 1.13, 0.2]}>
+          <boxGeometry args={[0.13, 0.07, 0.09]} />
+          <meshStandardMaterial color="#607d8b" />
+        </mesh>
+        {/* Radiation Dose Chart/Log Sheet */}
+        <mesh position={[1.3, 1.45, 0.2]}>
+          <boxGeometry args={[0.18, 0.13, 0.04]} />
+          <meshStandardMaterial color="#fffde7" />
+        </mesh>
+        {/* Emergency Lighting/Backup Power Indicator */}
+        <mesh position={[1.6, 1.7, 0.2]}>
+          <boxGeometry args={[0.13, 0.13, 0.04]} />
+          <meshStandardMaterial color="#43a047" />
+        </mesh>
+        {/* Film/Digital Media Storage */}
+        <mesh position={[-1.6, 0.7, 0]}>
+          <boxGeometry args={[0.5, 0.7, 0.4]} />
+          <meshStandardMaterial color="#a1887f" />
+        </mesh>
+      </group>
+      {/* Lead Apron Hooks with Aprons */}
+      <mesh position={[-width / 2 + 0.18, 1.7, depth / 2 - 2.2]}>
+        <boxGeometry args={[0.12, 0.7, 0.04]} />
+        <meshStandardMaterial color="#90caf9" />
+      </mesh>
+      {/* Oxygen Cylinder */}
+      <mesh position={[width / 2 - 0.7, 0.7, -depth / 2 + 1.2]}>
+        <cylinderGeometry args={[0.13, 0.13, 0.7, 16]} />
+        <meshStandardMaterial color="#81d4fa" />
+      </mesh>
+      {/* Crash Cart */}
+      <mesh position={[width / 2 - 1.2, 0.55, 1.2]}>
+        <boxGeometry args={[0.7, 0.32, 0.5]} />
+        <meshStandardMaterial color="#e57373" />
+      </mesh>
+      {/* Wall-mounted Hand Sanitizer */}
+      <mesh position={[width / 2 - 0.5, 1.5, -1.2]}>
+        <boxGeometry args={[0.08, 0.18, 0.06]} />
+        <meshStandardMaterial color="#81d4fa" />
+      </mesh>
+      {/* Patient Call Button */}
+      <mesh position={[0.7, 1.1, -0.7]}>
+        <cylinderGeometry args={[0.04, 0.04, 0.04, 12]} />
+        <meshStandardMaterial color="#ffb300" />
+      </mesh>
+      {/* Lead Apron/PPE Storage */}
+      <mesh position={[-width / 2 + 0.3, 1.1, 1.5]}>
+        <boxGeometry args={[0.5, 0.7, 0.4]} />
+        <meshStandardMaterial color="#90caf9" />
+      </mesh>
+      {/* Wall-mounted X-ray Viewer */}
+      <mesh position={[width / 2 - 0.08, 1.7, -1.2]} rotation={[0, Math.PI / 2, 0]}>
+        <boxGeometry args={[0.04, 0.7, 1.2]} />
+        <meshStandardMaterial color="#fff" />
+      </mesh>
+      {/* Waiting Chair for Patient */}
+      <mesh position={[width / 2 - 1.2, 0.38, depth / 2 - 1.2]}>
+        <boxGeometry args={[0.7, 0.28, 0.5]} />
+        <meshStandardMaterial color="#bdbdbd" />
+      </mesh>
+      {/* Waste Bin */}
+      <mesh position={[width / 2 - 0.4, 0.18, -1.2]}>
+        <cylinderGeometry args={[0.11, 0.11, 0.28, 16]} />
+        <meshStandardMaterial color="#d32f2f" />
+      </mesh>
+      {/* Wall Clock */}
+      <mesh position={[width / 2 - 0.08, 3.2, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <cylinderGeometry args={[0.18, 0.18, 0.04, 24]} />
+        <meshStandardMaterial color="#fff" />
+      </mesh>
+      {/* Potted Plant for Comfort */}
+      <mesh position={[width / 2 - 1.7, 1.18, -depth / 2 + 2.1]}>
+        <cylinderGeometry args={[0.09, 0.09, 0.13, 12]} />
+        <meshStandardMaterial color="#8d6e63" />
+      </mesh>
+      <mesh position={[width / 2 - 1.7, 1.28, -depth / 2 + 2.1]}>
+        <sphereGeometry args={[0.11, 12, 12]} />
+        <meshStandardMaterial color="#388e3c" />
+      </mesh>
+      {/* Health Info Poster */}
+      <mesh position={[width / 2 - 0.08, 2.2, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <boxGeometry args={[0.04, 1.2, 1.2]} />
+        <meshStandardMaterial color="#e1bee7" />
+      </mesh>
+      {/* Staff (Radiology Technician) */}
+      <Human position={[-1.2, 0.7, -0.7]} color="#1976d2" height={1.2} />
+    </group>
+  );
+};
 // Pharmacy Room
 interface PharmacyRoomProps {
   position?: [number, number, number];

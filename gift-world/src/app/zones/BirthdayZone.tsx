@@ -122,6 +122,8 @@ export default function BirthdayZone() {
               <button onClick={() => setCurrentRoom('staffRest')} className={`p-1 rounded ${currentRoom==='staffRest'?'bg-yellow-500/50 text-white border border-yellow-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Staff Rest</button>
                 <button onClick={() => setCurrentRoom("laboratory")} className={`p-1 rounded ${currentRoom==='laboratory'?'bg-purple-500/50 text-white border border-purple-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Laboratory</button>
                 <button onClick={() => setCurrentRoom("pharmacy")} className={`p-1 rounded ${currentRoom==='pharmacy'?'bg-green-500/50 text-white border border-green-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Pharmacy</button>
+                <button onClick={() => setCurrentRoom("radiology")} className={`p-1 rounded ${currentRoom==='radiology'?'bg-blue-500/50 text-white border border-blue-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Radiology</button>
+                <button onClick={() => setCurrentRoom("maternity")} className={`p-1 rounded ${currentRoom==='maternity'?'bg-pink-500/50 text-white border border-pink-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Maternity</button>
             </div>
           )}
         </div>
