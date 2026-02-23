@@ -113,10 +113,15 @@ export default function BirthdayZone() {
               <button onClick={() => setCurrentRoom('consultation')} className={`p-1 rounded ${currentRoom==='consultation'?'bg-pink-500/50 text-white border border-pink-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Consultation</button>
               <button onClick={() => setCurrentRoom('ward')} className={`p-1 rounded ${currentRoom==='ward'?'bg-green-500/50 text-white border border-green-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Ward</button>
               <button onClick={() => setCurrentRoom('operation')} className={`p-1 rounded ${currentRoom==='operation'?'bg-purple-500/50 text-white border border-purple-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Operation</button>
+              <button onClick={() => setCurrentRoom('icu')} className={`p-1 rounded ${currentRoom==='icu'?'bg-blue-900/50 text-white border border-blue-900':'bg-white/10 text-white/70 hover:bg-white/20'}`}>ICU</button>
+              <button onClick={() => setCurrentRoom('recovery')} className={`p-1 rounded ${currentRoom==='recovery'?'bg-green-900/50 text-white border border-green-900':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Recovery</button>
+              <button onClick={() => setCurrentRoom('emergency')} className={`p-1 rounded ${currentRoom==='emergency'?'bg-red-500/50 text-white border border-red-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Emergency</button>
               <button onClick={() => setCurrentRoom('pharmacy')} className={`p-1 rounded ${currentRoom==='pharmacy'?'bg-orange-500/50 text-white border border-orange-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Pharmacy</button>
               <button onClick={() => setCurrentRoom('store')} className={`p-1 rounded ${currentRoom==='store'?'bg-cyan-500/50 text-white border border-cyan-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Store</button>
               <button onClick={() => setCurrentRoom('generator')} className={`p-1 rounded ${currentRoom==='generator'?'bg-emerald-500/50 text-white border border-emerald-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Generator</button>
               <button onClick={() => setCurrentRoom('staffRest')} className={`p-1 rounded ${currentRoom==='staffRest'?'bg-yellow-500/50 text-white border border-yellow-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Staff Rest</button>
+                <button onClick={() => setCurrentRoom("laboratory")} className={`p-1 rounded ${currentRoom==='laboratory'?'bg-purple-500/50 text-white border border-purple-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Laboratory</button>
+                <button onClick={() => setCurrentRoom("pharmacy")} className={`p-1 rounded ${currentRoom==='pharmacy'?'bg-green-500/50 text-white border border-green-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Pharmacy</button>
             </div>
           )}
         </div>
