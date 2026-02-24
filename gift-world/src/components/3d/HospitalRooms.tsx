@@ -126,6 +126,56 @@ export const ChapelPrayerRoom: React.FC<ChapelPrayerRoomProps> = ({ position = [
         <cylinderGeometry args={[0.07, 0.07, 0.32, 12]} />
         <meshStandardMaterial color="#d32f2f" />
       </mesh>
+        {/* Wheelchair-accessible space */}
+        <mesh position={[-2.8, 0.02, 0.7]}>
+          <boxGeometry args={[1.2, 0.02, 1.2]} />
+          <meshStandardMaterial color="#bdbdbd" opacity={0.3} transparent />
+        </mesh>
+        {/* Multi-faith/neutral decor (wall art) */}
+        <mesh position={[0, 2.2, 1.8]}>
+          <boxGeometry args={[1.2, 0.32, 0.08]} />
+          <meshStandardMaterial color="#fff8e1" />
+        </mesh>
+        {/* Braille/inclusive signage */}
+        <mesh position={[-width/2+0.3, 1.5, depth/2-0.3]}>
+          <boxGeometry args={[0.32, 0.12, 0.04]} />
+          <meshStandardMaterial color="#212121" />
+        </mesh>
+        {/* Air purifier/ventilation */}
+        <mesh position={[width/2-0.3, 0.7, -depth/2+0.3]}>
+          <boxGeometry args={[0.22, 0.32, 0.22]} />
+          <meshStandardMaterial color="#b3e5fc" />
+        </mesh>
+        {/* Water fountain/dispenser */}
+        <mesh position={[width/2-1.2, 0.7, -depth/2+0.7]}>
+          <cylinderGeometry args={[0.18, 0.18, 0.32, 12]} />
+          <meshStandardMaterial color="#81d4fa" />
+        </mesh>
+        {/* Tissues/comfort supplies station */}
+        <mesh position={[width/2-1.2, 0.32, -depth/2+1.2]}>
+          <boxGeometry args={[0.32, 0.22, 0.22]} />
+          <meshStandardMaterial color="#ffe082" />
+        </mesh>
+        {/* Emergency call button/intercom */}
+        <mesh position={[width/2-0.3, 1.5, -depth/2+0.3]}>
+          <boxGeometry args={[0.09, 0.09, 0.04]} />
+          <meshStandardMaterial color="#ff1744" />
+        </mesh>
+        {/* Privacy screen/partition */}
+        <mesh position={[0, 1.2, depth/2-0.12]}>
+          <boxGeometry args={[3.2, 2.2, 0.04]} />
+          <meshStandardMaterial color="#b2dfdb" />
+        </mesh>
+        {/* Dimmable/soft lighting control (panel) */}
+        <mesh position={[width/2-0.3, 1.2, -depth/2+0.3]}>
+          <boxGeometry args={[0.12, 0.12, 0.04]} />
+          <meshStandardMaterial color="#fffde7" />
+        </mesh>
+        {/* CCTV/security camera */}
+        <mesh position={[width/2-0.2, height-0.2, -depth/2+0.2]}>
+          <boxGeometry args={[0.09, 0.09, 0.09]} />
+          <meshStandardMaterial color="#212121" />
+        </mesh>
     </group>
   );
 };
@@ -263,6 +313,46 @@ export const MortuaryRoom: React.FC<MortuaryRoomProps> = ({ position = [0, 0, 0]
         <boxGeometry args={[0.09, 0.09, 0.09]} />
         <meshStandardMaterial color="#212121" />
       </mesh>
+        {/* Body identification/labeling station */}
+        <mesh position={[width/2-2.2, 0.7, -depth/2+1.2]}>
+          <boxGeometry args={[1.2, 0.7, 0.5]} />
+          <meshStandardMaterial color="#ffe082" />
+        </mesh>
+        {/* Ventilation/extractor fan */}
+        <mesh position={[-width/2+0.3, height-0.3, 0]}>
+          <boxGeometry args={[0.7, 0.18, 0.08]} />
+          <meshStandardMaterial color="#b0bec5" />
+        </mesh>
+        {/* CCTV/security camera */}
+        <mesh position={[width/2-0.2, height-0.2, -depth/2+0.2]}>
+          <boxGeometry args={[0.09, 0.09, 0.09]} />
+          <meshStandardMaterial color="#212121" />
+        </mesh>
+        {/* Intercom/Emergency call button */}
+        <mesh position={[width/2-0.3, 1.5, -depth/2+0.3]}>
+          <boxGeometry args={[0.09, 0.09, 0.04]} />
+          <meshStandardMaterial color="#ff1744" />
+        </mesh>
+        {/* Additional PPE storage */}
+        <mesh position={[0.7, 1.5, depth/2-0.3]}>
+          <boxGeometry args={[0.32, 0.32, 0.18]} />
+          <meshStandardMaterial color="#90caf9" />
+        </mesh>
+        {/* Disinfectant/cleaning supplies station */}
+        <mesh position={[width/2-1.2, 0.32, -depth/2+0.7]}>
+          <boxGeometry args={[0.5, 0.22, 0.32]} />
+          <meshStandardMaterial color="#81d4fa" />
+        </mesh>
+        {/* Privacy screen/partition for viewing */}
+        <mesh position={[0, 1.2, depth/2-0.12]}>
+          <boxGeometry args={[3.2, 2.2, 0.04]} />
+          <meshStandardMaterial color="#b2dfdb" />
+        </mesh>
+        {/* Secure access panel/lock for entry */}
+        <mesh position={[0.7, 1.2, depth/2-0.06]}>
+          <boxGeometry args={[0.18, 0.18, 0.04]} />
+          <meshStandardMaterial color="#1976d2" />
+        </mesh>
     </group>
   );
 };
@@ -403,6 +493,51 @@ export const BloodBankRoom: React.FC<BloodBankRoomProps> = ({ position = [0, 0, 
         <boxGeometry args={[3.2, 2.2, 0.04]} />
         <meshStandardMaterial color="#b2dfdb" />
       </mesh>
+        {/* Blood component separator (apheresis machine) */}
+        <group position={[-2.5, 0.32, 2.2]}>
+          <mesh>
+            <boxGeometry args={[0.7, 0.32, 0.5]} />
+            <meshStandardMaterial color="#cfd8dc" />
+          </mesh>
+          <mesh position={[0, 0.32, 0]}>
+            <cylinderGeometry args={[0.12, 0.12, 0.18, 16]} />
+            <meshStandardMaterial color="#607d8b" />
+          </mesh>
+          <mesh position={[0.18, 0.18, 0.18]}>
+            <boxGeometry args={[0.18, 0.12, 0.12]} />
+            <meshStandardMaterial color="#90caf9" />
+          </mesh>
+        </group>
+        {/* Labeling/packing station */}
+        <mesh position={[width/2-2.2, 0.7, -depth/2+1.2]}>
+          <boxGeometry args={[1.2, 0.7, 0.5]} />
+          <meshStandardMaterial color="#ffe082" />
+        </mesh>
+        {/* Biohazard waste bin */}
+        <mesh position={[width/2-0.3, 0.32, -depth/2+0.3]}>
+          <cylinderGeometry args={[0.13, 0.13, 0.32, 12]} />
+          <meshStandardMaterial color="#d32f2f" />
+        </mesh>
+        {/* Secure drug/medicine cabinet */}
+        <mesh position={[-width/2+0.7, 1.5, -depth/2+0.7]}>
+          <boxGeometry args={[0.5, 0.7, 0.32]} />
+          <meshStandardMaterial color="#bdbdbd" />
+        </mesh>
+        {/* UPS/power backup unit for fridges */}
+        <mesh position={[-width/2+1.2, 0.32, -depth/2+0.7]}>
+          <boxGeometry args={[0.5, 0.22, 0.32]} />
+          <meshStandardMaterial color="#212121" />
+        </mesh>
+        {/* CCTV/security camera */}
+        <mesh position={[width/2-0.2, height-0.2, -depth/2+0.2]}>
+          <boxGeometry args={[0.09, 0.09, 0.09]} />
+          <meshStandardMaterial color="#212121" />
+        </mesh>
+        {/* Intercom/Emergency call button */}
+        <mesh position={[width/2-0.3, 1.5, -depth/2+0.3]}>
+          <boxGeometry args={[0.09, 0.09, 0.04]} />
+          <meshStandardMaterial color="#ff1744" />
+        </mesh>
     </group>
   );
 };
