@@ -1,4 +1,3 @@
-
 // BirthdayZone cleaned up for new implementation
 
 
@@ -13,6 +12,7 @@ import WeatherControls from "@/components/ui/WeatherControls";
 import WeatherSystem from "@/components/3d/weather/WeatherSystem";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useTheme } from "@/hooks/useTheme";
+import { Text } from '@react-three/drei';
 
 type WeatherType = 'sunny' | 'rainy' | 'cloudy' | 'monsoon' | 'winter';
 
@@ -25,7 +25,7 @@ export default function BirthdayZone() {
 
 
   // Hospital view state
-  const [viewMode, setViewMode] = useState<'exterior' | 'interior'>('exterior');
+  const [viewMode, setViewMode] = useState<'exterior' | 'interior' | 'hospitalSection'>('exterior');
   const [currentRoom, setCurrentRoom] = useState<
     | 'reception'
     | 'waiting'
@@ -133,6 +133,18 @@ export default function BirthdayZone() {
             >
               🏛️ Interior View
             </button>
+            <button
+              onClick={() => {
+                setViewMode('hospitalSection');
+              }}
+              className={`px-3 py-1 rounded text-xs border transition-colors ${
+                viewMode === 'hospitalSection'
+                  ? 'bg-emerald-500/30 text-white border-emerald-300/40'
+                  : 'bg-white/10 text-white/80 hover:bg-white/20'
+              }`}
+            >
+              🏢 Hospital Section
+            </button>
           </div>
           {viewMode === 'interior' && (
             <div className="grid grid-cols-3 gap-1 text-xs">
@@ -174,11 +186,66 @@ export default function BirthdayZone() {
           <WeatherSystem weatherType={weather} autoChange={autoWeather} />
           {viewMode === 'exterior' ? (
             <Hospital3D position={[0, 0, 0]} isNight={isNight} />
-          ) : (
+          ) : viewMode === 'interior' ? (
             <HospitalInterior3D position={[0, 0, 0]} currentRoom={currentRoom} viewMode={viewMode} isNight={isNight} />
-          )}
+          ) : viewMode === 'hospitalSection' ? (
+            <HospitalSectionLayout isNight={isNight} />
+          ) : null}
         </Scene>
       </div>
     </div>
+  );
+}
+
+// Hospital Section Layout: map ground floor rooms side by side
+function HospitalSectionLayout({ isNight }: { isNight?: boolean }) {
+  // Ambulance Bay at front, other rooms in next line side by side
+  const groundFloorRooms = [
+    { name: 'Ambulance Bay', room: 'ambulanceBayEntrance', position: [0, 0, 0] },
+  ];
+  const otherRooms = [
+    { name: 'Reception', room: 'reception', position: [-20, 0, -10] },
+    { name: 'Waiting Area', room: 'waiting', position: [-10, 0, -10] },
+    { name: 'Emergency', room: 'emergency', position: [0, 0, -10] },
+    { name: 'Admin Offices', room: 'administrativeOffices', position: [10, 0, -10] },
+    { name: 'Cafeteria', room: 'cafeteriaCanteen', position: [20, 0, -10] },
+  ];
+  return (
+    <group>
+      {/* Ambulance Bay at front */}
+      <group>
+        {groundFloorRooms.map(({ name, room, position }) => (
+          <group key={room} position={position}>
+            <HospitalInterior3D currentRoom={room} isNight={isNight} position={[0, 0, 0]} />
+            <Text
+              position={[0, 2.5, 0]}
+              fontSize={0.7}
+              color="#1976d2"
+              anchorX="center"
+              anchorY="middle"
+            >
+              {name}
+            </Text>
+          </group>
+        ))}
+      </group>
+      {/* Other rooms in next line, spaced side by side */}
+      <group>
+        {otherRooms.map(({ name, room, position }) => (
+          <group key={room} position={position}>
+            <HospitalInterior3D currentRoom={room} isNight={isNight} position={[0, 0, 0]} />
+            <Text
+              position={[0, 2.5, 0]}
+              fontSize={0.7}
+              color="#1976d2"
+              anchorX="center"
+              anchorY="middle"
+            >
+              {name}
+            </Text>
+          </group>
+        ))}
+      </group>
+    </group>
   );
 }
