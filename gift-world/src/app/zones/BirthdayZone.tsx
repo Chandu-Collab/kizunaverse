@@ -199,40 +199,35 @@ export default function BirthdayZone() {
 
 // Hospital Section Layout: map ground floor rooms side by side
 function HospitalSectionLayout({ isNight }: { isNight?: boolean }) {
-  // Ambulance Bay at front, other rooms in next line side by side
-  const groundFloorRooms = [
-    { name: 'Ambulance Bay', room: 'ambulanceBayEntrance', position: [0, 0, 0] },
-  ];
+  // Ambulance Bay at the very front, all other rooms behind with new arrangement
+  const ambulanceBay = { name: 'Ambulance Bay', room: 'ambulanceBayEntrance', position: [0, 0, 14] };
   const otherRooms = [
-    { name: 'Reception', room: 'reception', position: [-20, 0, -10] },
-    { name: 'Waiting Area', room: 'waiting', position: [-10, 0, -10] },
-    { name: 'Emergency', room: 'emergency', position: [0, 0, -10] },
-    { name: 'Admin Offices', room: 'administrativeOffices', position: [10, 0, -10] },
-    { name: 'Cafeteria', room: 'cafeteriaCanteen', position: [20, 0, -10] },
+    { name: 'Reception', room: 'reception', position: [0, 0, 0], rotation: [0, 0, 0] }, // Center
+    { name: 'Waiting Area', room: 'waiting', position: [10, 0, 0], rotation: [0, 0, 0] }, // Right side
+    { name: 'Emergency', room: 'emergency', position: [-10, 0, 0], rotation: [0, 0, 0] }, // Left side
+    { name: 'Admin Offices', room: 'administrativeOffices', position: [-10, 0, -10], rotation: [0, Math.PI, 0] },
+    { name: 'Back Exit', room: 'emergency', position: [0, 0, -10], rotation: [0, Math.PI, 0] }, // Centered back exit
+    { name: 'Cafeteria', room: 'cafeteriaCanteen', position: [10, 0, -10], rotation: [0, Math.PI, 0] }, // Cafeteria to the right of exit
   ];
   return (
     <group>
-      {/* Ambulance Bay at front */}
-      <group>
-        {groundFloorRooms.map(({ name, room, position }) => (
-          <group key={room} position={position}>
-            <HospitalInterior3D currentRoom={room} isNight={isNight} position={[0, 0, 0]} />
-            <Text
-              position={[0, 2.5, 0]}
-              fontSize={0.7}
-              color="#1976d2"
-              anchorX="center"
-              anchorY="middle"
-            >
-              {name}
-            </Text>
-          </group>
-        ))}
+      {/* Ambulance Bay at the very front */}
+      <group position={ambulanceBay.position}>
+        <HospitalInterior3D currentRoom={ambulanceBay.room} isNight={isNight} position={[0, 0, 0]} />
+        <Text
+          position={[0, 2.5, 0]}
+          fontSize={0.7}
+          color="#1976d2"
+          anchorX="center"
+          anchorY="middle"
+        >
+          {ambulanceBay.name}
+        </Text>
       </group>
-      {/* Other rooms in next line, spaced side by side */}
+      {/* All other rooms behind, arranged as requested */}
       <group>
-        {otherRooms.map(({ name, room, position }) => (
-          <group key={room} position={position}>
+        {otherRooms.map(({ name, room, position, rotation }) => (
+          <group key={room + name} position={position} rotation={rotation}>
             <HospitalInterior3D currentRoom={room} isNight={isNight} position={[0, 0, 0]} />
             <Text
               position={[0, 2.5, 0]}
