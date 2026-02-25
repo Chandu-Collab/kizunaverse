@@ -23,7 +23,6 @@ export default function BirthdayZone() {
   const { isNight, toggleTheme } = useTheme();
   const [isAutoCycle, setIsAutoCycle] = useState(true);
 
-
   // Hospital view state
   const [viewMode, setViewMode] = useState<'exterior' | 'interior' | 'hospitalSection'>('exterior');
   const [currentRoom, setCurrentRoom] = useState<
@@ -62,6 +61,9 @@ export default function BirthdayZone() {
     setAutoWeather(false);
   };
   const handleToggleAuto = () => setAutoWeather((prev) => !prev);
+
+  // Floor state for hospital section
+  const [sectionFloor, setSectionFloor] = useState<'ground' | 'first' | 'second'>('ground');
 
   // Auto day/night cycle every 30s
   React.useEffect(() => {
@@ -146,34 +148,68 @@ export default function BirthdayZone() {
               🏢 Hospital Section
             </button>
           </div>
+          {/* Floor selector for hospital section */}
+          {viewMode === 'hospitalSection' && (
+            <div className="flex gap-2 mb-2">
+              <span className="text-white text-xs">Floor:</span>
+              <button
+                onClick={() => setSectionFloor('ground')}
+                className={`px-2 py-1 rounded text-xs border transition-colors ${sectionFloor === 'ground' ? 'bg-blue-500/40 text-white border-blue-300' : 'bg-white/10 text-white/70 border-white/20'}`}
+              >
+                Ground
+              </button>
+              <button
+                onClick={() => setSectionFloor('first')}
+                className={`px-2 py-1 rounded text-xs border transition-colors ${sectionFloor === 'first' ? 'bg-blue-500/40 text-white border-blue-300' : 'bg-white/10 text-white/70 border-white/20'}`}
+              >
+                First
+              </button>
+              <button
+                onClick={() => setSectionFloor('second')}
+                className={`px-2 py-1 rounded text-xs border transition-colors ${sectionFloor === 'second' ? 'bg-blue-500/40 text-white border-blue-300' : 'bg-white/10 text-white/70 border-white/20'}`}
+              >
+                Second
+              </button>
+            </div>
+          )}
           {viewMode === 'interior' && (
             <div className="grid grid-cols-3 gap-1 text-xs">
-                <button onClick={() => setCurrentRoom('cafeteriaCanteen')} className={`p-1 rounded ${currentRoom==='cafeteriaCanteen'?'bg-yellow-500/50 text-white border border-yellow-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Cafeteria/Canteen</button>
-                <button onClick={() => setCurrentRoom('administrativeOffices')} className={`p-1 rounded ${currentRoom==='administrativeOffices'?'bg-gray-700/50 text-white border border-gray-400':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Admin Offices</button>
-                <button onClick={() => setCurrentRoom('ambulanceBayEntrance')} className={`p-1 rounded ${currentRoom==='ambulanceBayEntrance'?'bg-red-700/50 text-white border border-red-400':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Ambulance Bay</button>
-                <button onClick={() => setCurrentRoom('physiotherapyRehab')} className={`p-1 rounded ${currentRoom==='physiotherapyRehab'?'bg-green-700/50 text-white border border-green-400':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Physiotherapy/Rehab</button>
-                <button onClick={() => setCurrentRoom('bloodBank')} className={`p-1 rounded ${currentRoom==='bloodBank'?'bg-red-800/50 text-white border border-red-400':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Blood Bank</button>
-                <button onClick={() => setCurrentRoom('mortuary')} className={`p-1 rounded ${currentRoom==='mortuary'?'bg-gray-900/50 text-white border border-gray-400':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Mortuary</button>
-                <button onClick={() => setCurrentRoom('chapelPrayerRoom')} className={`p-1 rounded ${currentRoom==='chapelPrayerRoom'?'bg-purple-900/50 text-white border border-purple-400':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Chapel/Prayer Room</button>
-              <button onClick={() => setCurrentRoom('reception')} className={`p-1 rounded ${currentRoom==='reception'?'bg-blue-500/50 text-white border border-blue-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Reception</button>
-              <button onClick={() => setCurrentRoom('waiting')} className={`p-1 rounded ${currentRoom==='waiting'?'bg-indigo-500/50 text-white border border-indigo-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Waiting Area</button>
-              <button onClick={() => setCurrentRoom('consultation')} className={`p-1 rounded ${currentRoom==='consultation'?'bg-pink-500/50 text-white border border-pink-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Consultation</button>
-              <button onClick={() => setCurrentRoom('ward')} className={`p-1 rounded ${currentRoom==='ward'?'bg-green-500/50 text-white border border-green-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Ward</button>
-              <button onClick={() => setCurrentRoom('operation')} className={`p-1 rounded ${currentRoom==='operation'?'bg-purple-500/50 text-white border border-purple-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Operation</button>
-              <button onClick={() => setCurrentRoom('icu')} className={`p-1 rounded ${currentRoom==='icu'?'bg-blue-900/50 text-white border border-blue-900':'bg-white/10 text-white/70 hover:bg-white/20'}`}>ICU</button>
-              <button onClick={() => setCurrentRoom('recovery')} className={`p-1 rounded ${currentRoom==='recovery'?'bg-green-900/50 text-white border border-green-900':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Recovery</button>
-              <button onClick={() => setCurrentRoom('emergency')} className={`p-1 rounded ${currentRoom==='emergency'?'bg-red-500/50 text-white border border-red-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Emergency</button>
-              <button onClick={() => setCurrentRoom('pharmacy')} className={`p-1 rounded ${currentRoom==='pharmacy'?'bg-orange-500/50 text-white border border-orange-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Pharmacy</button>
-              <button onClick={() => setCurrentRoom('store')} className={`p-1 rounded ${currentRoom==='store'?'bg-cyan-500/50 text-white border border-cyan-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Store</button>
-              <button onClick={() => setCurrentRoom('generator')} className={`p-1 rounded ${currentRoom==='generator'?'bg-emerald-500/50 text-white border border-emerald-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Generator</button>
-              <button onClick={() => setCurrentRoom('nurseStations')} className={`p-1 rounded ${currentRoom==='nurseStations'?'bg-pink-500/50 text-white border border-pink-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Nurse Station</button>
-              <button onClick={() => setCurrentRoom('bathroomRestroom')} className={`p-1 rounded ${currentRoom==='bathroomRestroom'?'bg-gray-500/50 text-white border border-gray-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Bathroom/Restroom</button>
-              <button onClick={() => setCurrentRoom('staffRest')} className={`p-1 rounded ${currentRoom==='staffRest'?'bg-yellow-500/50 text-white border border-yellow-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Staff Rest</button>
-              <button onClick={() => setCurrentRoom("laboratory")} className={`p-1 rounded ${currentRoom==='laboratory'?'bg-purple-500/50 text-white border border-purple-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Laboratory</button>
-              <button onClick={() => setCurrentRoom("radiology")} className={`p-1 rounded ${currentRoom==='radiology'?'bg-blue-500/50 text-white border border-blue-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Radiology</button>
-              <button onClick={() => setCurrentRoom("maternity")} className={`p-1 rounded ${currentRoom==='maternity'?'bg-pink-500/50 text-white border border-pink-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Maternity</button>
-              <button onClick={() => setCurrentRoom("pediatric")} className={`p-1 rounded ${currentRoom==='pediatric'?'bg-yellow-500/50 text-white border border-yellow-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Pediatric</button>
-              <button onClick={() => setCurrentRoom("isolation")} className={`p-1 rounded ${currentRoom==='isolation'?'bg-red-500/50 text-white border border-red-300':'bg-white/10 text-white/70 hover:bg-white/20'}`}>Isolation</button>
+              {[
+                { key: 'reception', label: 'Reception' },
+                { key: 'waiting', label: 'Waiting Area' },
+                { key: 'consultation', label: 'Consultation' },
+                { key: 'ward', label: 'Ward' },
+                { key: 'operation', label: 'Operation' },
+                { key: 'pharmacy', label: 'Pharmacy' },
+                { key: 'store', label: 'Store' },
+                { key: 'generator', label: 'Generator' },
+                { key: 'staffRest', label: 'Staff Rest' },
+                { key: 'icu', label: 'ICU' },
+                { key: 'recovery', label: 'Recovery' },
+                { key: 'emergency', label: 'Emergency' },
+                { key: 'laboratory', label: 'Laboratory' },
+                { key: 'radiology', label: 'Radiology' },
+                { key: 'maternity', label: 'Maternity' },
+                { key: 'pediatric', label: 'Pediatric' },
+                { key: 'isolation', label: 'Isolation' },
+                { key: 'nurseStations', label: 'Nurse Station' },
+                { key: 'bathroomRestroom', label: 'Bathroom/Restroom' },
+                { key: 'cafeteriaCanteen', label: 'Cafeteria/Canteen' },
+                { key: 'administrativeOffices', label: 'Admin Offices' },
+                { key: 'ambulanceBayEntrance', label: 'Ambulance Bay' },
+                { key: 'physiotherapyRehab', label: 'Physiotherapy/Rehab' },
+                { key: 'bloodBank', label: 'Blood Bank' },
+                { key: 'mortuary', label: 'Mortuary' },
+                { key: 'chapelPrayerRoom', label: 'Chapel/Prayer Room' },
+              ].map(({ key, label }) => (
+                <button
+                  key={key}
+                  onClick={() => setCurrentRoom(key)}
+                  className={`p-1 rounded ${currentRoom === key ? 'bg-blue-500/50 text-white border border-blue-300' : 'bg-white/10 text-white/70 hover:bg-white/20'}`}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
           )}
         </div>
@@ -189,7 +225,7 @@ export default function BirthdayZone() {
           ) : viewMode === 'interior' ? (
             <HospitalInterior3D position={[0, 0, 0]} currentRoom={currentRoom} viewMode={viewMode} isNight={isNight} />
           ) : viewMode === 'hospitalSection' ? (
-            <HospitalSectionLayout isNight={isNight} />
+            <HospitalSectionLayout isNight={isNight} floor={sectionFloor} />
           ) : null}
         </Scene>
       </div>
@@ -197,36 +233,112 @@ export default function BirthdayZone() {
   );
 }
 
-// Hospital Section Layout: map ground floor rooms side by side
-function HospitalSectionLayout({ isNight }: { isNight?: boolean }) {
-  // Ambulance Bay at the very front, all other rooms behind with new arrangement
-  const ambulanceBay = { name: 'Ambulance Bay', room: 'ambulanceBayEntrance', position: [0, 0, 14] };
-  const otherRooms = [
-    { name: 'Reception', room: 'reception', position: [0, 0, 0], rotation: [0, 0, 0] }, // Center
-    { name: 'Waiting Area', room: 'waiting', position: [10, 0, 0], rotation: [0, 0, 0] }, // Right side
-    { name: 'Emergency', room: 'emergency', position: [-10, 0, 0], rotation: [0, 0, 0] }, // Left side
-    { name: 'Admin Offices', room: 'administrativeOffices', position: [-10, 0, -10], rotation: [0, Math.PI, 0] },
-    { name: 'Back Exit', room: 'emergency', position: [0, 0, -10], rotation: [0, Math.PI, 0] }, // Centered back exit
-    { name: 'Cafeteria', room: 'cafeteriaCanteen', position: [10, 0, -10], rotation: [0, Math.PI, 0] }, // Cafeteria to the right of exit
+// Hospital Section Layout: map ground and first floor rooms
+function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolean; floor?: 'ground' | 'first' | 'second' }) {
+  // Define rooms for each floor
+  const ROOM_SPACING = 18;
+  const ROOM_DEPTH = 18;
+  const FLOOR_HEIGHT = 6;
+  const CORRIDOR_WIDTH = 6;
+  const ROOM_WIDTH = 8;
+
+  // Floor Y positions
+  const groundY = 0;
+  const firstY = FLOOR_HEIGHT;
+  const secondY = FLOOR_HEIGHT * 2;
+
+  // Room definitions
+  const groundFloorRooms = [
+    { name: 'Reception', room: 'reception', position: [0, groundY, 0], rotation: [0, 0, 0] },
+    { name: 'Waiting Area', room: 'waiting', position: [ROOM_SPACING, groundY, 0], rotation: [0, 0, 0] },
+    { name: 'Emergency', room: 'emergency', position: [-ROOM_SPACING, groundY, 0], rotation: [0, 0, 0] },
+    { name: 'Admin Offices', room: 'administrativeOffices', position: [-ROOM_SPACING, groundY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Back Exit', room: 'emergency', position: [0, groundY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Cafeteria', room: 'cafeteriaCanteen', position: [ROOM_SPACING, groundY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
   ];
+  const firstFloorRooms = [
+    { name: 'ICU', room: 'icu', position: [0, firstY, 0], rotation: [0, 0, 0] },
+    { name: 'Operation', room: 'operation', position: [ROOM_SPACING, firstY, 0], rotation: [0, 0, 0] },
+    { name: 'Ward', room: 'ward', position: [-ROOM_SPACING, firstY, 0], rotation: [0, 0, 0] },
+    { name: 'Maternity', room: 'maternity', position: [0, firstY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Pediatric', room: 'pediatric', position: [ROOM_SPACING, firstY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Isolation', room: 'isolation', position: [-ROOM_SPACING, firstY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+  ];
+  // Second floor: example rooms, adjust as needed
+  const secondFloorRooms = [
+    { name: 'Radiology', room: 'radiology', position: [0, secondY, 0], rotation: [0, 0, 0] },
+    { name: 'Laboratory', room: 'laboratory', position: [ROOM_SPACING, secondY, 0], rotation: [0, 0, 0] },
+    { name: 'Blood Bank', room: 'bloodBank', position: [-ROOM_SPACING, secondY, 0], rotation: [0, 0, 0] },
+    { name: 'Physiotherapy', room: 'physiotherapyRehab', position: [0, secondY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Staff Rest', room: 'staffRest', position: [ROOM_SPACING, secondY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Mortuary', room: 'mortuary', position: [-ROOM_SPACING, secondY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+  ];
+
+  let rooms: typeof groundFloorRooms = groundFloorRooms;
+  if (floor === 'first') rooms = firstFloorRooms;
+  if (floor === 'second') rooms = secondFloorRooms;
+
+  const minZ = Math.min(...rooms.map(r => r.position[2]));
+  const maxZ = Math.max(...rooms.map(r => r.position[2]));
+  const corridorY = floor === 'ground' ? groundY : floor === 'first' ? firstY : secondY;
+  const corridorFrontZ = maxZ + ROOM_DEPTH / 2 - CORRIDOR_WIDTH / 2;
+  const corridorBackZ = minZ - ROOM_DEPTH / 2 + CORRIDOR_WIDTH / 2;
+  const minX = Math.min(...rooms.map(r => r.position[0]));
+  const maxX = Math.max(...rooms.map(r => r.position[0]));
+  const corridorWidth = Math.abs(maxX - minX) + ROOM_WIDTH;
+
+  function Corridor({ from, to, y = 0 }) {
+    const mid = [(from[0] + to[0]) / 2, y, (from[2] + to[2]) / 2];
+    const dx = Math.abs(from[0] - to[0]);
+    const dz = Math.abs(from[2] - to[2]);
+    return (
+      <mesh position={mid} scale={[dx > dz ? dx : CORRIDOR_WIDTH, 0.1, dz > dx ? dz : CORRIDOR_WIDTH]} visible={true}>
+        <boxGeometry />
+        <meshStandardMaterial color="#e0e0e0" opacity={0.3} transparent />
+      </mesh>
+    );
+  }
+
+  const ambulanceBay = { name: 'Ambulance Bay', room: 'ambulanceBayEntrance', position: [0, groundY, ROOM_SPACING + 4] };
   return (
     <group>
-      {/* Ambulance Bay at the very front */}
-      <group position={ambulanceBay.position}>
-        <HospitalInterior3D currentRoom={ambulanceBay.room} isNight={isNight} position={[0, 0, 0]} />
-        <Text
-          position={[0, 2.5, 0]}
-          fontSize={0.7}
-          color="#1976d2"
-          anchorX="center"
-          anchorY="middle"
-        >
-          {ambulanceBay.name}
-        </Text>
-      </group>
-      {/* All other rooms behind, arranged as requested */}
+      {/* Ambulance Bay at the very front (only on ground floor view) */}
+      {floor === 'ground' && (
+        <group position={ambulanceBay.position}>
+          <HospitalInterior3D currentRoom={ambulanceBay.room} isNight={isNight} position={[0, 0, 0]} />
+          <Text
+            position={[0, 2.5, 0]}
+            fontSize={0.7}
+            color="#1976d2"
+            anchorX="center"
+            anchorY="middle"
+          >
+            {ambulanceBay.name}
+          </Text>
+        </group>
+      )}
+      {/* Corridors between all adjacent rooms */}
+      {rooms.map((roomA, i, arr) =>
+        arr.slice(i + 1).map((roomB, j) => {
+          const isAdjacent = (roomA.position[0] === roomB.position[0] && Math.abs(roomA.position[2] - roomB.position[2]) === ROOM_DEPTH)
+            || (roomA.position[2] === roomB.position[2] && Math.abs(roomA.position[0] - roomB.position[0]) === ROOM_SPACING);
+          if (!isAdjacent) return null;
+          return <Corridor key={roomA.name + '-' + roomB.name} from={roomA.position} to={roomB.position} y={roomA.position[1]} />;
+        })
+      )}
+      {/* Front corridor */}
+      <mesh position={[0, corridorY, corridorFrontZ]} scale={[corridorWidth, 0.1, CORRIDOR_WIDTH]} visible={true}>
+        <boxGeometry />
+        <meshStandardMaterial color="#e0e0e0" opacity={0.3} transparent />
+      </mesh>
+      {/* Back corridor */}
+      <mesh position={[0, corridorY, corridorBackZ]} scale={[corridorWidth, 0.1, CORRIDOR_WIDTH]} visible={true}>
+        <boxGeometry />
+        <meshStandardMaterial color="#e0e0e0" opacity={0.3} transparent />
+      </mesh>
+      {/* Render rooms for selected floor */}
       <group>
-        {otherRooms.map(({ name, room, position, rotation }) => (
+        {rooms.map(({ name, room, position, rotation }) => (
           <group key={room + name} position={position} rotation={rotation}>
             <HospitalInterior3D currentRoom={room} isNight={isNight} position={[0, 0, 0]} />
             <Text
