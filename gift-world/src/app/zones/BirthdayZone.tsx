@@ -234,62 +234,63 @@ export default function BirthdayZone() {
 }
 
 // Hospital Section Layout: map ground and first floor rooms
-function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolean; floor?: 'ground' | 'first' }) {
+function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolean; floor?: 'ground' | 'first' | 'second' }) {
   // Define rooms for each floor
-  // Increase spacing between rooms to avoid overlap
-  const ROOM_SPACING = 18; // Increased from 10 to 18 units
+  const ROOM_SPACING = 18;
   const ROOM_DEPTH = 18;
   const FLOOR_HEIGHT = 6;
-  // Corridor dimensions
   const CORRIDOR_WIDTH = 6;
-  const CORRIDOR_LENGTH = ROOM_DEPTH * 2 + 4;
+  const ROOM_WIDTH = 8;
 
-  // For front/back corridor calculation
-  const ROOM_WIDTH = 8; // Estimate for corridor width calculation
+  // Floor Y positions
+  const groundY = 0;
+  const firstY = FLOOR_HEIGHT;
+  const secondY = FLOOR_HEIGHT * 2;
+
+  // Room definitions
   const groundFloorRooms = [
-    { name: 'Reception', room: 'reception', position: [0, 0, 0], rotation: [0, 0, 0] },
-    { name: 'Waiting Area', room: 'waiting', position: [ROOM_SPACING, 0, 0], rotation: [0, 0, 0] },
-    { name: 'Emergency', room: 'emergency', position: [-ROOM_SPACING, 0, 0], rotation: [0, 0, 0] },
-    { name: 'Admin Offices', room: 'administrativeOffices', position: [-ROOM_SPACING, 0, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
-    { name: 'Back Exit', room: 'emergency', position: [0, 0, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
-    { name: 'Cafeteria', room: 'cafeteriaCanteen', position: [ROOM_SPACING, 0, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Reception', room: 'reception', position: [0, groundY, 0], rotation: [0, 0, 0] },
+    { name: 'Waiting Area', room: 'waiting', position: [ROOM_SPACING, groundY, 0], rotation: [0, 0, 0] },
+    { name: 'Emergency', room: 'emergency', position: [-ROOM_SPACING, groundY, 0], rotation: [0, 0, 0] },
+    { name: 'Admin Offices', room: 'administrativeOffices', position: [-ROOM_SPACING, groundY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Back Exit', room: 'emergency', position: [0, groundY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Cafeteria', room: 'cafeteriaCanteen', position: [ROOM_SPACING, groundY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
   ];
   const firstFloorRooms = [
-    { name: 'ICU', room: 'icu', position: [0, FLOOR_HEIGHT, 0], rotation: [0, 0, 0] },
-    { name: 'Operation', room: 'operation', position: [ROOM_SPACING, FLOOR_HEIGHT, 0], rotation: [0, 0, 0] },
-    { name: 'Ward', room: 'ward', position: [-ROOM_SPACING, FLOOR_HEIGHT, 0], rotation: [0, 0, 0] },
-    { name: 'Maternity', room: 'maternity', position: [0, FLOOR_HEIGHT, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
-    { name: 'Pediatric', room: 'pediatric', position: [ROOM_SPACING, FLOOR_HEIGHT, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
-    { name: 'Isolation', room: 'isolation', position: [-ROOM_SPACING, FLOOR_HEIGHT, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'ICU', room: 'icu', position: [0, firstY, 0], rotation: [0, 0, 0] },
+    { name: 'Operation', room: 'operation', position: [ROOM_SPACING, firstY, 0], rotation: [0, 0, 0] },
+    { name: 'Ward', room: 'ward', position: [-ROOM_SPACING, firstY, 0], rotation: [0, 0, 0] },
+    { name: 'Maternity', room: 'maternity', position: [0, firstY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Pediatric', room: 'pediatric', position: [ROOM_SPACING, firstY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Isolation', room: 'isolation', position: [-ROOM_SPACING, firstY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
   ];
-  // Second floor rooms (example layout, adjust as needed)
+  // Second floor: example rooms, adjust as needed
   const secondFloorRooms = [
-    { name: 'Library', room: 'library', position: [0, FLOOR_HEIGHT * 2, 0], rotation: [0, 0, 0] },
-    { name: 'Conference', room: 'conference', position: [ROOM_SPACING, FLOOR_HEIGHT * 2, 0], rotation: [0, 0, 0] },
-    { name: 'Research', room: 'research', position: [-ROOM_SPACING, FLOOR_HEIGHT * 2, 0], rotation: [0, 0, 0] },
-    { name: 'Dormitory', room: 'dormitory', position: [0, FLOOR_HEIGHT * 2, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
-    { name: 'Cafeteria 2F', room: 'cafeteria2f', position: [ROOM_SPACING, FLOOR_HEIGHT * 2, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
-    { name: 'Staff Lounge', room: 'staffLounge', position: [-ROOM_SPACING, FLOOR_HEIGHT * 2, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Radiology', room: 'radiology', position: [0, secondY, 0], rotation: [0, 0, 0] },
+    { name: 'Laboratory', room: 'laboratory', position: [ROOM_SPACING, secondY, 0], rotation: [0, 0, 0] },
+    { name: 'Blood Bank', room: 'bloodBank', position: [-ROOM_SPACING, secondY, 0], rotation: [0, 0, 0] },
+    { name: 'Physiotherapy', room: 'physiotherapyRehab', position: [0, secondY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Staff Rest', room: 'staffRest', position: [ROOM_SPACING, secondY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Mortuary', room: 'mortuary', position: [-ROOM_SPACING, secondY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
   ];
-  const rooms = (floor === 'ground' ? groundFloorRooms : floor === 'first' ? firstFloorRooms : secondFloorRooms);
+
+  let rooms: typeof groundFloorRooms = groundFloorRooms;
+  if (floor === 'first') rooms = firstFloorRooms;
+  if (floor === 'second') rooms = secondFloorRooms;
+
   const minZ = Math.min(...rooms.map(r => r.position[2]));
   const maxZ = Math.max(...rooms.map(r => r.position[2]));
-  // Corridor runs full width, placed in front and back
-  const corridorY = (floor === 'ground' ? 0 : FLOOR_HEIGHT);
-  // Corridors should be flush with room faces (no gap)
+  const corridorY = floor === 'ground' ? groundY : floor === 'first' ? firstY : secondY;
   const corridorFrontZ = maxZ + ROOM_DEPTH / 2 - CORRIDOR_WIDTH / 2;
   const corridorBackZ = minZ - ROOM_DEPTH / 2 + CORRIDOR_WIDTH / 2;
-  // Calculate corridor width to cover all rooms
   const minX = Math.min(...rooms.map(r => r.position[0]));
   const maxX = Math.max(...rooms.map(r => r.position[0]));
   const corridorWidth = Math.abs(maxX - minX) + ROOM_WIDTH;
 
-  // Helper: render corridor between two points
   function Corridor({ from, to, y = 0 }) {
     const mid = [(from[0] + to[0]) / 2, y, (from[2] + to[2]) / 2];
     const dx = Math.abs(from[0] - to[0]);
     const dz = Math.abs(from[2] - to[2]);
-    // If horizontal, corridor is wide along x, else along z
     return (
       <mesh position={mid} scale={[dx > dz ? dx : CORRIDOR_WIDTH, 0.1, dz > dx ? dz : CORRIDOR_WIDTH]} visible={true}>
         <boxGeometry />
@@ -297,9 +298,8 @@ function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolea
       </mesh>
     );
   }
-  // ...existing code...
-  // Ambulance Bay always at the front (ground floor)
-  const ambulanceBay = { name: 'Ambulance Bay', room: 'ambulanceBayEntrance', position: [0, 0, ROOM_SPACING + 4] };
+
+  const ambulanceBay = { name: 'Ambulance Bay', room: 'ambulanceBayEntrance', position: [0, groundY, ROOM_SPACING + 4] };
   return (
     <group>
       {/* Ambulance Bay at the very front (only on ground floor view) */}
@@ -318,9 +318,8 @@ function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolea
         </group>
       )}
       {/* Corridors between all adjacent rooms */}
-      {(floor === 'ground' ? groundFloorRooms : firstFloorRooms).map((roomA, i, arr) =>
+      {rooms.map((roomA, i, arr) =>
         arr.slice(i + 1).map((roomB, j) => {
-          // Only connect if rooms share x or z (adjacent horizontally or vertically)
           const isAdjacent = (roomA.position[0] === roomB.position[0] && Math.abs(roomA.position[2] - roomB.position[2]) === ROOM_DEPTH)
             || (roomA.position[2] === roomB.position[2] && Math.abs(roomA.position[0] - roomB.position[0]) === ROOM_SPACING);
           if (!isAdjacent) return null;
@@ -339,7 +338,7 @@ function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolea
       </mesh>
       {/* Render rooms for selected floor */}
       <group>
-        {(floor === 'ground' ? groundFloorRooms : firstFloorRooms).map(({ name, room, position, rotation }) => (
+        {rooms.map(({ name, room, position, rotation }) => (
           <group key={room + name} position={position} rotation={rotation}>
             <HospitalInterior3D currentRoom={room} isNight={isNight} position={[0, 0, 0]} />
             <Text
