@@ -63,7 +63,7 @@ export default function BirthdayZone() {
   const handleToggleAuto = () => setAutoWeather((prev) => !prev);
 
   // Floor state for hospital section
-  const [sectionFloor, setSectionFloor] = useState<'ground' | 'first'>('ground');
+  const [sectionFloor, setSectionFloor] = useState<'ground' | 'first' | 'second'>('ground');
 
   // Auto day/night cycle every 30s
   React.useEffect(() => {
@@ -164,6 +164,12 @@ export default function BirthdayZone() {
               >
                 First
               </button>
+              <button
+                onClick={() => setSectionFloor('second')}
+                className={`px-2 py-1 rounded text-xs border transition-colors ${sectionFloor === 'second' ? 'bg-blue-500/40 text-white border-blue-300' : 'bg-white/10 text-white/70 border-white/20'}`}
+              >
+                Second
+              </button>
             </div>
           )}
           {viewMode === 'interior' && (
@@ -256,7 +262,16 @@ function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolea
     { name: 'Pediatric', room: 'pediatric', position: [ROOM_SPACING, FLOOR_HEIGHT, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
     { name: 'Isolation', room: 'isolation', position: [-ROOM_SPACING, FLOOR_HEIGHT, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
   ];
-  const rooms = (floor === 'ground' ? groundFloorRooms : firstFloorRooms);
+  // Second floor rooms (example layout, adjust as needed)
+  const secondFloorRooms = [
+    { name: 'Library', room: 'library', position: [0, FLOOR_HEIGHT * 2, 0], rotation: [0, 0, 0] },
+    { name: 'Conference', room: 'conference', position: [ROOM_SPACING, FLOOR_HEIGHT * 2, 0], rotation: [0, 0, 0] },
+    { name: 'Research', room: 'research', position: [-ROOM_SPACING, FLOOR_HEIGHT * 2, 0], rotation: [0, 0, 0] },
+    { name: 'Dormitory', room: 'dormitory', position: [0, FLOOR_HEIGHT * 2, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Cafeteria 2F', room: 'cafeteria2f', position: [ROOM_SPACING, FLOOR_HEIGHT * 2, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Staff Lounge', room: 'staffLounge', position: [-ROOM_SPACING, FLOOR_HEIGHT * 2, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+  ];
+  const rooms = (floor === 'ground' ? groundFloorRooms : floor === 'first' ? firstFloorRooms : secondFloorRooms);
   const minZ = Math.min(...rooms.map(r => r.position[2]));
   const maxZ = Math.max(...rooms.map(r => r.position[2]));
   // Corridor runs full width, placed in front and back
