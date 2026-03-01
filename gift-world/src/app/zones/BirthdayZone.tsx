@@ -2,7 +2,7 @@
 
 
 import dynamic from "next/dynamic";
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 const Hospital3D = dynamic(() => import("@/components/3d/Hospital3D"), { ssr: false });
 const HospitalInterior3D = dynamic(() => import("@/components/3d/HospitalInterior3D"), { ssr: false });
 const Stairs3D = dynamic(() => import("@/components/3d/Stairs3D"), { ssr: false });
@@ -156,6 +156,16 @@ export default function BirthdayZone() {
 
   // Floor state for hospital section
   const [sectionFloor, setSectionFloor] = useState<'ground' | 'first' | 'second'>('ground');
+  
+  // Real-time updates for lift status (refresh every second)
+  const [liftUpdateTrigger, setLiftUpdateTrigger] = useState(0);
+  
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setLiftUpdateTrigger(prev => prev + 1);
+    }, 1000); // Update every second for real-time effect
+    return () => clearInterval(interval);
+  }, []);
 
   const selectedRoomMeaning = hospitalRoomMeanings[roomMeaningKeyMap[currentRoom]];
   const selectedRoomLabel = roomLabels[currentRoom];
@@ -313,7 +323,7 @@ export default function BirthdayZone() {
           ) : viewMode === 'interior' ? (
             <HospitalInterior3D position={[0, 0, 0]} currentRoom={currentRoom} viewMode={viewMode} isNight={isNight} />
           ) : viewMode === 'hospitalSection' ? (
-            <HospitalSectionLayout isNight={isNight} floor={sectionFloor} />
+            <HospitalSectionLayout isNight={isNight} floor={sectionFloor} liftUpdateTrigger={liftUpdateTrigger} />
           ) : null}
         </Scene>
       </div>
@@ -322,7 +332,60 @@ export default function BirthdayZone() {
 }
 
 // Hospital Section Layout: map ground and first floor rooms
-function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolean; floor?: 'ground' | 'first' | 'second' }) {
+function HospitalSectionLayout({ isNight, floor = 'ground', liftUpdateTrigger }: { isNight?: boolean; floor?: 'ground' | 'first' | 'second'; liftUpdateTrigger?: number }) {
+  // Real-time lift simulation based on current time and floor
+  const currentTime = new Date();
+  const seconds = currentTime.getSeconds();
+  const minutes = currentTime.getMinutes();
+  
+  // Simulate dynamic lift behavior
+  const isMoving = seconds % 15 < 3; // Moving for 3 seconds every 15 seconds
+  const direction = minutes % 2 === 0 ? 'up' : (minutes % 3 === 0 ? 'down' : 'stopped');
+  
+  // Simulate occupancy based on time of day and floor
+  const getOccupancy = () => {
+    const hour = currentTime.getHours();
+    if (hour >= 8 && hour <= 17) { // Peak hours
+      return ['moderate', 'full', 'light'][floor === 'ground' ? 1 : floor === 'first' ? 0 : 2] as 'empty' | 'light' | 'moderate' | 'full';
+    } else if (hour >= 6 && hour <= 22) { // Regular hours
+      return ['light', 'moderate', 'empty'][seconds % 3] as 'empty' | 'light' | 'moderate' | 'full';
+    }
+    return 'empty'; // Night time
+  };
+  
+  // Simulate door status
+  const getDoorStatus = () => {
+    if (isMoving) return 'closed';
+    const cycle = seconds % 12;
+    if (cycle < 2) return 'opening';
+    if (cycle < 8) return 'open';
+    if (cycle < 10) return 'closing';
+    return 'closed';
+  };
+  
+  // Simulate waiting queue (more during peak hours)
+  const getWaitingQueue = () => {
+    const hour = currentTime.getHours();
+    if (hour >= 8 && hour <= 17) {
+      return Math.floor((seconds % 5) + (floor === 'ground' ? 2 : 0)); // Ground floor busier
+    }
+    return Math.floor(seconds % 3);
+  };
+  
+  // Simulate estimated arrival time
+  const getEstimatedArrival = () => {
+    if (!isMoving && floor === getDirectFloor()) return 0;
+    return Math.max(5, 15 - (seconds % 15)); // 5-15 seconds
+  };
+  
+  // Get the floor the lift is currently heading to
+  const getDirectFloor = (): 'ground' | 'first' | 'second' => {
+    const floorCycle = Math.floor(seconds / 15) % 3;
+    return ['ground', 'first', 'second'][floorCycle] as 'ground' | 'first' | 'second';
+  };
+  
+  // Check for maintenance mode (rarely, for demo purposes)
+  const maintenanceMode = minutes === 0 && seconds < 30; // First 30 seconds of every hour
   type Vec3 = [number, number, number];
   type RoomDef = { name: string; room: HospitalRoomKey; position: Vec3; rotation: Vec3 };
 
@@ -666,12 +729,19 @@ function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolea
         </>
       )}
 
-      {/* Central Hospital Lift - Always visible, positioned between front and back rooms */}
+      {/* Central Hospital Lift with Real-time Usage Data */}
       <Lift3D
         position={[0, groundY, -ROOM_DEPTH / 2]} // Center between front (Z=0) and back (Z=-18) rooms
         currentFloor={floor}
         totalFloors={3}
         isNight={isNight}
+        isMoving={isMoving}
+        direction={isMoving ? direction : 'stopped'}
+        occupancy={getOccupancy()}
+        doorStatus={getDoorStatus()}
+        waitingQueue={getWaitingQueue()}
+        maintenanceMode={maintenanceMode}
+        estimatedArrival={getEstimatedArrival()}
       />
 
       {/* Lift access corridors connecting to main corridors */}

@@ -6,6 +6,13 @@ interface Lift3DProps {
   currentFloor?: 'ground' | 'first' | 'second';
   totalFloors?: number;
   isNight?: boolean;
+  isMoving?: boolean;
+  direction?: 'up' | 'down' | 'stopped';
+  occupancy?: 'empty' | 'light' | 'moderate' | 'full';
+  doorStatus?: 'open' | 'closed' | 'opening' | 'closing';
+  waitingQueue?: number;
+  maintenanceMode?: boolean;
+  estimatedArrival?: number; // in seconds
 }
 
 const Lift3D: React.FC<Lift3DProps> = ({
@@ -13,6 +20,13 @@ const Lift3D: React.FC<Lift3DProps> = ({
   currentFloor = 'ground',
   totalFloors = 3,
   isNight = false,
+  isMoving = false,
+  direction = 'stopped',
+  occupancy = 'empty',
+  doorStatus = 'closed',
+  waitingQueue = 0,
+  maintenanceMode = false,
+  estimatedArrival = 0,
 }) => {
   const FLOOR_HEIGHT = 6;
   const LIFT_WIDTH = 4;
@@ -35,6 +49,35 @@ const Lift3D: React.FC<Lift3DProps> = ({
     metalness: 0.9,
     roughness: 0.05
   });
+
+  // Occupancy indicator colors
+  const getOccupancyColor = () => {
+    switch (occupancy) {
+      case 'empty': return '#4caf50';
+      case 'light': return '#ffb74d';
+      case 'moderate': return '#ff7043';
+      case 'full': return '#f44336';
+      default: return '#9e9e9e';
+    }
+  };
+
+  // Door status colors
+  const getDoorStatusColor = () => {
+    switch (doorStatus) {
+      case 'open': return '#4caf50';
+      case 'opening': return '#81c784';
+      case 'closing': return '#ffb74d';
+      case 'closed': return '#e0e0e0';
+      default: return '#9e9e9e';
+    }
+  };
+
+  // Service status
+  const getServiceStatus = () => {
+    if (maintenanceMode) return { color: '#f44336', text: 'MAINTENANCE' };
+    if (isMoving) return { color: '#2196f3', text: 'IN SERVICE' };
+    return { color: '#4caf50', text: 'AVAILABLE' };
+  };
 
   // Calculate current lift car position based on floor
   const getCurrentCarY = () => {
@@ -95,15 +138,32 @@ const Lift3D: React.FC<Lift3DProps> = ({
           distance={4}
         />
         
-        {/* LED strip lighting around ceiling */}
+        {/* LED strip lighting around ceiling - changes based on status */}
         <mesh position={[0, FLOOR_HEIGHT / 2 - 0.15, 0]}>
           <torusGeometry args={[LIFT_WIDTH / 2 - 0.2, 0.02, 8, 24]} />
           <meshStandardMaterial 
-            color="#ffffff" 
-            emissive="#e3f2fd"
-            emissiveIntensity={isNight ? 0.6 : 0.3}
+            color={maintenanceMode ? "#f44336" : isMoving ? "#2196f3" : "#ffffff"} 
+            emissive={maintenanceMode ? "#ffebee" : isMoving ? "#e3f2fd" : "#e3f2fd"}
+            emissiveIntensity={maintenanceMode ? 1.0 : isMoving ? 0.8 : (isNight ? 0.6 : 0.3)}
           />
         </mesh>
+        
+        {/* Occupancy indicator lights inside car */}
+        <group position={[0, FLOOR_HEIGHT / 2 - 0.3, 0]}>
+          {['empty', 'light', 'moderate', 'full'].map((level, index) => {
+            const isActive = ['empty', 'light', 'moderate', 'full'].indexOf(occupancy) >= index;
+            return (
+              <mesh key={level} position={[(index - 1.5) * 0.3, 0, 0]}>
+                <cylinderGeometry args={[0.03, 0.03, 0.01, 16]} />
+                <meshStandardMaterial 
+                  color={isActive ? getOccupancyColor() : "#424242"}
+                  emissive={isActive ? getOccupancyColor() : "#000000"}
+                  emissiveIntensity={isActive ? 0.6 : 0}
+                />
+              </mesh>
+            );
+          })}
+        </group>
       </group>
 
       {/* Floor indicators and controls for each floor */}
@@ -143,17 +203,30 @@ const Lift3D: React.FC<Lift3DProps> = ({
                 </mesh>
               )}
               
-              {/* Medical-grade floor indicator display */}
+              {/* Medical-grade floor indicator display with real-time status */}
               <mesh position={[0.05, 0, 0]}>
                 <boxGeometry args={[0.02, 0.2, 0.15]} />
                 <meshStandardMaterial 
-                  color={isCurrentFloor ? "#81c784" : "#fff"}
-                  emissive={isCurrentFloor ? "#4caf50" : "#b3e5fc"}
-                  emissiveIntensity={isCurrentFloor ? 0.8 : 0.3}
+                  color={isCurrentFloor && !maintenanceMode ? "#81c784" : maintenanceMode ? "#f44336" : "#fff"}
+                  emissive={isCurrentFloor && !maintenanceMode ? "#4caf50" : maintenanceMode ? "#f44336" : "#b3e5fc"}
+                  emissiveIntensity={isCurrentFloor || maintenanceMode ? 0.8 : 0.3}
                   roughness={0.1}
                   metalness={0.8}
                 />
               </mesh>
+              
+              {/* Real-time arrival indicator */}
+              {estimatedArrival > 0 && floorName !== currentFloor && (
+                <Text
+                  position={[0.15, -0.15, 0]}
+                  fontSize={0.05}
+                  color="#4caf50"
+                  anchorX="center"
+                  anchorY="middle"
+                >
+                  {estimatedArrival}s
+                </Text>
+              )}
             </group>
             
             {/* Floor number text */}
@@ -236,15 +309,216 @@ const Lift3D: React.FC<Lift3DProps> = ({
         distance={8}
       />
 
-      {/* Hospital lift identification */}
+      {/* Real-time Status Display Panel */}
+      <group position={[LIFT_WIDTH / 2 + 0.8, SHAFT_HEIGHT / 2, 0]}>
+        {/* Main status screen */}
+        <mesh>
+          <boxGeometry args={[0.8, 1.5, 0.1]} />
+          <meshStandardMaterial 
+            color="#263238"
+            roughness={0.1}
+            metalness={0.8}
+          />
+        </mesh>
+        
+        {/* Screen display */}
+        <mesh position={[0.06, 0, 0]}>
+          <boxGeometry args={[0.7, 1.3, 0.02]} />
+          <meshStandardMaterial 
+            color="#000"
+            emissive="#0d47a1"
+            emissiveIntensity={0.3}
+          />
+        </mesh>
+        
+        {/* Status indicators */}
+        <group position={[0.1, 0.4, 0]}>
+          {/* Service status light */}
+          <mesh position={[0, 0.3, 0]}>
+            <cylinderGeometry args={[0.05, 0.05, 0.02, 16]} />
+            <meshStandardMaterial 
+              color={getServiceStatus().color}
+              emissive={getServiceStatus().color}
+              emissiveIntensity={maintenanceMode ? 1.0 : 0.8}
+            />
+          </mesh>
+          
+          {/* Occupancy indicator */}
+          <mesh position={[0, 0.15, 0]}>
+            <cylinderGeometry args={[0.04, 0.04, 0.02, 16]} />
+            <meshStandardMaterial 
+              color={getOccupancyColor()}
+              emissive={getOccupancyColor()}
+              emissiveIntensity={0.6}
+            />
+          </mesh>
+          
+          {/* Door status indicator */}
+          <mesh position={[0, 0, 0]}>
+            <cylinderGeometry args={[0.04, 0.04, 0.02, 16]} />
+            <meshStandardMaterial 
+              color={getDoorStatusColor()}
+              emissive={getDoorStatusColor()}
+              emissiveIntensity={doorStatus === 'opening' || doorStatus === 'closing' ? 1.0 : 0.6}
+            />
+          </mesh>
+          
+          {/* Movement indicator */}
+          {isMoving && (
+            <mesh position={[0, -0.15, 0]}>
+              <cylinderGeometry args={[0.04, 0.04, 0.02, 16]} />
+              <meshStandardMaterial 
+                color="#2196f3"
+                emissive="#2196f3"
+                emissiveIntensity={1.0}
+              />
+            </mesh>
+          )}
+        </group>
+      </group>
+
+      {/* Status Text Display */}
+      <group position={[LIFT_WIDTH / 2 + 0.8, SHAFT_HEIGHT / 2, 0.15]}>
+        <Text
+          position={[0, 0.5, 0]}
+          fontSize={0.08}
+          color={getServiceStatus().color}
+          anchorX="center"
+          anchorY="middle"
+        >
+          {getServiceStatus().text}
+        </Text>
+        
+        <Text
+          position={[0, 0.3, 0]}
+          fontSize={0.06}
+          color={isNight ? "#90caf9" : "#1976d2"}
+          anchorX="center"
+          anchorY="middle"
+        >
+          Floor: {currentFloor.toUpperCase()}
+        </Text>
+        
+        <Text
+          position={[0, 0.15, 0]}
+          fontSize={0.05}
+          color={getOccupancyColor()}
+          anchorX="center"
+          anchorY="middle"
+        >
+          Load: {occupancy.toUpperCase()}
+        </Text>
+        
+        <Text
+          position={[0, 0, 0]}
+          fontSize={0.05}
+          color={getDoorStatusColor()}
+          anchorX="center"
+          anchorY="middle"
+        >
+          Doors: {doorStatus.toUpperCase()}
+        </Text>
+        
+        {isMoving && (
+          <Text
+            position={[0, -0.15, 0]}
+            fontSize={0.05}
+            color="#2196f3"
+            anchorX="center"
+            anchorY="middle"
+          >
+            {direction === 'up' ? '↑ ASCENDING' : direction === 'down' ? '↓ DESCENDING' : 'MOVING'}
+          </Text>
+        )}
+        
+        {waitingQueue > 0 && (
+          <Text
+            position={[0, -0.35, 0]}
+            fontSize={0.04}
+            color="#ff9800"
+            anchorX="center"
+            anchorY="middle"
+          >
+            Queue: {waitingQueue} waiting
+          </Text>
+        )}
+        
+        {estimatedArrival > 0 && (
+          <Text
+            position={[0, -0.5, 0]}
+            fontSize={0.04}
+            color="#4caf50"
+            anchorX="center"
+            anchorY="middle"
+          >
+            ETA: {estimatedArrival}s
+          </Text>
+        )}
+      </group>
+
+      {/* Movement Direction Indicators */}
+      {isMoving && (
+        <group position={[0, carY + FLOOR_HEIGHT + 0.5, 0]}>
+          {direction === 'up' && (
+            <mesh>
+              <coneGeometry args={[0.2, 0.4, 6]} />
+              <meshStandardMaterial 
+                color="#4caf50"
+                emissive="#81c784"
+                emissiveIntensity={0.8}
+              />
+            </mesh>
+          )}
+          {direction === 'down' && (
+            <mesh rotation={[Math.PI, 0, 0]}>
+              <coneGeometry args={[0.2, 0.4, 6]} />
+              <meshStandardMaterial 
+                color="#ff9800"
+                emissive="#ffb74d"
+                emissiveIntensity={0.8}
+              />
+            </mesh>
+          )}
+        </group>
+      )}
+
+      {/* Queue Status Indicators on Each Floor */}
+      {[0, 1, 2].map((floorIndex) => {
+        const floorY = floorIndex * FLOOR_HEIGHT;
+        const queueAtFloor = Math.max(0, waitingQueue - floorIndex);
+        
+        return queueAtFloor > 0 ? (
+          <group key={`queue-${floorIndex}`} position={[LIFT_WIDTH / 2 + 0.5, floorY + 1.8, 0]}>
+            <mesh>
+              <cylinderGeometry args={[0.08, 0.08, 0.02, 16]} />
+              <meshStandardMaterial 
+                color="#ff9800"
+                emissive="#ffb74d"
+                emissiveIntensity={0.6}
+              />
+            </mesh>
+            <Text
+              position={[0.2, 0, 0]}
+              fontSize={0.08}
+              color="#ff9800"
+              anchorX="left"
+              anchorY="middle"
+            >
+              {queueAtFloor}
+            </Text>
+          </group>
+        ) : null;
+      })}
+
+      {/* Hospital lift identification with real-time status */}
       <Text
         position={[0, SHAFT_HEIGHT + 0.5, 0]}
         fontSize={0.4}
-        color={isNight ? "#90caf9" : "#1976d2"}
+        color={maintenanceMode ? "#f44336" : (isNight ? "#90caf9" : "#1976d2")}
         anchorX="center"
         anchorY="middle"
       >
-        Medical Lift
+        Medical Lift {maintenanceMode ? "[MAINTENANCE]" : ""}
       </Text>
       
       <Text
@@ -254,7 +528,18 @@ const Lift3D: React.FC<Lift3DProps> = ({
         anchorX="center"
         anchorY="middle"
       >
-        Floor: {currentFloor.charAt(0).toUpperCase() + currentFloor.slice(1)}
+        {isMoving ? `Moving ${direction} from ${currentFloor}` : `Floor: ${currentFloor.charAt(0).toUpperCase() + currentFloor.slice(1)}`}
+      </Text>
+      
+      {/* Real-time usage statistics */}
+      <Text
+        position={[0, SHAFT_HEIGHT - 0.2, 0]}
+        fontSize={0.15}
+        color={getOccupancyColor()}
+        anchorX="center"
+        anchorY="middle"
+      >
+        Capacity: {occupancy} • Doors: {doorStatus} {waitingQueue > 0 ? `• Queue: ${waitingQueue}` : ""}
       </Text>
 
       {/* Medical cross symbol */}
