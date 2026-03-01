@@ -21,14 +21,14 @@ const Stairs3D: React.FC<Stairs3DProps> = ({
   const stepDepth = 0.6; // Smaller depth for better proportions
   const stepHeight = floorHeight / stepCount;
 
-  // Define materials based on time
+  // Define hospital-grade materials based on time
   const stairMaterial = isNight 
-    ? { color: '#2a3f5f', roughness: 0.7, metalness: 0.1 }
-    : { color: '#5a6b7a', roughness: 0.6, metalness: 0.2 };
+    ? { color: '#b3e5fc', roughness: 0.1, metalness: 0.8 }
+    : { color: '#e0e0e0', roughness: 0.2, metalness: 0.6 };
 
   const handrailMaterial = isNight
-    ? { color: '#1a2332', roughness: 0.3, metalness: 0.4 }
-    : { color: '#3a4956', roughness: 0.3, metalness: 0.4 };
+    ? { color: '#90caf9', roughness: 0.1, metalness: 0.9 }
+    : { color: '#607d8b', roughness: 0.1, metalness: 0.8 };
 
   // Generate steps
   const steps = Array.from({ length: stepCount }, (_, i) => {
@@ -104,27 +104,65 @@ const Stairs3D: React.FC<Stairs3DProps> = ({
         <meshStandardMaterial {...handrailMaterial} />
       </mesh>
 
-      {/* Stairs label - smaller for proportional size */}
+      {/* Hospital-style stairs label */}
       <Text
         position={[0, floorHeight + 0.3, handrailLength/2]}
         fontSize={0.3}
-        color={isNight ? "#64b5f6" : "#1976d2"}
+        color={isNight ? "#90caf9" : "#1976d2"}
         anchorX="center"
         anchorY="middle"
       >
         {stairsDirection === 'left' ? 'Stairs (Left)' : 'Stairs (Right)'}
       </Text>
 
-      {/* Base platform - smaller */}
+      {/* Emergency lighting */}
+      <pointLight
+        position={[0, floorHeight + 0.5, handrailLength/2]}
+        intensity={isNight ? 0.6 : 0.3}
+        color={isNight ? "#b3c6ff" : "#ffffff"}
+        distance={4}
+      />
+
+      {/* Base platform - hospital grade */}
       <mesh position={[0, -0.1, -stepDepth]} receiveShadow>
         <boxGeometry args={[stepWidth + 0.5, 0.2, 1.5]} />
-        <meshStandardMaterial color="#4a5960" />
+        <meshStandardMaterial 
+          color="#bdbdbd" 
+          roughness={0.2} 
+          metalness={0.6}
+        />
       </mesh>
 
-      {/* Top platform - smaller */}
+      {/* Top platform - hospital grade */}
       <mesh position={[0, floorHeight + 0.1, handrailLength + stepDepth]} receiveShadow>
         <boxGeometry args={[stepWidth + 0.5, 0.2, 1.5]} />
-        <meshStandardMaterial color="#4a5960" />
+        <meshStandardMaterial 
+          color="#bdbdbd" 
+          roughness={0.2} 
+          metalness={0.6}
+        />
+      </mesh>
+
+      {/* Safety strips on steps */}
+      {Array.from({ length: stepCount }, (_, i) => (
+        <mesh key={`safety-${i}`} position={[0, i * stepHeight + 0.01, i * stepDepth + stepDepth/2 - 0.05]}>
+          <boxGeometry args={[stepWidth, 0.01, 0.1]} />
+          <meshStandardMaterial 
+            color="#ffeb3b" 
+            emissive="#fff59d"
+            emissiveIntensity={0.3}
+          />
+        </mesh>
+      ))}
+
+      {/* Hospital signage */}
+      <mesh position={[0, floorHeight + 0.6, handrailLength/2]}>
+        <boxGeometry args={[1.2, 0.3, 0.05]} />
+        <meshStandardMaterial 
+          color="#1976d2"
+          roughness={0.3}
+          metalness={0.2}
+        />
       </mesh>
     </group>
   );

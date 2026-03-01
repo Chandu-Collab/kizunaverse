@@ -6,6 +6,7 @@ import React, { Suspense, useState } from "react";
 const Hospital3D = dynamic(() => import("@/components/3d/Hospital3D"), { ssr: false });
 const HospitalInterior3D = dynamic(() => import("@/components/3d/HospitalInterior3D"), { ssr: false });
 const Stairs3D = dynamic(() => import("@/components/3d/Stairs3D"), { ssr: false });
+const Lift3D = dynamic(() => import("@/components/3d/Lift3D"), { ssr: false });
 
 import Scene from "@/components/3d/Scene";
 import ParticleBackground from "@/components/ui/ParticleBackground";
@@ -663,6 +664,71 @@ function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolea
             <meshStandardMaterial color="#6a7c89" />
           </mesh>
         </>
+      )}
+
+      {/* Central Hospital Lift - Always visible, positioned between front and back rooms */}
+      <Lift3D
+        position={[0, groundY, -ROOM_DEPTH / 2]} // Center between front (Z=0) and back (Z=-18) rooms
+        currentFloor={floor}
+        totalFloors={3}
+        isNight={isNight}
+      />
+
+      {/* Lift access corridors connecting to main corridors */}
+      
+      {/* Ground floor lift corridor */}
+      <mesh position={[0, groundY, (corridorFrontZ + (-ROOM_DEPTH / 2)) / 2]} scale={[6, 0.1, Math.abs(corridorFrontZ - (-ROOM_DEPTH / 2))]} visible={true}>
+        <boxGeometry />
+        <meshStandardMaterial color="#e8e8e8" opacity={0.4} transparent />
+      </mesh>
+      
+      {/* First floor lift corridor */}
+      <mesh position={[0, firstY, (corridorFrontZ + (-ROOM_DEPTH / 2)) / 2]} scale={[6, 0.1, Math.abs(corridorFrontZ - (-ROOM_DEPTH / 2))]} visible={true}>
+        <boxGeometry />
+        <meshStandardMaterial color="#e8e8e8" opacity={0.4} transparent />
+      </mesh>
+      
+      {/* Second floor lift corridor */}
+      <mesh position={[0, secondY, (corridorFrontZ + (-ROOM_DEPTH / 2)) / 2]} scale={[6, 0.1, Math.abs(corridorFrontZ - (-ROOM_DEPTH / 2))]} visible={true}>
+        <boxGeometry />
+        <meshStandardMaterial color="#e8e8e8" opacity={0.4} transparent />
+      </mesh>
+
+      {/* Lift area markers for each floor */}
+      {floor === 'ground' && (
+        <Text
+          position={[0, groundY + 3, -ROOM_DEPTH / 2]}
+          fontSize={0.6}
+          color={isNight ? "#81c784" : "#4caf50"}
+          anchorX="center"
+          anchorY="middle"
+        >
+          🛗 CENTRAL LIFT
+        </Text>
+      )}
+      
+      {floor === 'first' && (
+        <Text
+          position={[0, firstY + 3, -ROOM_DEPTH / 2]}
+          fontSize={0.6}
+          color={isNight ? "#81c784" : "#4caf50"}
+          anchorX="center"
+          anchorY="middle"
+        >
+          🛗 CENTRAL LIFT
+        </Text>
+      )}
+      
+      {floor === 'second' && (
+        <Text
+          position={[0, secondY + 3, -ROOM_DEPTH / 2]}
+          fontSize={0.6}
+          color={isNight ? "#81c784" : "#4caf50"}
+          anchorX="center"
+          anchorY="middle"
+        >
+          🛗 CENTRAL LIFT
+        </Text>
       )}
     </group>
   );
