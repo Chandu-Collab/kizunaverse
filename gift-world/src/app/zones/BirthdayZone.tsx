@@ -199,16 +199,21 @@ export default function BirthdayZone() {
         </button>
       </div>
 
-      {/* Particle background for ambiance, responds to weather and night */}
-      <ParticleBackground weather={weather} isNight={isNight} />
-
-      {/* Weather controls UI */}
-      <WeatherControls
-        onWeatherChange={handleWeatherChange}
-        currentWeather={weather}
-        autoWeather={autoWeather}
-        onToggleAuto={handleToggleAuto}
+      {/* Particle background for ambiance - responds to weather and night, reduced for indoor scenes */}
+      <ParticleBackground 
+        weather={viewMode === 'exterior' ? weather : 'sunny'} 
+        isNight={isNight} 
       />
+
+      {/* Weather controls UI - only visible in exterior view */}
+      {viewMode === 'exterior' && (
+        <WeatherControls
+          onWeatherChange={handleWeatherChange}
+          currentWeather={weather}
+          autoWeather={autoWeather}
+          onToggleAuto={handleToggleAuto}
+        />
+      )}
 
       {/* Hospital 3D View Controls */}
       <div className="absolute top-4 left-4 z-40">
@@ -313,11 +318,13 @@ export default function BirthdayZone() {
         </div>
       )}
 
-      {/* 3D Scene with weather system, pass isNight for lighting */}
+      {/* 3D Scene with conditional weather system - only for exterior view */}
       <div className="absolute inset-0 flex items-center justify-center">
         <Scene cameraPosition={[0, 12, 32]} enableControls enableShadows>
-          {/* Weather system overlays (rain, clouds, sun, etc.) */}
-          <WeatherSystem weatherType={weather} autoChange={autoWeather} />
+          {/* Weather system only for exterior view (not inside hospital) */}
+          {viewMode === 'exterior' && (
+            <WeatherSystem weatherType={weather} autoChange={autoWeather} />
+          )}
           {viewMode === 'exterior' ? (
             <Hospital3D position={[0, 0, 0]} isNight={isNight} />
           ) : viewMode === 'interior' ? (
