@@ -2,9 +2,11 @@
 
 
 import dynamic from "next/dynamic";
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 const Hospital3D = dynamic(() => import("@/components/3d/Hospital3D"), { ssr: false });
 const HospitalInterior3D = dynamic(() => import("@/components/3d/HospitalInterior3D"), { ssr: false });
+const Stairs3D = dynamic(() => import("@/components/3d/Stairs3D"), { ssr: false });
+const Lift3D = dynamic(() => import("@/components/3d/Lift3D"), { ssr: false });
 
 import Scene from "@/components/3d/Scene";
 import ParticleBackground from "@/components/ui/ParticleBackground";
@@ -154,6 +156,16 @@ export default function BirthdayZone() {
 
   // Floor state for hospital section
   const [sectionFloor, setSectionFloor] = useState<'ground' | 'first' | 'second'>('ground');
+  
+  // Real-time updates for lift status (refresh every second)
+  const [liftUpdateTrigger, setLiftUpdateTrigger] = useState(0);
+  
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setLiftUpdateTrigger(prev => prev + 1);
+    }, 1000); // Update every second for real-time effect
+    return () => clearInterval(interval);
+  }, []);
 
   const selectedRoomMeaning = hospitalRoomMeanings[roomMeaningKeyMap[currentRoom]];
   const selectedRoomLabel = roomLabels[currentRoom];
@@ -187,16 +199,21 @@ export default function BirthdayZone() {
         </button>
       </div>
 
-      {/* Particle background for ambiance, responds to weather and night */}
-      <ParticleBackground weather={weather} isNight={isNight} />
-
-      {/* Weather controls UI */}
-      <WeatherControls
-        onWeatherChange={handleWeatherChange}
-        currentWeather={weather}
-        autoWeather={autoWeather}
-        onToggleAuto={handleToggleAuto}
+      {/* Particle background for ambiance - responds to weather and night, reduced for indoor scenes */}
+      <ParticleBackground 
+        weather={viewMode === 'exterior' ? weather : 'sunny'} 
+        isNight={isNight} 
       />
+
+      {/* Weather controls UI - only visible in exterior view */}
+      {viewMode === 'exterior' && (
+        <WeatherControls
+          onWeatherChange={handleWeatherChange}
+          currentWeather={weather}
+          autoWeather={autoWeather}
+          onToggleAuto={handleToggleAuto}
+        />
+      )}
 
       {/* Hospital 3D View Controls */}
       <div className="absolute top-4 left-4 z-40">
@@ -301,17 +318,19 @@ export default function BirthdayZone() {
         </div>
       )}
 
-      {/* 3D Scene with weather system, pass isNight for lighting */}
+      {/* 3D Scene with conditional weather system - only for exterior view */}
       <div className="absolute inset-0 flex items-center justify-center">
         <Scene cameraPosition={[0, 12, 32]} enableControls enableShadows>
-          {/* Weather system overlays (rain, clouds, sun, etc.) */}
-          <WeatherSystem weatherType={weather} autoChange={autoWeather} />
+          {/* Weather system only for exterior view (not inside hospital) */}
+          {viewMode === 'exterior' && (
+            <WeatherSystem weatherType={weather} autoChange={autoWeather} />
+          )}
           {viewMode === 'exterior' ? (
             <Hospital3D position={[0, 0, 0]} isNight={isNight} />
           ) : viewMode === 'interior' ? (
             <HospitalInterior3D position={[0, 0, 0]} currentRoom={currentRoom} viewMode={viewMode} isNight={isNight} />
           ) : viewMode === 'hospitalSection' ? (
-            <HospitalSectionLayout isNight={isNight} floor={sectionFloor} />
+            <HospitalSectionLayout isNight={isNight} floor={sectionFloor} liftUpdateTrigger={liftUpdateTrigger} />
           ) : null}
         </Scene>
       </div>
@@ -320,7 +339,60 @@ export default function BirthdayZone() {
 }
 
 // Hospital Section Layout: map ground and first floor rooms
-function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolean; floor?: 'ground' | 'first' | 'second' }) {
+function HospitalSectionLayout({ isNight, floor = 'ground', liftUpdateTrigger }: { isNight?: boolean; floor?: 'ground' | 'first' | 'second'; liftUpdateTrigger?: number }) {
+  // Real-time lift simulation based on current time and floor
+  const currentTime = new Date();
+  const seconds = currentTime.getSeconds();
+  const minutes = currentTime.getMinutes();
+  
+  // Simulate dynamic lift behavior
+  const isMoving = seconds % 15 < 3; // Moving for 3 seconds every 15 seconds
+  const direction = minutes % 2 === 0 ? 'up' : (minutes % 3 === 0 ? 'down' : 'stopped');
+  
+  // Simulate occupancy based on time of day and floor
+  const getOccupancy = () => {
+    const hour = currentTime.getHours();
+    if (hour >= 8 && hour <= 17) { // Peak hours
+      return ['moderate', 'full', 'light'][floor === 'ground' ? 1 : floor === 'first' ? 0 : 2] as 'empty' | 'light' | 'moderate' | 'full';
+    } else if (hour >= 6 && hour <= 22) { // Regular hours
+      return ['light', 'moderate', 'empty'][seconds % 3] as 'empty' | 'light' | 'moderate' | 'full';
+    }
+    return 'empty'; // Night time
+  };
+  
+  // Simulate door status
+  const getDoorStatus = () => {
+    if (isMoving) return 'closed';
+    const cycle = seconds % 12;
+    if (cycle < 2) return 'opening';
+    if (cycle < 8) return 'open';
+    if (cycle < 10) return 'closing';
+    return 'closed';
+  };
+  
+  // Simulate waiting queue (more during peak hours)
+  const getWaitingQueue = () => {
+    const hour = currentTime.getHours();
+    if (hour >= 8 && hour <= 17) {
+      return Math.floor((seconds % 5) + (floor === 'ground' ? 2 : 0)); // Ground floor busier
+    }
+    return Math.floor(seconds % 3);
+  };
+  
+  // Simulate estimated arrival time
+  const getEstimatedArrival = () => {
+    if (!isMoving && floor === getDirectFloor()) return 0;
+    return Math.max(5, 15 - (seconds % 15)); // 5-15 seconds
+  };
+  
+  // Get the floor the lift is currently heading to
+  const getDirectFloor = (): 'ground' | 'first' | 'second' => {
+    const floorCycle = Math.floor(seconds / 15) % 3;
+    return ['ground', 'first', 'second'][floorCycle] as 'ground' | 'first' | 'second';
+  };
+  
+  // Check for maintenance mode (rarely, for demo purposes)
+  const maintenanceMode = minutes === 0 && seconds < 30; // First 30 seconds of every hour
   type Vec3 = [number, number, number];
   type RoomDef = { name: string; room: HospitalRoomKey; position: Vec3; rotation: Vec3 };
 
@@ -394,6 +466,13 @@ function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolea
     room: 'ambulanceBayEntrance',
     position: [0, groundY, ROOM_SPACING + 4],
   };
+
+  // Stairs positions beside the rooms (left and right sides of the layout)
+  const STAIRS_OFFSET = 28; // Position beside the outermost rooms
+  const STAIRS_Z_OFFSET = -9; // Middle of room layout (between front and back rooms)
+  const leftStairsPosition: Vec3 = [-STAIRS_OFFSET, groundY, STAIRS_Z_OFFSET];
+  const rightStairsPosition: Vec3 = [STAIRS_OFFSET, groundY, STAIRS_Z_OFFSET];
+
   return (
     <group>
       {/* Ambulance Bay at the very front (only on ground floor view) */}
@@ -447,6 +526,287 @@ function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolea
           </group>
         ))}
       </group>
+
+      {/* Stairs - Left and Right sides beside the rooms - Conditional based on floor */}
+      
+      {/* Ground Floor View: Show only ground to first floor stairs */}
+      {floor === 'ground' && (
+        <>
+          {/* Visual markers for stairs areas */}
+          <Text
+            position={[-STAIRS_OFFSET, groundY + 4, STAIRS_Z_OFFSET]}
+            fontSize={0.5}
+            color={isNight ? "#64b5f6" : "#1976d2"}
+            anchorX="center"
+            anchorY="middle"
+          >
+            LEFT STAIRS ↑
+          </Text>
+          <Text
+            position={[STAIRS_OFFSET, groundY + 4, STAIRS_Z_OFFSET]}
+            fontSize={0.5}
+            color={isNight ? "#64b5f6" : "#1976d2"}
+            anchorX="center"
+            anchorY="middle"
+          >
+            RIGHT STAIRS ↑
+          </Text>
+          
+          {/* Ground to First Floor - Left Stairs */}
+          <Stairs3D
+            position={leftStairsPosition}
+            rotation={[0, Math.PI / 2, 0]}
+            stairsDirection="left"
+            floorHeight={FLOOR_HEIGHT}
+            isNight={isNight}
+          />
+          
+          {/* Ground to First Floor - Right Stairs */}
+          <Stairs3D
+            position={rightStairsPosition}
+            rotation={[0, -Math.PI / 2, 0]}
+            stairsDirection="right"
+            floorHeight={FLOOR_HEIGHT}
+            isNight={isNight}
+          />
+        </>
+      )}
+
+      {/* First Floor View: Show stairs from ground and to second floor */}
+      {floor === 'first' && (
+        <>
+          {/* Visual markers */}
+          <Text
+            position={[-STAIRS_OFFSET, firstY + 4, STAIRS_Z_OFFSET]}
+            fontSize={0.5}
+            color={isNight ? "#64b5f6" : "#1976d2"}
+            anchorX="center"
+            anchorY="middle"
+          >
+            LEFT STAIRS ↑↓
+          </Text>
+          <Text
+            position={[STAIRS_OFFSET, firstY + 4, STAIRS_Z_OFFSET]}
+            fontSize={0.5}
+            color={isNight ? "#64b5f6" : "#1976d2"}
+            anchorX="center"
+            anchorY="middle"
+          >
+            RIGHT STAIRS ↑↓
+          </Text>
+
+          {/* Show stairs coming up from ground */}
+          <Stairs3D
+            position={leftStairsPosition}
+            rotation={[0, Math.PI / 2, 0]}
+            stairsDirection="left"
+            floorHeight={FLOOR_HEIGHT}
+            isNight={isNight}
+          />
+          <Stairs3D
+            position={rightStairsPosition}
+            rotation={[0, -Math.PI / 2, 0]}
+            stairsDirection="right"
+            floorHeight={FLOOR_HEIGHT}
+            isNight={isNight}
+          />
+          
+          {/* Show stairs going to second floor */}
+          <Stairs3D
+            position={[leftStairsPosition[0], firstY, leftStairsPosition[2]]}
+            rotation={[0, Math.PI / 2, 0]}
+            stairsDirection="left"
+            floorHeight={FLOOR_HEIGHT}
+            isNight={isNight}
+          />
+          <Stairs3D
+            position={[rightStairsPosition[0], firstY, rightStairsPosition[2]]}
+            rotation={[0, -Math.PI / 2, 0]}
+            stairsDirection="right"
+            floorHeight={FLOOR_HEIGHT}
+            isNight={isNight}
+          />
+        </>
+      )}
+
+      {/* Second Floor View: Show only stairs coming up from first floor */}
+      {floor === 'second' && (
+        <>
+          {/* Visual markers */}
+          <Text
+            position={[-STAIRS_OFFSET, secondY + 4, STAIRS_Z_OFFSET]}
+            fontSize={0.5}
+            color={isNight ? "#64b5f6" : "#1976d2"}
+            anchorX="center"
+            anchorY="middle"
+          >
+            LEFT STAIRS ↓
+          </Text>
+          <Text
+            position={[STAIRS_OFFSET, secondY + 4, STAIRS_Z_OFFSET]}
+            fontSize={0.5}
+            color={isNight ? "#64b5f6" : "#1976d2"}
+            anchorX="center"
+            anchorY="middle"
+          >
+            RIGHT STAIRS ↓
+          </Text>
+
+          {/* Show only stairs coming up from first floor */}
+          <Stairs3D
+            position={[leftStairsPosition[0], firstY, leftStairsPosition[2]]}
+            rotation={[0, Math.PI / 2, 0]}
+            stairsDirection="left"
+            floorHeight={FLOOR_HEIGHT}
+            isNight={isNight}
+          />
+          <Stairs3D
+            position={[rightStairsPosition[0], firstY, rightStairsPosition[2]]}
+            rotation={[0, -Math.PI / 2, 0]}
+            stairsDirection="right"
+            floorHeight={FLOOR_HEIGHT}
+            isNight={isNight}
+          />
+        </>
+      )}
+
+      {/* Stair platforms for better connection between floors - Conditional based on floor */}
+      
+      {/* Ground Floor: Show ground level platforms and first floor landing */}
+      {floor === 'ground' && (
+        <>
+          <mesh position={[leftStairsPosition[0], groundY + 0.1, leftStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+          <mesh position={[rightStairsPosition[0], groundY + 0.1, rightStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+        </>
+      )}
+      
+      {/* First Floor: Show ground, first, and second floor platforms */}
+      {floor === 'first' && (
+        <>
+          {/* Ground floor platforms */}
+          <mesh position={[leftStairsPosition[0], groundY + 0.1, leftStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+          <mesh position={[rightStairsPosition[0], groundY + 0.1, rightStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+          
+          {/* First floor platforms */}
+          <mesh position={[leftStairsPosition[0], firstY + 0.1, leftStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+          <mesh position={[rightStairsPosition[0], firstY + 0.1, rightStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+        </>
+      )}
+      
+      {/* Second Floor: Show first and second floor platforms */}
+      {floor === 'second' && (
+        <>
+          {/* First floor platforms (base of stairs) */}
+          <mesh position={[leftStairsPosition[0], firstY + 0.1, leftStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+          <mesh position={[rightStairsPosition[0], firstY + 0.1, rightStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+          
+          {/* Second floor platforms */}
+          <mesh position={[leftStairsPosition[0], secondY + 0.1, leftStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+          <mesh position={[rightStairsPosition[0], secondY + 0.1, rightStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+        </>
+      )}
+
+      {/* Central Hospital Lift with Real-time Usage Data */}
+      <Lift3D
+        position={[0, groundY, -ROOM_DEPTH / 2]} // Center between front (Z=0) and back (Z=-18) rooms
+        currentFloor={floor}
+        totalFloors={3}
+        isNight={isNight}
+        isMoving={isMoving}
+        direction={isMoving ? direction : 'stopped'}
+        occupancy={getOccupancy()}
+        doorStatus={getDoorStatus()}
+        waitingQueue={getWaitingQueue()}
+        maintenanceMode={maintenanceMode}
+        estimatedArrival={getEstimatedArrival()}
+      />
+
+      {/* Lift access corridors connecting to main corridors */}
+      
+      {/* Ground floor lift corridor */}
+      <mesh position={[0, groundY, (corridorFrontZ + (-ROOM_DEPTH / 2)) / 2]} scale={[6, 0.1, Math.abs(corridorFrontZ - (-ROOM_DEPTH / 2))]} visible={true}>
+        <boxGeometry />
+        <meshStandardMaterial color="#e8e8e8" opacity={0.4} transparent />
+      </mesh>
+      
+      {/* First floor lift corridor */}
+      <mesh position={[0, firstY, (corridorFrontZ + (-ROOM_DEPTH / 2)) / 2]} scale={[6, 0.1, Math.abs(corridorFrontZ - (-ROOM_DEPTH / 2))]} visible={true}>
+        <boxGeometry />
+        <meshStandardMaterial color="#e8e8e8" opacity={0.4} transparent />
+      </mesh>
+      
+      {/* Second floor lift corridor */}
+      <mesh position={[0, secondY, (corridorFrontZ + (-ROOM_DEPTH / 2)) / 2]} scale={[6, 0.1, Math.abs(corridorFrontZ - (-ROOM_DEPTH / 2))]} visible={true}>
+        <boxGeometry />
+        <meshStandardMaterial color="#e8e8e8" opacity={0.4} transparent />
+      </mesh>
+
+      {/* Lift area markers for each floor */}
+      {floor === 'ground' && (
+        <Text
+          position={[0, groundY + 3, -ROOM_DEPTH / 2]}
+          fontSize={0.6}
+          color={isNight ? "#81c784" : "#4caf50"}
+          anchorX="center"
+          anchorY="middle"
+        >
+          🛗 CENTRAL LIFT
+        </Text>
+      )}
+      
+      {floor === 'first' && (
+        <Text
+          position={[0, firstY + 3, -ROOM_DEPTH / 2]}
+          fontSize={0.6}
+          color={isNight ? "#81c784" : "#4caf50"}
+          anchorX="center"
+          anchorY="middle"
+        >
+          🛗 CENTRAL LIFT
+        </Text>
+      )}
+      
+      {floor === 'second' && (
+        <Text
+          position={[0, secondY + 3, -ROOM_DEPTH / 2]}
+          fontSize={0.6}
+          color={isNight ? "#81c784" : "#4caf50"}
+          anchorX="center"
+          anchorY="middle"
+        >
+          🛗 CENTRAL LIFT
+        </Text>
+      )}
     </group>
   );
 }
