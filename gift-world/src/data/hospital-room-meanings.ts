@@ -1,0 +1,33 @@
+// kizunaverse/gift-world/src/data/hospital-room-meanings.ts
+// This file contains the meanings for each major hospital room, written in a soft, respectful tone.
+
+export const hospitalRoomMeanings: { [room: string]: string } = {
+  exterior: "This building stands strong, just like you did when life tested your dreams.",
+  reception: "This is where hope begins — just like the day you proved to yourself what you’re capable of.",
+  waitingArea: "For patience — because you never rush growth. You trust timing.",
+  consultation: "For the way you truly listen. Not to reply, but to understand.",
+  ward: "For your quiet care — the kind that doesn’t ask for attention.",
+  operationTheatre: "For your courage to make difficult decisions when they matter most.",
+  pharmacy: "For the small solutions you offer that heal more than people realize.",
+  storeRoom: "For the strength you keep inside — even when you don’t show it.",
+  generatorRoom: "For your ability to create light, even when everything feels dark.",
+  icu: "For your strength in handling fragile situations with steady hands.",
+  recoveryRoom: "For the comfort you bring — sometimes just by being present.",
+  emergency: "For your calm in chaos — when others panic, you steady the room.",
+  laboratory: "For your curiosity — your need to understand things deeply, not just accept them.",
+  radiology: "For your clarity — your ability to see beyond the surface.",
+  pediatric: "For the softness in you that protects innocence.",
+  isolationRoom: "For the times you handled pain alone, without letting it change your kindness.",
+  bloodBank: "For the life you give to others through your words, support, and presence.",
+  nurseStation: "For your reliability — the kind people quietly depend on.",
+  chapel: "For your faith, your values, and the strength you draw from within.",
+  adminOffice: "For your quiet leadership — you guide without needing to control.",
+  physiotherapy: "For the way you encourage others to stand up again.",
+  cafeteria: "For the warmth you bring into ordinary moments.",
+  restroom: "For your honesty — because even strength needs space to breathe.",
+  ambulanceBay: "For your readiness to help — no matter the hour.",
+  mortuary: "For your understanding that life is fragile — and that’s why kindness matters.",
+  library: "For your love of learning — because your mind was never meant to stay small.",
+  researchLab: "For your ambition to discover, question, and grow.",
+  unfinishedDreams: "Some dreams pause.\nThey don’t disappear.\nAnd in another world…\nthis would have been yours.",
+};

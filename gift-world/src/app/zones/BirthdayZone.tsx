@@ -12,9 +12,127 @@ import WeatherControls from "@/components/ui/WeatherControls";
 import WeatherSystem from "@/components/3d/weather/WeatherSystem";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useTheme } from "@/hooks/useTheme";
+import { hospitalRoomMeanings } from "@/data/hospital-room-meanings";
 import { Text } from '@react-three/drei';
 
 type WeatherType = 'sunny' | 'rainy' | 'cloudy' | 'monsoon' | 'winter';
+type HospitalRoomKey =
+  | 'reception'
+  | 'waiting'
+  | 'consultation'
+  | 'ward'
+  | 'operation'
+  | 'pharmacy'
+  | 'store'
+  | 'generator'
+  | 'staffRest'
+  | 'exterior'
+  | 'icu'
+  | 'recovery'
+  | 'emergency'
+  | 'laboratory'
+  | 'radiology'
+  | 'maternity'
+  | 'pediatric'
+  | 'isolation'
+  | 'nurseStations'
+  | 'bathroomRestroom'
+  | 'cafeteriaCanteen'
+  | 'administrativeOffices'
+  | 'ambulanceBayEntrance'
+  | 'physiotherapyRehab'
+  | 'bloodBank'
+  | 'mortuary'
+  | 'chapelPrayerRoom';
+
+const roomMeaningKeyMap: Record<HospitalRoomKey, keyof typeof hospitalRoomMeanings> = {
+  exterior: 'exterior',
+  reception: 'reception',
+  waiting: 'waitingArea',
+  consultation: 'consultation',
+  ward: 'ward',
+  operation: 'operationTheatre',
+  pharmacy: 'pharmacy',
+  store: 'storeRoom',
+  generator: 'generatorRoom',
+  staffRest: 'restroom',
+  icu: 'icu',
+  recovery: 'recoveryRoom',
+  emergency: 'emergency',
+  laboratory: 'laboratory',
+  radiology: 'radiology',
+  maternity: 'ward',
+  pediatric: 'pediatric',
+  isolation: 'isolationRoom',
+  nurseStations: 'nurseStation',
+  bathroomRestroom: 'restroom',
+  cafeteriaCanteen: 'cafeteria',
+  administrativeOffices: 'adminOffice',
+  ambulanceBayEntrance: 'ambulanceBay',
+  physiotherapyRehab: 'physiotherapy',
+  bloodBank: 'bloodBank',
+  mortuary: 'mortuary',
+  chapelPrayerRoom: 'chapel',
+};
+
+const roomLabels: Record<HospitalRoomKey, string> = {
+  reception: 'Reception',
+  waiting: 'Waiting Area',
+  consultation: 'Consultation',
+  ward: 'Ward',
+  operation: 'Operation',
+  pharmacy: 'Pharmacy',
+  store: 'Store',
+  generator: 'Generator',
+  staffRest: 'Staff Rest',
+  exterior: 'Exterior',
+  icu: 'ICU',
+  recovery: 'Recovery',
+  emergency: 'Emergency',
+  laboratory: 'Laboratory',
+  radiology: 'Radiology',
+  maternity: 'Maternity',
+  pediatric: 'Pediatric',
+  isolation: 'Isolation',
+  nurseStations: 'Nurse Station',
+  bathroomRestroom: 'Bathroom/Restroom',
+  cafeteriaCanteen: 'Cafeteria/Canteen',
+  administrativeOffices: 'Admin Offices',
+  ambulanceBayEntrance: 'Ambulance Bay',
+  physiotherapyRehab: 'Physiotherapy/Rehab',
+  bloodBank: 'Blood Bank',
+  mortuary: 'Mortuary',
+  chapelPrayerRoom: 'Chapel/Prayer Room',
+};
+
+const interiorRooms: Array<{ key: HospitalRoomKey; label: string }> = [
+  { key: 'reception', label: 'Reception' },
+  { key: 'waiting', label: 'Waiting Area' },
+  { key: 'consultation', label: 'Consultation' },
+  { key: 'ward', label: 'Ward' },
+  { key: 'operation', label: 'Operation' },
+  { key: 'pharmacy', label: 'Pharmacy' },
+  { key: 'store', label: 'Store' },
+  { key: 'generator', label: 'Generator' },
+  { key: 'staffRest', label: 'Staff Rest' },
+  { key: 'icu', label: 'ICU' },
+  { key: 'recovery', label: 'Recovery' },
+  { key: 'emergency', label: 'Emergency' },
+  { key: 'laboratory', label: 'Laboratory' },
+  { key: 'radiology', label: 'Radiology' },
+  { key: 'maternity', label: 'Maternity' },
+  { key: 'pediatric', label: 'Pediatric' },
+  { key: 'isolation', label: 'Isolation' },
+  { key: 'nurseStations', label: 'Nurse Station' },
+  { key: 'bathroomRestroom', label: 'Bathroom/Restroom' },
+  { key: 'cafeteriaCanteen', label: 'Cafeteria/Canteen' },
+  { key: 'administrativeOffices', label: 'Admin Offices' },
+  { key: 'ambulanceBayEntrance', label: 'Ambulance Bay' },
+  { key: 'physiotherapyRehab', label: 'Physiotherapy/Rehab' },
+  { key: 'bloodBank', label: 'Blood Bank' },
+  { key: 'mortuary', label: 'Mortuary' },
+  { key: 'chapelPrayerRoom', label: 'Chapel/Prayer Room' },
+];
 
 export default function BirthdayZone() {
   // Weather state management (pattern from YourSpace)
@@ -25,35 +143,7 @@ export default function BirthdayZone() {
 
   // Hospital view state
   const [viewMode, setViewMode] = useState<'exterior' | 'interior' | 'hospitalSection'>('exterior');
-  const [currentRoom, setCurrentRoom] = useState<
-    | 'reception'
-    | 'waiting'
-    | 'consultation'
-    | 'ward'
-    | 'operation'
-    | 'pharmacy'
-    | 'store'
-    | 'generator'
-    | 'staffRest'
-    | 'exterior'
-    | 'icu'
-    | 'recovery'
-    | 'emergency'
-    | 'laboratory'
-    | 'radiology'
-    | 'maternity'
-    | 'pediatric'
-    | 'isolation'
-    | 'nurseStations'
-    | 'bathroomRestroom'
-    | 'cafeteriaCanteen'
-    | 'administrativeOffices'
-    | 'ambulanceBayEntrance'
-    | 'physiotherapyRehab'
-    | 'bloodBank'
-    | 'mortuary'
-    | 'chapelPrayerRoom'
-  >('exterior');
+  const [currentRoom, setCurrentRoom] = useState<HospitalRoomKey>('exterior');
 
   // Handler for WeatherControls
   const handleWeatherChange = (newWeather: WeatherType) => {
@@ -64,6 +154,9 @@ export default function BirthdayZone() {
 
   // Floor state for hospital section
   const [sectionFloor, setSectionFloor] = useState<'ground' | 'first' | 'second'>('ground');
+
+  const selectedRoomMeaning = hospitalRoomMeanings[roomMeaningKeyMap[currentRoom]];
+  const selectedRoomLabel = roomLabels[currentRoom];
 
   // Auto day/night cycle every 30s
   React.useEffect(() => {
@@ -174,34 +267,7 @@ export default function BirthdayZone() {
           )}
           {viewMode === 'interior' && (
             <div className="grid grid-cols-3 gap-1 text-xs">
-              {[
-                { key: 'reception', label: 'Reception' },
-                { key: 'waiting', label: 'Waiting Area' },
-                { key: 'consultation', label: 'Consultation' },
-                { key: 'ward', label: 'Ward' },
-                { key: 'operation', label: 'Operation' },
-                { key: 'pharmacy', label: 'Pharmacy' },
-                { key: 'store', label: 'Store' },
-                { key: 'generator', label: 'Generator' },
-                { key: 'staffRest', label: 'Staff Rest' },
-                { key: 'icu', label: 'ICU' },
-                { key: 'recovery', label: 'Recovery' },
-                { key: 'emergency', label: 'Emergency' },
-                { key: 'laboratory', label: 'Laboratory' },
-                { key: 'radiology', label: 'Radiology' },
-                { key: 'maternity', label: 'Maternity' },
-                { key: 'pediatric', label: 'Pediatric' },
-                { key: 'isolation', label: 'Isolation' },
-                { key: 'nurseStations', label: 'Nurse Station' },
-                { key: 'bathroomRestroom', label: 'Bathroom/Restroom' },
-                { key: 'cafeteriaCanteen', label: 'Cafeteria/Canteen' },
-                { key: 'administrativeOffices', label: 'Admin Offices' },
-                { key: 'ambulanceBayEntrance', label: 'Ambulance Bay' },
-                { key: 'physiotherapyRehab', label: 'Physiotherapy/Rehab' },
-                { key: 'bloodBank', label: 'Blood Bank' },
-                { key: 'mortuary', label: 'Mortuary' },
-                { key: 'chapelPrayerRoom', label: 'Chapel/Prayer Room' },
-              ].map(({ key, label }) => (
+              {interiorRooms.map(({ key, label }) => (
                 <button
                   key={key}
                   onClick={() => setCurrentRoom(key)}
@@ -214,6 +280,26 @@ export default function BirthdayZone() {
           )}
         </div>
       </div>
+
+      {viewMode === 'interior' && (
+        <div className="room-meaning-wrap absolute top-28 right-4 z-40 max-w-sm">
+          <div key={currentRoom} className="room-meaning-card relative p-4">
+            <div className="room-meaning-title text-[11px] mb-1">Tagline</div>
+            <div className="room-meaning-room text-sm font-semibold mb-2">{selectedRoomLabel}</div>
+            <p className="room-meaning-text text-sm">
+              {selectedRoomMeaning.split('\n').map((line, index) => (
+                <span
+                  key={`${currentRoom}-line-${index}`}
+                  className="room-meaning-line"
+                  style={{ animationDelay: `${180 + index * 90}ms` }}
+                >
+                  {line}
+                </span>
+              ))}
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* 3D Scene with weather system, pass isNight for lighting */}
       <div className="absolute inset-0 flex items-center justify-center">
@@ -235,6 +321,9 @@ export default function BirthdayZone() {
 
 // Hospital Section Layout: map ground and first floor rooms
 function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolean; floor?: 'ground' | 'first' | 'second' }) {
+  type Vec3 = [number, number, number];
+  type RoomDef = { name: string; room: HospitalRoomKey; position: Vec3; rotation: Vec3 };
+
   // Define rooms for each floor
   const ROOM_SPACING = 18;
   const ROOM_DEPTH = 18;
@@ -248,7 +337,7 @@ function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolea
   const secondY = FLOOR_HEIGHT * 2;
 
   // Room definitions
-  const groundFloorRooms = [
+  const groundFloorRooms: RoomDef[] = [
     { name: 'Reception', room: 'reception', position: [0, groundY, 0], rotation: [0, 0, 0] },
     { name: 'Waiting Area', room: 'waiting', position: [ROOM_SPACING, groundY, 0], rotation: [0, 0, 0] },
     { name: 'Emergency', room: 'emergency', position: [-ROOM_SPACING, groundY, 0], rotation: [0, 0, 0] },
@@ -256,7 +345,7 @@ function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolea
     { name: 'Back Exit', room: 'emergency', position: [0, groundY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
     { name: 'Cafeteria', room: 'cafeteriaCanteen', position: [ROOM_SPACING, groundY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
   ];
-  const firstFloorRooms = [
+  const firstFloorRooms: RoomDef[] = [
     { name: 'ICU', room: 'icu', position: [0, firstY, 0], rotation: [0, 0, 0] },
     { name: 'Operation', room: 'operation', position: [ROOM_SPACING, firstY, 0], rotation: [0, 0, 0] },
     { name: 'Ward', room: 'ward', position: [-ROOM_SPACING, firstY, 0], rotation: [0, 0, 0] },
@@ -265,7 +354,7 @@ function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolea
     { name: 'Isolation', room: 'isolation', position: [-ROOM_SPACING, firstY, -ROOM_DEPTH], rotation: [0, Math.PI, 0] },
   ];
   // Second floor: example rooms, adjust as needed
-  const secondFloorRooms = [
+  const secondFloorRooms: RoomDef[] = [
     { name: 'Radiology', room: 'radiology', position: [0, secondY, 0], rotation: [0, 0, 0] },
     { name: 'Laboratory', room: 'laboratory', position: [ROOM_SPACING, secondY, 0], rotation: [0, 0, 0] },
     { name: 'Blood Bank', room: 'bloodBank', position: [-ROOM_SPACING, secondY, 0], rotation: [0, 0, 0] },
@@ -287,19 +376,24 @@ function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolea
   const maxX = Math.max(...rooms.map(r => r.position[0]));
   const corridorWidth = Math.abs(maxX - minX) + ROOM_WIDTH;
 
-  function Corridor({ from, to, y = 0 }) {
-    const mid = [(from[0] + to[0]) / 2, y, (from[2] + to[2]) / 2];
+  function Corridor({ from, to, y = 0 }: { from: Vec3; to: Vec3; y?: number }) {
+    const mid: Vec3 = [(from[0] + to[0]) / 2, y, (from[2] + to[2]) / 2];
     const dx = Math.abs(from[0] - to[0]);
     const dz = Math.abs(from[2] - to[2]);
+    const corridorScale: Vec3 = [dx > dz ? dx : CORRIDOR_WIDTH, 0.1, dz > dx ? dz : CORRIDOR_WIDTH];
     return (
-      <mesh position={mid} scale={[dx > dz ? dx : CORRIDOR_WIDTH, 0.1, dz > dx ? dz : CORRIDOR_WIDTH]} visible={true}>
+      <mesh position={mid} scale={corridorScale} visible={true}>
         <boxGeometry />
         <meshStandardMaterial color="#e0e0e0" opacity={0.3} transparent />
       </mesh>
     );
   }
 
-  const ambulanceBay = { name: 'Ambulance Bay', room: 'ambulanceBayEntrance', position: [0, groundY, ROOM_SPACING + 4] };
+  const ambulanceBay: { name: string; room: HospitalRoomKey; position: Vec3 } = {
+    name: 'Ambulance Bay',
+    room: 'ambulanceBayEntrance',
+    position: [0, groundY, ROOM_SPACING + 4],
+  };
   return (
     <group>
       {/* Ambulance Bay at the very front (only on ground floor view) */}
