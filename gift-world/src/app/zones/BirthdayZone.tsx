@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import React, { Suspense, useState } from "react";
 const Hospital3D = dynamic(() => import("@/components/3d/Hospital3D"), { ssr: false });
 const HospitalInterior3D = dynamic(() => import("@/components/3d/HospitalInterior3D"), { ssr: false });
+const Stairs3D = dynamic(() => import("@/components/3d/Stairs3D"), { ssr: false });
 
 import Scene from "@/components/3d/Scene";
 import ParticleBackground from "@/components/ui/ParticleBackground";
@@ -394,6 +395,13 @@ function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolea
     room: 'ambulanceBayEntrance',
     position: [0, groundY, ROOM_SPACING + 4],
   };
+
+  // Stairs positions beside the rooms (left and right sides of the layout)
+  const STAIRS_OFFSET = 28; // Position beside the outermost rooms
+  const STAIRS_Z_OFFSET = -9; // Middle of room layout (between front and back rooms)
+  const leftStairsPosition: Vec3 = [-STAIRS_OFFSET, groundY, STAIRS_Z_OFFSET];
+  const rightStairsPosition: Vec3 = [STAIRS_OFFSET, groundY, STAIRS_Z_OFFSET];
+
   return (
     <group>
       {/* Ambulance Bay at the very front (only on ground floor view) */}
@@ -447,6 +455,215 @@ function HospitalSectionLayout({ isNight, floor = 'ground' }: { isNight?: boolea
           </group>
         ))}
       </group>
+
+      {/* Stairs - Left and Right sides beside the rooms - Conditional based on floor */}
+      
+      {/* Ground Floor View: Show only ground to first floor stairs */}
+      {floor === 'ground' && (
+        <>
+          {/* Visual markers for stairs areas */}
+          <Text
+            position={[-STAIRS_OFFSET, groundY + 4, STAIRS_Z_OFFSET]}
+            fontSize={0.5}
+            color={isNight ? "#64b5f6" : "#1976d2"}
+            anchorX="center"
+            anchorY="middle"
+          >
+            LEFT STAIRS ↑
+          </Text>
+          <Text
+            position={[STAIRS_OFFSET, groundY + 4, STAIRS_Z_OFFSET]}
+            fontSize={0.5}
+            color={isNight ? "#64b5f6" : "#1976d2"}
+            anchorX="center"
+            anchorY="middle"
+          >
+            RIGHT STAIRS ↑
+          </Text>
+          
+          {/* Ground to First Floor - Left Stairs */}
+          <Stairs3D
+            position={leftStairsPosition}
+            rotation={[0, Math.PI / 2, 0]}
+            stairsDirection="left"
+            floorHeight={FLOOR_HEIGHT}
+            isNight={isNight}
+          />
+          
+          {/* Ground to First Floor - Right Stairs */}
+          <Stairs3D
+            position={rightStairsPosition}
+            rotation={[0, -Math.PI / 2, 0]}
+            stairsDirection="right"
+            floorHeight={FLOOR_HEIGHT}
+            isNight={isNight}
+          />
+        </>
+      )}
+
+      {/* First Floor View: Show stairs from ground and to second floor */}
+      {floor === 'first' && (
+        <>
+          {/* Visual markers */}
+          <Text
+            position={[-STAIRS_OFFSET, firstY + 4, STAIRS_Z_OFFSET]}
+            fontSize={0.5}
+            color={isNight ? "#64b5f6" : "#1976d2"}
+            anchorX="center"
+            anchorY="middle"
+          >
+            LEFT STAIRS ↑↓
+          </Text>
+          <Text
+            position={[STAIRS_OFFSET, firstY + 4, STAIRS_Z_OFFSET]}
+            fontSize={0.5}
+            color={isNight ? "#64b5f6" : "#1976d2"}
+            anchorX="center"
+            anchorY="middle"
+          >
+            RIGHT STAIRS ↑↓
+          </Text>
+
+          {/* Show stairs coming up from ground */}
+          <Stairs3D
+            position={leftStairsPosition}
+            rotation={[0, Math.PI / 2, 0]}
+            stairsDirection="left"
+            floorHeight={FLOOR_HEIGHT}
+            isNight={isNight}
+          />
+          <Stairs3D
+            position={rightStairsPosition}
+            rotation={[0, -Math.PI / 2, 0]}
+            stairsDirection="right"
+            floorHeight={FLOOR_HEIGHT}
+            isNight={isNight}
+          />
+          
+          {/* Show stairs going to second floor */}
+          <Stairs3D
+            position={[leftStairsPosition[0], firstY, leftStairsPosition[2]]}
+            rotation={[0, Math.PI / 2, 0]}
+            stairsDirection="left"
+            floorHeight={FLOOR_HEIGHT}
+            isNight={isNight}
+          />
+          <Stairs3D
+            position={[rightStairsPosition[0], firstY, rightStairsPosition[2]]}
+            rotation={[0, -Math.PI / 2, 0]}
+            stairsDirection="right"
+            floorHeight={FLOOR_HEIGHT}
+            isNight={isNight}
+          />
+        </>
+      )}
+
+      {/* Second Floor View: Show only stairs coming up from first floor */}
+      {floor === 'second' && (
+        <>
+          {/* Visual markers */}
+          <Text
+            position={[-STAIRS_OFFSET, secondY + 4, STAIRS_Z_OFFSET]}
+            fontSize={0.5}
+            color={isNight ? "#64b5f6" : "#1976d2"}
+            anchorX="center"
+            anchorY="middle"
+          >
+            LEFT STAIRS ↓
+          </Text>
+          <Text
+            position={[STAIRS_OFFSET, secondY + 4, STAIRS_Z_OFFSET]}
+            fontSize={0.5}
+            color={isNight ? "#64b5f6" : "#1976d2"}
+            anchorX="center"
+            anchorY="middle"
+          >
+            RIGHT STAIRS ↓
+          </Text>
+
+          {/* Show only stairs coming up from first floor */}
+          <Stairs3D
+            position={[leftStairsPosition[0], firstY, leftStairsPosition[2]]}
+            rotation={[0, Math.PI / 2, 0]}
+            stairsDirection="left"
+            floorHeight={FLOOR_HEIGHT}
+            isNight={isNight}
+          />
+          <Stairs3D
+            position={[rightStairsPosition[0], firstY, rightStairsPosition[2]]}
+            rotation={[0, -Math.PI / 2, 0]}
+            stairsDirection="right"
+            floorHeight={FLOOR_HEIGHT}
+            isNight={isNight}
+          />
+        </>
+      )}
+
+      {/* Stair platforms for better connection between floors - Conditional based on floor */}
+      
+      {/* Ground Floor: Show ground level platforms and first floor landing */}
+      {floor === 'ground' && (
+        <>
+          <mesh position={[leftStairsPosition[0], groundY + 0.1, leftStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+          <mesh position={[rightStairsPosition[0], groundY + 0.1, rightStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+        </>
+      )}
+      
+      {/* First Floor: Show ground, first, and second floor platforms */}
+      {floor === 'first' && (
+        <>
+          {/* Ground floor platforms */}
+          <mesh position={[leftStairsPosition[0], groundY + 0.1, leftStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+          <mesh position={[rightStairsPosition[0], groundY + 0.1, rightStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+          
+          {/* First floor platforms */}
+          <mesh position={[leftStairsPosition[0], firstY + 0.1, leftStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+          <mesh position={[rightStairsPosition[0], firstY + 0.1, rightStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+        </>
+      )}
+      
+      {/* Second Floor: Show first and second floor platforms */}
+      {floor === 'second' && (
+        <>
+          {/* First floor platforms (base of stairs) */}
+          <mesh position={[leftStairsPosition[0], firstY + 0.1, leftStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+          <mesh position={[rightStairsPosition[0], firstY + 0.1, rightStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+          
+          {/* Second floor platforms */}
+          <mesh position={[leftStairsPosition[0], secondY + 0.1, leftStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+          <mesh position={[rightStairsPosition[0], secondY + 0.1, rightStairsPosition[2]]} receiveShadow>
+            <boxGeometry args={[4, 0.2, 4]} />
+            <meshStandardMaterial color="#6a7c89" />
+          </mesh>
+        </>
+      )}
     </group>
   );
 }
