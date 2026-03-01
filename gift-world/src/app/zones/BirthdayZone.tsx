@@ -144,7 +144,7 @@ export default function BirthdayZone() {
   const [isAutoCycle, setIsAutoCycle] = useState(true);
 
   // Hospital view state
-  const [viewMode, setViewMode] = useState<'exterior' | 'interior' | 'hospitalSection'>('exterior');
+  const [viewMode, setViewMode] = useState<'exterior' | 'interior' | 'hospitalSection' | 'leftWing' | 'rightWing'>('exterior');
   const [currentRoom, setCurrentRoom] = useState<HospitalRoomKey>('exterior');
 
   // Handler for WeatherControls
@@ -255,11 +255,35 @@ export default function BirthdayZone() {
                   : 'bg-white/10 text-white/80 hover:bg-white/20'
               }`}
             >
-              🏢 Hospital Section
+              🏢 Central Wing
+            </button>
+            <button
+              onClick={() => {
+                setViewMode('leftWing');
+              }}
+              className={`px-3 py-1 rounded text-xs border transition-colors ${
+                viewMode === 'leftWing'
+                  ? 'bg-purple-500/30 text-white border-purple-300/40'
+                  : 'bg-white/10 text-white/80 hover:bg-white/20'
+              }`}
+            >
+              🏥 Left Wing
+            </button>
+            <button
+              onClick={() => {
+                setViewMode('rightWing');
+              }}
+              className={`px-3 py-1 rounded text-xs border transition-colors ${
+                viewMode === 'rightWing'
+                  ? 'bg-orange-500/30 text-white border-orange-300/40'
+                  : 'bg-white/10 text-white/80 hover:bg-white/20'
+              }`}
+            >
+              🏥 Right Wing
             </button>
           </div>
-          {/* Floor selector for hospital section */}
-          {viewMode === 'hospitalSection' && (
+          {/* Floor selector for hospital wings */}
+          {(viewMode === 'hospitalSection' || viewMode === 'leftWing' || viewMode === 'rightWing') && (
             <div className="flex gap-2 mb-2">
               <span className="text-white text-xs">Floor:</span>
               <button
@@ -331,6 +355,10 @@ export default function BirthdayZone() {
             <HospitalInterior3D position={[0, 0, 0]} currentRoom={currentRoom} viewMode={viewMode} isNight={isNight} />
           ) : viewMode === 'hospitalSection' ? (
             <HospitalSectionLayout isNight={isNight} floor={sectionFloor} liftUpdateTrigger={liftUpdateTrigger} />
+          ) : viewMode === 'leftWing' ? (
+            <LeftWingLayout isNight={isNight} floor={sectionFloor} liftUpdateTrigger={liftUpdateTrigger} />
+          ) : viewMode === 'rightWing' ? (
+            <RightWingLayout isNight={isNight} floor={sectionFloor} liftUpdateTrigger={liftUpdateTrigger} />
           ) : null}
         </Scene>
       </div>
@@ -807,6 +835,272 @@ function HospitalSectionLayout({ isNight, floor = 'ground', liftUpdateTrigger }:
           🛗 CENTRAL LIFT
         </Text>
       )}
+    </group>
+  );
+}
+
+// Left Wing Layout: Diagnostic & Research Wing
+function LeftWingLayout({ isNight, floor = 'ground', liftUpdateTrigger }: { isNight?: boolean; floor?: 'ground' | 'first' | 'second'; liftUpdateTrigger?: number }) {
+  type Vec3 = [number, number, number];
+  type RoomDef = { name: string; room: HospitalRoomKey; position: Vec3; rotation: Vec3 };
+
+  // Wing positioning - offset to the left of main building
+  const WING_OFFSET_X = -45;
+  const WING_OFFSET_Z = 0;
+  
+  // Wing layout constants
+  const ROOM_SPACING = 16;
+  const ROOM_DEPTH = 16;
+  const FLOOR_HEIGHT = 6;
+  const CORRIDOR_WIDTH = 5;
+
+  // Floor Y positions
+  const groundY = 0;
+  const firstY = FLOOR_HEIGHT;
+  const secondY = FLOOR_HEIGHT * 2;
+
+  // Left Wing Room Configurations (Diagnostic & Research Focus)
+  const leftWingGroundRooms: RoomDef[] = [
+    { name: 'Laboratory Complex', room: 'laboratory', position: [WING_OFFSET_X, groundY, WING_OFFSET_Z], rotation: [0, 0, 0] },
+    { name: 'Radiology Suite', room: 'radiology', position: [WING_OFFSET_X + ROOM_SPACING, groundY, WING_OFFSET_Z], rotation: [0, 0, 0] },
+    { name: 'Blood Bank', room: 'bloodBank', position: [WING_OFFSET_X - ROOM_SPACING, groundY, WING_OFFSET_Z], rotation: [0, 0, 0] },
+    { name: 'Pharmacy Wing', room: 'pharmacy', position: [WING_OFFSET_X, groundY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Storage Complex', room: 'store', position: [WING_OFFSET_X + ROOM_SPACING, groundY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Generator Room', room: 'generator', position: [WING_OFFSET_X - ROOM_SPACING, groundY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+  ];
+
+  const leftWingFirstRooms: RoomDef[] = [
+    { name: 'Research Lab', room: 'laboratory', position: [WING_OFFSET_X, firstY, WING_OFFSET_Z], rotation: [0, 0, 0] },
+    { name: 'Advanced ICU', room: 'icu', position: [WING_OFFSET_X + ROOM_SPACING, firstY, WING_OFFSET_Z], rotation: [0, 0, 0] },
+    { name: 'Isolation Wing', room: 'isolation', position: [WING_OFFSET_X - ROOM_SPACING, firstY, WING_OFFSET_Z], rotation: [0, 0, 0] },
+    { name: 'Nurse Station', room: 'nurseStations', position: [WING_OFFSET_X, firstY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Consultation', room: 'consultation', position: [WING_OFFSET_X + ROOM_SPACING, firstY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Recovery Ward', room: 'recovery', position: [WING_OFFSET_X - ROOM_SPACING, firstY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+  ];
+
+  const leftWingSecondRooms: RoomDef[] = [
+    { name: 'Teaching Lab', room: 'laboratory', position: [WING_OFFSET_X, secondY, WING_OFFSET_Z], rotation: [0, 0, 0] },
+    { name: 'Conference Room', room: 'administrativeOffices', position: [WING_OFFSET_X + ROOM_SPACING, secondY, WING_OFFSET_Z], rotation: [0, 0, 0] },
+    { name: 'Research Office', room: 'administrativeOffices', position: [WING_OFFSET_X - ROOM_SPACING, secondY, WING_OFFSET_Z], rotation: [0, 0, 0] },
+    { name: 'Staff Training', room: 'staffRest', position: [WING_OFFSET_X, secondY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Medical Library', room: 'administrativeOffices', position: [WING_OFFSET_X + ROOM_SPACING, secondY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Archive Room', room: 'store', position: [WING_OFFSET_X - ROOM_SPACING, secondY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+  ];
+
+  let rooms: typeof leftWingGroundRooms = leftWingGroundRooms;
+  if (floor === 'first') rooms = leftWingFirstRooms;
+  if (floor === 'second') rooms = leftWingSecondRooms;
+
+  const corridorY = floor === 'ground' ? groundY : floor === 'first' ? firstY : secondY;
+
+  function Corridor({ from, to, y = 0 }: { from: Vec3; to: Vec3; y?: number }) {
+    const mid: Vec3 = [(from[0] + to[0]) / 2, y, (from[2] + to[2]) / 2];
+    const dx = Math.abs(from[0] - to[0]);
+    const dz = Math.abs(from[2] - to[2]);
+    const corridorScale: Vec3 = [dx > dz ? dx : CORRIDOR_WIDTH, 0.1, dz > dx ? dz : CORRIDOR_WIDTH];
+    return (
+      <mesh position={mid} scale={corridorScale} visible={true}>
+        <boxGeometry />
+        <meshStandardMaterial color="#e8f5e8" opacity={0.4} transparent />
+      </mesh>
+    );
+  }
+
+  return (
+    <group>
+      {/* Wing identifier */}
+      <Text
+        position={[WING_OFFSET_X, corridorY + 4, WING_OFFSET_Z - ROOM_DEPTH / 2]}
+        fontSize={1.0}
+        color={isNight ? "#a5d6a7" : "#388e3c"}
+        anchorX="center"
+        anchorY="middle"
+      >
+        🧪 DIAGNOSTIC & RESEARCH WING
+      </Text>
+
+      {/* Rooms */}
+      {rooms.map((roomDef) => (
+        <group key={roomDef.name} position={roomDef.position} rotation={roomDef.rotation}>
+          <HospitalInterior3D currentRoom={roomDef.room} isNight={isNight} position={[0, 0, 0]} />
+          <Text
+            position={[0, 2.5, 0]}
+            fontSize={0.5}
+            color={isNight ? "#a5d6a7" : "#2e7d32"}
+            anchorX="center"
+            anchorY="middle"
+          >
+            {roomDef.name}
+          </Text>
+        </group>
+      ))}
+
+      {/* Corridors connecting rooms */}
+      {rooms.map((roomA, i, arr) =>
+        arr.slice(i + 1).map((roomB, j) => {
+          const isAdjacent = (roomA.position[0] === roomB.position[0] && Math.abs(roomA.position[2] - roomB.position[2]) === ROOM_DEPTH)
+            || (roomA.position[2] === roomB.position[2] && Math.abs(roomA.position[0] - roomB.position[0]) === ROOM_SPACING);
+          if (!isAdjacent) return null;
+          return <Corridor key={roomA.name + '-' + roomB.name} from={roomA.position} to={roomB.position} y={roomA.position[1]} />;
+        })
+      )}
+
+      {/* Wing lift system */}
+      <Lift3D
+        position={[WING_OFFSET_X, groundY, WING_OFFSET_Z - ROOM_DEPTH / 2]}
+        currentFloor={floor}
+        totalFloors={3}
+        isNight={isNight}
+        isMoving={false}
+        direction="stopped"
+        occupancy="light"
+        doorStatus="closed"
+        waitingQueue={1}
+        maintenanceMode={false}
+        estimatedArrival={0}
+      />
+
+      {/* Wing stairs */}
+      <Stairs3D
+        position={[WING_OFFSET_X - 22, groundY, WING_OFFSET_Z - ROOM_DEPTH / 2]}
+        rotation={[0, 0, 0]}
+        stairsDirection="left"
+        floorHeight={FLOOR_HEIGHT}
+        isNight={isNight}
+      />
+    </group>
+  );
+}
+
+// Right Wing Layout: Patient Services & Support Wing
+function RightWingLayout({ isNight, floor = 'ground', liftUpdateTrigger }: { isNight?: boolean; floor?: 'ground' | 'first' | 'second'; liftUpdateTrigger?: number }) {
+  type Vec3 = [number, number, number];
+  type RoomDef = { name: string; room: HospitalRoomKey; position: Vec3; rotation: Vec3 };
+
+  // Wing positioning - offset to the right of main building
+  const WING_OFFSET_X = 45;
+  const WING_OFFSET_Z = 0;
+  
+  // Wing layout constants
+  const ROOM_SPACING = 16;
+  const ROOM_DEPTH = 16;
+  const FLOOR_HEIGHT = 6;
+  const CORRIDOR_WIDTH = 5;
+
+  // Floor Y positions
+  const groundY = 0;
+  const firstY = FLOOR_HEIGHT;
+  const secondY = FLOOR_HEIGHT * 2;
+
+  // Right Wing Room Configurations (Patient Services & Support Focus)
+  const rightWingGroundRooms: RoomDef[] = [
+    { name: 'Patient Reception', room: 'reception', position: [WING_OFFSET_X, groundY, WING_OFFSET_Z], rotation: [0, 0, 0] },
+    { name: 'Family Waiting', room: 'waiting', position: [WING_OFFSET_X + ROOM_SPACING, groundY, WING_OFFSET_Z], rotation: [0, 0, 0] },
+    { name: 'Cafeteria Main', room: 'cafeteriaCanteen', position: [WING_OFFSET_X - ROOM_SPACING, groundY, WING_OFFSET_Z], rotation: [0, 0, 0] },
+    { name: 'Admin Complex', room: 'administrativeOffices', position: [WING_OFFSET_X, groundY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Patient Support', room: 'waiting', position: [WING_OFFSET_X + ROOM_SPACING, groundY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Bathroom Complex', room: 'bathroomRestroom', position: [WING_OFFSET_X - ROOM_SPACING, groundY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+  ];
+
+  const rightWingFirstRooms: RoomDef[] = [
+    { name: 'Maternity Suite', room: 'maternity', position: [WING_OFFSET_X, firstY, WING_OFFSET_Z], rotation: [0, 0, 0] },
+    { name: 'Pediatric Ward', room: 'pediatric', position: [WING_OFFSET_X + ROOM_SPACING, firstY, WING_OFFSET_Z], rotation: [0, 0, 0] },
+    { name: 'General Ward', room: 'ward', position: [WING_OFFSET_X - ROOM_SPACING, firstY, WING_OFFSET_Z], rotation: [0, 0, 0] },
+    { name: 'Physiotherapy', room: 'physiotherapyRehab', position: [WING_OFFSET_X, firstY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Chapel & Prayer', room: 'chapelPrayerRoom', position: [WING_OFFSET_X + ROOM_SPACING, firstY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Patient Lounge', room: 'waiting', position: [WING_OFFSET_X - ROOM_SPACING, firstY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+  ];
+
+  const rightWingSecondRooms: RoomDef[] = [
+    { name: 'VIP Suites', room: 'ward', position: [WING_OFFSET_X, secondY, WING_OFFSET_Z], rotation: [0, 0, 0] },
+    { name: 'Private Rooms', room: 'ward', position: [WING_OFFSET_X + ROOM_SPACING, secondY, WING_OFFSET_Z], rotation: [0, 0, 0] },
+    { name: 'Family Rooms', room: 'staffRest', position: [WING_OFFSET_X - ROOM_SPACING, secondY, WING_OFFSET_Z], rotation: [0, 0, 0] },
+    { name: 'Comfort Suite', room: 'waiting', position: [WING_OFFSET_X, secondY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Guest Services', room: 'reception', position: [WING_OFFSET_X + ROOM_SPACING, secondY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Wellness Center', room: 'physiotherapyRehab', position: [WING_OFFSET_X - ROOM_SPACING, secondY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+  ];
+
+  let rooms: typeof rightWingGroundRooms = rightWingGroundRooms;
+  if (floor === 'first') rooms = rightWingFirstRooms;
+  if (floor === 'second') rooms = rightWingSecondRooms;
+
+  const corridorY = floor === 'ground' ? groundY : floor === 'first' ? firstY : secondY;
+
+  function Corridor({ from, to, y = 0 }: { from: Vec3; to: Vec3; y?: number }) {
+    const mid: Vec3 = [(from[0] + to[0]) / 2, y, (from[2] + to[2]) / 2];
+    const dx = Math.abs(from[0] - to[0]);
+    const dz = Math.abs(from[2] - to[2]);
+    const corridorScale: Vec3 = [dx > dz ? dx : CORRIDOR_WIDTH, 0.1, dz > dx ? dz : CORRIDOR_WIDTH];
+    return (
+      <mesh position={mid} scale={corridorScale} visible={true}>
+        <boxGeometry />
+        <meshStandardMaterial color="#fff3e0" opacity={0.4} transparent />
+      </mesh>
+    );
+  }
+
+  return (
+    <group>
+      {/* Wing identifier */}
+      <Text
+        position={[WING_OFFSET_X, corridorY + 4, WING_OFFSET_Z - ROOM_DEPTH / 2]}
+        fontSize={1.0}
+        color={isNight ? "#ffcc80" : "#e65100"}
+        anchorX="center"
+        anchorY="middle"
+      >
+        🏥 PATIENT SERVICES WING
+      </Text>
+
+      {/* Rooms */}
+      {rooms.map((roomDef) => (
+        <group key={roomDef.name} position={roomDef.position} rotation={roomDef.rotation}>
+          <HospitalInterior3D currentRoom={roomDef.room} isNight={isNight} position={[0, 0, 0]} />
+          <Text
+            position={[0, 2.5, 0]}
+            fontSize={0.5}
+            color={isNight ? "#ffcc80" : "#bf360c"}
+            anchorX="center"
+            anchorY="middle"
+          >
+            {roomDef.name}
+          </Text>
+        </group>
+      ))}
+
+      {/* Corridors connecting rooms */}
+      {rooms.map((roomA, i, arr) =>
+        arr.slice(i + 1).map((roomB, j) => {
+          const isAdjacent = (roomA.position[0] === roomB.position[0] && Math.abs(roomA.position[2] - roomB.position[2]) === ROOM_DEPTH)
+            || (roomA.position[2] === roomB.position[2] && Math.abs(roomA.position[0] - roomB.position[0]) === ROOM_SPACING);
+          if (!isAdjacent) return null;
+          return <Corridor key={roomA.name + '-' + roomB.name} from={roomA.position} to={roomB.position} y={roomA.position[1]} />;
+        })
+      )}
+
+      {/* Wing lift system */}
+      <Lift3D
+        position={[WING_OFFSET_X, groundY, WING_OFFSET_Z - ROOM_DEPTH / 2]}
+        currentFloor={floor}
+        totalFloors={3}
+        isNight={isNight}
+        isMoving={false}
+        direction="stopped"
+        occupancy="moderate"
+        doorStatus="open"
+        waitingQueue={2}
+        maintenanceMode={false}
+        estimatedArrival={0}
+      />
+
+      {/* Wing stairs */}
+      <Stairs3D
+        position={[WING_OFFSET_X + 22, groundY, WING_OFFSET_Z - ROOM_DEPTH / 2]}
+        rotation={[0, 0, 0]}
+        stairsDirection="right"
+        floorHeight={FLOOR_HEIGHT}
+        isNight={isNight}
+      />
     </group>
   );
 }
