@@ -297,7 +297,7 @@ export default function BirthdayZone() {
     const currentText = birthdayStory[currentStoryIndex];
     
     // Show white lilies effect
-    if (currentText.includes('🌸') || currentText.includes('white lily') || currentText.includes('white lilies')) {
+    if (currentText.includes('🤍') || currentText.includes('white lily') || currentText.includes('white lilies')) {
       setShowEffects(prev => ({ ...prev, whiteLilies: true }));
     }
     
@@ -490,7 +490,18 @@ export default function BirthdayZone() {
       {viewMode === 'interior' && (
         <div className="room-meaning-wrap absolute top-28 right-4 z-40 max-w-sm">
           <div key={currentRoom} className="room-meaning-card relative p-4">
-            <div className="room-meaning-title text-[11px] mb-1">Tagline</div>
+            
+            {/* Personal touches based on room */}
+            <div className="absolute top-2 right-2 text-2xl opacity-60">
+              {(selectedRoomMeaning.includes('🐱') || selectedRoomMeaning.includes('cat')) && '🐱'}
+              {selectedRoomMeaning.includes('🤍') && '🤍'}
+              {selectedRoomMeaning.includes('🦜') && '🦜'}
+            </div>
+            
+            <div className="room-meaning-title text-[11px] mb-1">
+              Personal Meaning
+              <span className="ml-2 text-pink-300 opacity-70">✨</span>
+            </div>
             <div className="room-meaning-room text-sm font-semibold mb-2">{selectedRoomLabel}</div>
             <p className="room-meaning-text text-sm">
               {selectedRoomMeaning.split('\n').map((line, index) => (
