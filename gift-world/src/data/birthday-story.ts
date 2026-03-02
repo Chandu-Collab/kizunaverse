@@ -2,46 +2,13 @@
 // This file contains the story for the BirthdayZone hospital gift.
 
 export const birthdayStory: string[] = [
-  `🌙 “The Girl Who Wore a White Coat in Her Heart”\n\nThere was once a girl who didn’t just study…\nShe dove deep.\n\nNot because someone forced her.\nNot because marks mattered.\nBut because when she dreamed — she dreamed seriously.\n\nShe woke up early.\nShe sacrificed sleep.\nShe solved question papers when others scrolled.\nShe didn’t just prepare for NEET — she lived it.\n\nAnd one day…\nShe became a NEET rank holder.`,
+  `🌙 "The Girl Who Wore a White Coat in Her Heart"\n\n🌸 Imagine a white lily blooming in silence...\nPure. Determined. Beautiful.\n\nThere was once a girl who didn't just study…\nShe dove deep.\n\nWith the intelligence of an African grey parrot — sharp, observant, remembering every detail.\nWith the quiet grace of a cat — focused, patient, never giving up.\nWith the purity of a white lily — her intentions were always honest.\n\nNot because someone forced her.\nNot because marks mattered.\nBut because when she dreamed — she dreamed seriously.\n\nShe woke up early.\nShe sacrificed sleep.\nShe solved question papers when others scrolled.\nShe didn't just prepare for NEET — she lived it.\n\nAnd one day…\nShe became a NEET rank holder.\n\n🐾 (A small cat watched her study every night, as if understanding her dedication)`,
 
-  `But life…\nLife doesn’t always move according to merit.\n\nSometimes decisions are made by circumstances.\nSometimes dreams pause — not because they failed,\nbut because they were too pure for the world’s timing.\n\nShe didn’t wear the white coat.\nBut that doesn’t mean she wasn’t meant for it.\n\nBecause being a doctor is not just about a degree.\n\nIt is about:\n\nDiscipline\nCompassion\nStrength\nResponsibility\nHealing others silently\n\nAnd she still carries all of that.`,
+  `But life…\nLife doesn't always move according to merit.\n\nSometimes decisions are made by circumstances.\nSometimes dreams pause — not because they failed,\nbut because they were too pure for the world's timing.\n\n🦜 Like an African grey parrot that remembers everything —\nyou remember the exactness of your preparation.\nThe formulas. The concepts. The late-night dedication.\nNone of that knowledge was wasted.\n\nShe didn't wear the white coat.\nBut that doesn't mean she wasn't meant for it.\n\n🌸 A white lily doesn't bloom any less beautifully\njust because it's in a different garden.\n\nBecause being a doctor is not just about a degree.\n\nIt is about:\n\nDiscipline (like a cat's patience)\nCompassion (like the purity of white lilies)\nStrength (like the intelligence that never fades)\nResponsibility\nHealing others silently\n\n🐱 And she still carries all of that.\n(Just as gracefully as a cat carries herself)`,
 
-  `🏥 “So I Built You This…”\n\nThis hospital is not a building.\n\nIt is:\n\nThe nights you stayed awake.\nThe tears you didn’t show.\nThe strength you never lost.\nThe dream you once held tightly.\n\nI didn’t build it to remind you of what you couldn’t become.\n\nI built it to remind you —\n\nYou were always capable of becoming it.\n\nYou were never “not allowed.”\nYou were just too strong for one single path.\n\nMaybe life didn’t give you MBBS.\nBut it gave you something more powerful —\nResilience.\n\nAnd that girl who studied with fire in her eyes?\nShe is still here.\n\nJust evolving.`,
+  `🏥 "So I Built You This…"\n\n🌸 In the gardens around this hospital, white lilies bloom.\n🐱 A small cat wanders the peaceful corridors.\n🦜 And if you listen carefully... you might hear the soft calls of an African grey parrot.\n\nThis hospital is not a building.\n\nIt is:\n\nThe nights you stayed awake (while cats dozed nearby).\nThe tears you didn't show (pure as white lily petals).\nThe strength you never lost (wise as a parrot's memory).\nThe dream you once held tightly.\n\nI didn't build it to remind you of what you couldn't become.\n\nI built it to remind you —\n\nYou were always capable of becoming it.\n\nYou were never "not allowed."\nYou were just too strong for one single path.\n\n🌸 Like white lilies that can grow in any soil,\n🐱 Like a cat that always lands gracefully,\n🦜 Like a parrot that never forgets what matters...\n\nMaybe life didn't give you MBBS.\nBut it gave you something more powerful —\nResilience.\n\nAnd that girl who studied with fire in her eyes?\nShe is still here.\n\nJust evolving.`,
 
-  `💌 Why a Hospital?\n\nBecause:\n\nIf I gifted you jewelry — it shines for a moment.\nIf I gifted you clothes — they fade with time.\nIf I gifted you flowers — they dry.\n\nBut this?\n\nThis represents:\n\nYour effort.\nYour discipline.\nYour silent sacrifices.\nThe dream you once held.\n\nAnd I want you to know…\n\nEven if the world didn’t give you that white coat,\nI will always see you wearing it.\n\nNot as a doctor by degree.\nBut as a healer by heart.`,
+  `💌 Why a Hospital?\n\nBecause:\n\nIf I gifted you jewelry — it shines for a moment.\nIf I gifted you clothes — they fade with time.\nIf I gifted you flowers — they dry.\n\nBut this?\n\n🌸 With gardens of white lilies that never wilt in this digital world,\n🐱 With a companion cat that brings comfort in quiet moments,\n🦜 With the wisdom of an African grey parrot watching over it all...\n\nThis represents:\n\nYour effort (remembered like a parrot's perfect memory).\nYour discipline (graceful like a cat's patience).\nYour silent sacrifices (pure like white lilies).\nThe dream you once held.\n\nAnd I want you to know…\n\nEven if the world didn't give you that white coat,\nI will always see you wearing it.\n\n🌸 Surrounded by the beauty you deserve (white lilies),\n🐱 With the companionship you cherish (gentle cats),\n🦜 And the intelligence that never goes unnoticed (like a wise parrot).\n\nNot as a doctor by degree.\nBut as a healer by heart.`,
 
-  `\n---\n`,
-
-  `🏥 Hospital Room Meanings`,
-  `Exterior: This building stands strong, just like you did when life tested your dreams.`,
-  `Reception: This is where hope begins — just like the day you proved to yourself what you’re capable of.`,
-  `Waiting Area: For patience — because you never rush growth. You trust timing.`,
-  `Consultation Room: For the way you truly listen. Not to reply, but to understand.`,
-  `Ward: For your quiet care — the kind that doesn’t ask for attention.`,
-  `Operation Theatre: For your courage to make difficult decisions when they matter most.`,
-  `Pharmacy: For the small solutions you offer that heal more than people realize.`,
-  `Store Room: For the strength you keep inside — even when you don’t show it.`,
-  `Generator Room: For your ability to create light, even when everything feels dark.`,
-  `ICU: For your strength in handling fragile situations with steady hands.`,
-  `Recovery Room: For the comfort you bring — sometimes just by being present.`,
-  `Emergency: For your calm in chaos — when others panic, you steady the room.`,
-  `Laboratory: For your curiosity — your need to understand things deeply, not just accept them.`,
-  `Radiology: For your clarity — your ability to see beyond the surface.`,
-  `Pediatric: For the softness in you that protects innocence.`,
-  `Isolation Room: For the times you handled pain alone, without letting it change your kindness.`,
-  `Blood Bank: For the life you give to others through your words, support, and presence.`,
-  `Nurse Station: For your reliability — the kind people quietly depend on.`,
-  `Chapel / Prayer Room: For your faith, your values, and the strength you draw from within.`,
-  `Admin Office: For your quiet leadership — you guide without needing to control.`,
-  `Physiotherapy / Rehab: For the way you encourage others to stand up again.`,
-  `Cafeteria: For the warmth you bring into ordinary moments.`,
-  `Restroom: For your honesty — because even strength needs space to breathe.`,
-  `Ambulance Bay: For your readiness to help — no matter the hour.`,
-  `Mortuary: For your understanding that life is fragile — and that’s why kindness matters.`,
-  `Library: For your love of learning — because your mind was never meant to stay small.`,
-  `Research Lab: For your ambition to discover, question, and grow.`,
-
-  `\n💎 Final Secret Room: Unfinished Dreams\nSome dreams pause.\nThey don’t disappear.\nAnd in another world…\nthis would have been yours.`,
-
-  `🌟 Ending Scene (While showing top view of hospital)\n\n“Happy Birthday to the girl who once wanted to save lives…\nAnd who, without knowing, saved mine.”`
+  `🌟 Birthday Complete\n\n🌸 Watch as white lilies bloom in the hospital garden...\n🐱 See a small cat find its favorite sunny spot on the terrace...\n🦜 Listen to the gentle call of an African grey parrot...\n\nThese are not just decorations.\nThey are pieces of your soul I placed here.\n\n"Happy Birthday to the girl who once wanted to save lives…\nAnd who, without knowing, saved mine.\n\n🌸 May you always bloom like a white lily - pure and strong.\n🐱 May you always land gracefully like a cat, no matter what.\n🦜 And may you always remember your worth, like a parrot never forgets.\n\nThis surprise was built with every favorite thing of yours...\nBecause you deserve a world that knows what makes you smile."`
 ];

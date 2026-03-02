@@ -15,6 +15,7 @@ import WeatherSystem from "@/components/3d/weather/WeatherSystem";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useTheme } from "@/hooks/useTheme";
 import { hospitalRoomMeanings } from "@/data/hospital-room-meanings";
+import { birthdayStory } from "@/data/birthday-story";
 import { Text } from '@react-three/drei';
 
 type WeatherType = 'sunny' | 'rainy' | 'cloudy' | 'monsoon' | 'winter';
@@ -157,6 +158,35 @@ export default function BirthdayZone() {
   // Floor state for hospital section
   const [sectionFloor, setSectionFloor] = useState<'ground' | 'first' | 'second'>('ground');
   
+  // Birthday Story state management
+  const [showStory, setShowStory] = useState(false);
+  const [currentStoryIndex, setCurrentStoryIndex] = useState(0);
+  const [storyAnimationPhase, setStoryAnimationPhase] = useState<'fade-in' | 'display' | 'fade-out'>('fade-in');
+  const [showEffects, setShowEffects] = useState({
+    whiteLilies: false,
+    cat: false,
+    parrot: false,
+    finalReveal: false
+  });
+  
+  // Quiz/Authentication state
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [quizAnswers, setQuizAnswers] = useState({
+    animal: '',
+    bird: '', 
+    flower: ''
+  });
+  const [quizAttempts, setQuizAttempts] = useState(0);
+  const [showQuizError, setShowQuizError] = useState(false);
+  
+  // Correct answers for the quiz
+  const correctAnswers = {
+    animal: 'cat',
+    bird: 'african grey parrot',
+    flower: 'white lily'
+  };
+  
   // Real-time updates for lift status (refresh every second)
   const [liftUpdateTrigger, setLiftUpdateTrigger] = useState(0);
   
@@ -178,6 +208,120 @@ export default function BirthdayZone() {
     }, 30000);
     return () => clearInterval(interval);
   }, [isAutoCycle, toggleTheme]);
+
+  // Story progression functions
+  const startBirthdayStory = () => {
+    if (!isAuthenticated) {
+      setShowQuiz(true);
+      return;
+    }
+    
+    setShowStory(true);
+    setCurrentStoryIndex(0);
+    setStoryAnimationPhase('fade-in');
+    setShowEffects({
+      whiteLilies: false,
+      cat: false,
+      parrot: false,
+      finalReveal: false
+    });
+  };
+
+  // Quiz functions
+  const handleQuizSubmit = () => {
+    const isCorrect = 
+      quizAnswers.animal.toLowerCase().trim() === correctAnswers.animal &&
+      quizAnswers.bird.toLowerCase().trim() === correctAnswers.bird &&
+      quizAnswers.flower.toLowerCase().trim() === correctAnswers.flower;
+
+    if (isCorrect) {
+      setIsAuthenticated(true);
+      setShowQuiz(false);
+      setShowQuizError(false);
+      // Automatically start story after successful authentication
+      setTimeout(() => {
+        setShowStory(true);
+        setCurrentStoryIndex(0);
+        setStoryAnimationPhase('fade-in');
+      }, 500);
+    } else {
+      setQuizAttempts(prev => prev + 1);
+      setShowQuizError(true);
+      // Clear error after 3 seconds
+      setTimeout(() => setShowQuizError(false), 3000);
+    }
+  };
+
+  const handleQuizAnswerChange = (question: string, answer: string) => {
+    setQuizAnswers(prev => ({
+      ...prev,
+      [question]: answer
+    }));
+  };
+
+  const closeQuiz = () => {
+    setShowQuiz(false);
+    setQuizAnswers({ animal: '', bird: '', flower: '' });
+    setShowQuizError(false);
+  };
+
+  const nextStorySegment = () => {
+    if (currentStoryIndex < birthdayStory.length - 1) {
+      setStoryAnimationPhase('fade-out');
+      setTimeout(() => {
+        setCurrentStoryIndex(prev => prev + 1);
+        setStoryAnimationPhase('fade-in');
+      }, 500);
+    } else {
+      // End of story
+      setStoryAnimationPhase('fade-out');
+      setTimeout(() => {
+        setShowStory(false);
+        setCurrentStoryIndex(0);
+      }, 1000);
+    }
+  };
+
+  const closeBirthdayStory = () => {
+    setStoryAnimationPhase('fade-out');
+    setTimeout(() => {
+      setShowStory(false);
+      setCurrentStoryIndex(0);
+    }, 500);
+  };
+
+  // Trigger visual effects based on story content
+  useEffect(() => {
+    if (!showStory) return;
+    
+    const currentText = birthdayStory[currentStoryIndex];
+    
+    // Show white lilies effect
+    if (currentText.includes('🤍') || currentText.includes('white lily') || currentText.includes('white lilies')) {
+      setShowEffects(prev => ({ ...prev, whiteLilies: true }));
+    }
+    
+    // Show cat effect
+    if (currentText.includes('🐱') || currentText.includes('🐾') || currentText.includes('cat')) {
+      setShowEffects(prev => ({ ...prev, cat: true }));
+    }
+    
+    // Show parrot effect
+    if (currentText.includes('🦜') || currentText.includes('African grey parrot') || currentText.includes('parrot')) {
+      setShowEffects(prev => ({ ...prev, parrot: true }));
+    }
+    
+    // Final reveal with all effects
+    if (currentText.includes('Final Secret Room') || currentStoryIndex === birthdayStory.length - 1) {
+      setShowEffects(prev => ({ 
+        ...prev, 
+        whiteLilies: true, 
+        cat: true, 
+        parrot: true, 
+        finalReveal: true 
+      }));
+    }
+  }, [showStory, currentStoryIndex]);
 
   return (
     <div className="w-full h-screen relative overflow-hidden">
@@ -282,6 +426,27 @@ export default function BirthdayZone() {
               🏥 Right Wing
             </button>
           </div>
+          
+          {/* Birthday Story Button - Special surprise feature */}
+          <div className="flex gap-2 mb-2 border-t border-white/20 pt-2">
+            <button
+              onClick={startBirthdayStory}
+              disabled={showStory || showQuiz}
+              className={`px-3 py-2 rounded text-sm border transition-all duration-300 ${
+                showStory || showQuiz
+                  ? 'bg-gray-500/30 text-gray-400 border-gray-600/40 cursor-not-allowed'
+                  : isAuthenticated
+                  ? 'bg-gradient-to-r from-green-500/30 to-emerald-500/30 text-white border-emerald-300/40 hover:from-green-500/50 hover:to-emerald-500/50 hover:border-emerald-300/60 shadow-lg'
+                  : 'bg-gradient-to-r from-pink-500/30 to-purple-500/30 text-white border-pink-300/40 hover:from-pink-500/50 hover:to-purple-500/50 hover:border-pink-300/60 shadow-lg'
+              }`}
+            >
+              {isAuthenticated ? '🎁 ✓ Birthday Story' : '🔒 Birthday Story Surprise'}
+            </button>
+            {isAuthenticated && (
+              <span className="text-green-400 text-xs self-center">✓ Unlocked</span>
+            )}
+          </div>
+          
           {/* Floor selector for hospital wings */}
           {(viewMode === 'hospitalSection' || viewMode === 'leftWing' || viewMode === 'rightWing') && (
             <div className="flex gap-2 mb-2">
@@ -325,7 +490,18 @@ export default function BirthdayZone() {
       {viewMode === 'interior' && (
         <div className="room-meaning-wrap absolute top-28 right-4 z-40 max-w-sm">
           <div key={currentRoom} className="room-meaning-card relative p-4">
-            <div className="room-meaning-title text-[11px] mb-1">Tagline</div>
+            
+            {/* Personal touches based on room */}
+            <div className="absolute top-2 right-2 text-2xl opacity-60">
+              {(selectedRoomMeaning.includes('🐱') || selectedRoomMeaning.includes('cat')) && '🐱'}
+              {selectedRoomMeaning.includes('🤍') && '🤍'}
+              {selectedRoomMeaning.includes('🦜') && '🦜'}
+            </div>
+            
+            <div className="room-meaning-title text-[11px] mb-1">
+              Personal Meaning
+              <span className="ml-2 text-pink-300 opacity-70">✨</span>
+            </div>
             <div className="room-meaning-room text-sm font-semibold mb-2">{selectedRoomLabel}</div>
             <p className="room-meaning-text text-sm">
               {selectedRoomMeaning.split('\n').map((line, index) => (
@@ -342,6 +518,248 @@ export default function BirthdayZone() {
         </div>
       )}
 
+      {/* Quiz Authentication Overlay */}
+      {showQuiz && (
+        <div className="fixed inset-0 z-50 bg-gradient-to-br from-indigo-900/95 via-purple-900/95 to-pink-900/95">
+          <div className="relative z-10 flex flex-col items-center justify-center h-full p-4">
+            <div className="w-full max-w-md mx-auto bg-black/40 backdrop-blur-sm rounded-2xl p-8 shadow-2xl">
+              
+              {/* Quiz Header */}
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold text-white mb-2">🔒 Special Access Required</h2>
+                <p className="text-white/80 text-sm">Answer these questions to unlock your surprise</p>
+                {quizAttempts > 0 && (
+                  <p className="text-yellow-400 text-xs mt-2">Attempts: {quizAttempts}</p>
+                )}
+              </div>
+
+              {/* Quiz Questions */}
+              <div className="space-y-4 mb-6">
+                {/* Question 1: Favorite Animal */}
+                <div>
+                  <label className="block text-white text-sm font-medium mb-2">
+                    🐾 What is your favorite animal?
+                  </label>
+                  <input
+                    type="text"
+                    value={quizAnswers.animal}
+                    onChange={(e) => handleQuizAnswerChange('animal', e.target.value)}
+                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/40 quiz-input transition-all duration-200"
+                    placeholder="Enter your favorite animal..."
+                  />
+                </div>
+
+                {/* Question 2: Favorite Bird */}
+                <div>
+                  <label className="block text-white text-sm font-medium mb-2">
+                    🦜 What is your favorite bird?
+                  </label>
+                  <input
+                    type="text"
+                    value={quizAnswers.bird}
+                    onChange={(e) => handleQuizAnswerChange('bird', e.target.value)}
+                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/40 quiz-input transition-all duration-200"
+                    placeholder="Enter your favorite bird..."
+                  />
+                </div>
+
+                {/* Question 3: Favorite Flower */}
+                <div>
+                  <label className="block text-white text-sm font-medium mb-2">
+                    🌸 What is your favorite flower?
+                  </label>
+                  <input
+                    type="text"
+                    value={quizAnswers.flower}
+                    onChange={(e) => handleQuizAnswerChange('flower', e.target.value)}
+                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-white/40 quiz-input transition-all duration-200"
+                    placeholder="Enter your favorite flower..."
+                  />
+                </div>
+              </div>
+
+              {/* Error Message */}
+              {showQuizError && (
+                <div className={`bg-red-500/20 border border-red-400/40 rounded-lg p-3 mb-4 quiz-error`}>
+                  <p className="text-red-200 text-sm text-center">
+                    ❌ Hmm, that's not quite right. Try again! 
+                    {quizAttempts >= 3 && (
+                      <span className="block mt-1 text-xs">
+                        💡 Think about the things mentioned in our conversations...
+                      </span>
+                    )}
+                  </p>
+                </div>
+              )}
+
+              {/* Quiz Actions */}
+              <div className="flex gap-3">
+                <button
+                  onClick={handleQuizSubmit}
+                  disabled={!quizAnswers.animal || !quizAnswers.bird || !quizAnswers.flower}
+                  className={`flex-1 px-4 py-3 rounded-lg font-medium transition-colors ${
+                    !quizAnswers.animal || !quizAnswers.bird || !quizAnswers.flower
+                      ? 'bg-gray-500/30 text-gray-400 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-pink-600 to-purple-600 text-white hover:from-pink-700 hover:to-purple-700 shadow-lg'
+                  }`}
+                >
+                  🔓 Unlock Surprise
+                </button>
+                <button
+                  onClick={closeQuiz}
+                  className="px-4 py-3 bg-white/10 text-white/70 rounded-lg border border-white/20 hover:bg-white/20 hover:text-white transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Birthday Story Overlay */}
+      {showStory && (
+        <div className={`fixed inset-0 z-50 transition-opacity duration-500 ${
+          storyAnimationPhase === 'fade-in' ? 'opacity-100' : 
+          storyAnimationPhase === 'fade-out' ? 'opacity-0' : 'opacity-100'
+        }`}>
+          {/* Background with animated effects */}
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/95 via-purple-900/95 to-pink-900/95">
+            {/* Floating white lilies effect */}
+            {showEffects.whiteLilies && (
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                {[...Array(8)].map((_, i) => (
+                  <div
+                    key={`lily-${i}`}
+                    className="absolute animate-float"
+                    style={{
+                      left: `${10 + i * 12}%`,
+                      top: `${20 + (i % 3) * 25}%`,
+                      animationDelay: `${i * 0.5}s`,
+                      animationDuration: '4s'
+                    }}
+                  >
+                    <div className="relative w-12 h-12">
+                      {/* White lily with 6 petals */}
+                      <div className="absolute inset-0 transform rotate-0">
+                        {/* 6 lily petals arranged in a circle */}
+                        {[0, 60, 120, 180, 240, 300].map((rotation, petalIndex) => (
+                          <div
+                            key={petalIndex}
+                            className="absolute w-3 h-8 bg-gradient-to-t from-white via-white to-gray-50 rounded-full origin-bottom"
+                            style={{
+                              transform: `rotate(${rotation}deg) translateY(-50%)`,
+                              left: '50%',
+                              top: '50%',
+                              transformOrigin: '50% 100%',
+                              marginLeft: '-6px',
+                              boxShadow: `0 0 8px rgba(255,255,255,0.8), inset 0 1px 2px rgba(0,0,0,0.1)`
+                            }}
+                          />
+                        ))}
+                        {/* Center stamens */}
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                          <div className="w-2 h-2 bg-yellow-200 rounded-full relative">
+                            {/* Orange/brown anthers */}
+                            {[0, 45, 90, 135, 180, 225].map((angle, stamenIndex) => (
+                              <div
+                                key={stamenIndex}
+                                className="absolute w-1 h-1 bg-orange-400 rounded-full"
+                                style={{
+                                  transform: `rotate(${angle}deg) translateY(-4px)`,
+                                  left: '50%',
+                                  top: '50%',
+                                  transformOrigin: '50% 50%',
+                                  marginLeft: '-2px',
+                                  marginTop: '-2px'
+                                }}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {/* Cat animation */}
+            {showEffects.cat && (
+              <div className="absolute bottom-10 left-10 animate-walk-right">
+                <div className="text-6xl">🐱</div>
+              </div>
+            )}
+            
+            {/* Parrot animation */}
+            {showEffects.parrot && (
+              <div className="absolute top-20 right-20 animate-sway">
+                <div className="text-5xl">🦜</div>
+              </div>
+            )}
+          </div>
+
+          {/* Story content */}
+          <div className="relative z-10 flex flex-col items-center justify-center h-full p-4">
+            <div className={`w-full max-w-4xl mx-auto transition-all duration-700 ${
+              storyAnimationPhase === 'fade-in' ? 'transform translate-y-0 opacity-100' :
+              storyAnimationPhase === 'fade-out' ? 'transform translate-y-4 opacity-0' :
+              'transform translate-y-0 opacity-100'
+            }`}>
+              
+              {/* Story text with proper scrolling */}
+              <div className="bg-black/40 backdrop-blur-sm rounded-2xl p-6 mb-6 shadow-2xl h-96 overflow-hidden flex flex-col">
+                <div className="overflow-y-auto flex-1 pr-2 custom-scrollbar text-center">
+                  <pre className="whitespace-pre-wrap text-white text-base leading-relaxed font-medium">
+                    {birthdayStory[currentStoryIndex]}
+                  </pre>
+                </div>
+              </div>
+
+              {/* Navigation controls */}
+              <div className="flex justify-center gap-4 mb-4">
+                {currentStoryIndex > 0 && (
+                  <button
+                    onClick={() => setCurrentStoryIndex(prev => Math.max(0, prev - 1))}
+                    className="px-6 py-3 bg-white/20 text-white rounded-lg border border-white/30 hover:bg-white/30 transition-colors"
+                  >
+                    ← Previous
+                  </button>
+                )}
+                <button
+                  onClick={nextStorySegment}
+                  className="px-8 py-3 bg-gradient-to-r from-pink-600 to-purple-600 text-white rounded-lg border border-white/30 hover:from-pink-700 hover:to-purple-700 transition-colors shadow-lg"
+                >
+                  {currentStoryIndex < birthdayStory.length - 1 ? 'Continue →' : '🌟 Complete Story'}
+                </button>
+                <button
+                  onClick={closeBirthdayStory}
+                  className="px-6 py-3 bg-white/10 text-white/70 rounded-lg border border-white/20 hover:bg-white/20 hover:text-white transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+
+              {/* Progress indicator */}
+              <div className="flex justify-center">
+                <div className="flex gap-2">
+                  {birthdayStory.map((_, index) => (
+                    <div
+                      key={index}
+                      className={`w-3 h-3 rounded-full transition-colors ${
+                        index <= currentStoryIndex 
+                          ? 'bg-pink-400' 
+                          : 'bg-white/30'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 3D Scene with conditional weather system - only for exterior view */}
       <div className="absolute inset-0 flex items-center justify-center">
         <Scene cameraPosition={[0, 12, 32]} enableControls enableShadows>
@@ -349,6 +767,215 @@ export default function BirthdayZone() {
           {viewMode === 'exterior' && (
             <WeatherSystem weatherType={weather} autoChange={autoWeather} />
           )}
+          
+          {/* Birthday Story 3D Effects */}
+          {showStory && (
+            <>
+              {/* White Lilies floating around */}
+              {showEffects.whiteLilies && (
+                <>
+                  {/* First realistic white lily */}
+                  <group position={[-8, 2, 5]} rotation={[0, 0, 0.3]}>
+                    {/* Green stem */}
+                    <mesh position={[0, -0.5, 0]}>
+                      <cylinderGeometry args={[0.02, 0.03, 1, 8]} />
+                      <meshStandardMaterial color="#228B22" />
+                    </mesh>
+                    {/* 6 lily petals */}
+                    {[0, 60, 120, 180, 240, 300].map((rotation, petalIndex) => (
+                      <mesh
+                        key={petalIndex}
+                        position={[
+                          Math.cos((rotation * Math.PI) / 180) * 0.2,
+                          0.1,
+                          Math.sin((rotation * Math.PI) / 180) * 0.2
+                        ]}
+                        rotation={[0.3, (rotation * Math.PI) / 180, 0]}
+                      >
+                        <boxGeometry args={[0.15, 0.4, 0.02]} />
+                        <meshStandardMaterial color="#ffffff" side={2} />
+                      </mesh>
+                    ))}
+                    {/* Center with stamens */}
+                    <mesh position={[0, 0.15, 0]}>
+                      <sphereGeometry args={[0.05]} />
+                      <meshStandardMaterial color="#ffff99" />
+                    </mesh>
+                    {/* Orange anthers */}
+                    {[0, 60, 120, 180, 240, 300].map((rotation, stamenIndex) => (
+                      <mesh
+                        key={stamenIndex}
+                        position={[
+                          Math.cos((rotation * Math.PI) / 180) * 0.08,
+                          0.18,
+                          Math.sin((rotation * Math.PI) / 180) * 0.08
+                        ]}
+                      >
+                        <sphereGeometry args={[0.02]} />
+                        <meshStandardMaterial color="#ff8c00" />
+                      </mesh>
+                    ))}
+                  </group>
+
+                  {/* Second realistic white lily */}
+                  <group position={[8, 3, -4]} rotation={[0, 0, -0.2]}>
+                    <mesh position={[0, -0.6, 0]}>
+                      <cylinderGeometry args={[0.025, 0.035, 1.2, 8]} />
+                      <meshStandardMaterial color="#228B22" />
+                    </mesh>
+                    {[0, 60, 120, 180, 240, 300].map((rotation, petalIndex) => (
+                      <mesh
+                        key={petalIndex}
+                        position={[
+                          Math.cos((rotation * Math.PI) / 180) * 0.25,
+                          0.12,
+                          Math.sin((rotation * Math.PI) / 180) * 0.25
+                        ]}
+                        rotation={[0.2, (rotation * Math.PI) / 180, 0]}
+                      >
+                        <boxGeometry args={[0.18, 0.5, 0.02]} />
+                        <meshStandardMaterial color="#ffffff" side={2} />
+                      </mesh>
+                    ))}
+                    <mesh position={[0, 0.18, 0]}>
+                      <sphereGeometry args={[0.06]} />
+                      <meshStandardMaterial color="#ffff99" />
+                    </mesh>
+                    {[0, 60, 120, 180, 240, 300].map((rotation, stamenIndex) => (
+                      <mesh
+                        key={stamenIndex}
+                        position={[
+                          Math.cos((rotation * Math.PI) / 180) * 0.09,
+                          0.22,
+                          Math.sin((rotation * Math.PI) / 180) * 0.09
+                        ]}
+                      >
+                        <sphereGeometry args={[0.025]} />
+                        <meshStandardMaterial color="#ff8c00" />
+                      </mesh>
+                    ))}
+                  </group>
+
+                  {/* Third realistic white lily */}
+                  <group position={[-4, 4, -8]} rotation={[0, 0, 0.1]}>
+                    <mesh position={[0, -0.55, 0]}>
+                      <cylinderGeometry args={[0.022, 0.032, 1.1, 8]} />
+                      <meshStandardMaterial color="#228B22" />
+                    </mesh>
+                    {[0, 60, 120, 180, 240, 300].map((rotation, petalIndex) => (
+                      <mesh
+                        key={petalIndex}
+                        position={[
+                          Math.cos((rotation * Math.PI) / 180) * 0.22,
+                          0.11,
+                          Math.sin((rotation * Math.PI) / 180) * 0.22
+                        ]}
+                        rotation={[0.25, (rotation * Math.PI) / 180, 0]}
+                      >
+                        <boxGeometry args={[0.16, 0.45, 0.02]} />
+                        <meshStandardMaterial color="#ffffff" side={2} />
+                      </mesh>
+                    ))}
+                    <mesh position={[0, 0.16, 0]}>
+                      <sphereGeometry args={[0.055]} />
+                      <meshStandardMaterial color="#ffff99" />
+                    </mesh>
+                    {[0, 60, 120, 180, 240, 300].map((rotation, stamenIndex) => (
+                      <mesh
+                        key={stamenIndex}
+                        position={[
+                          Math.cos((rotation * Math.PI) / 180) * 0.085,
+                          0.20,
+                          Math.sin((rotation * Math.PI) / 180) * 0.085
+                        ]}
+                      >
+                        <sphereGeometry args={[0.022]} />
+                        <meshStandardMaterial color="#ff8c00" />
+                      </mesh>
+                    ))}
+                  </group>
+                </>
+              )}
+              
+              {/* Cat quietly wandering */}
+              {showEffects.cat && (
+                <group position={[6, 0.5, 8]}>
+                  {/* Simple cat shape */}
+                  <mesh position={[0, 0, 0]}>
+                    <boxGeometry args={[1, 0.5, 0.4]} />
+                    <meshStandardMaterial color="#808080" />
+                  </mesh>
+                  <mesh position={[0.4, 0.1, 0]}>
+                    <sphereGeometry args={[0.3]} />
+                    <meshStandardMaterial color="#808080" />
+                  </mesh>
+                  {/* Ears */}
+                  <mesh position={[0.5, 0.3, -0.1]}>
+                    <coneGeometry args={[0.1, 0.2, 3]} />
+                    <meshStandardMaterial color="#606060" />
+                  </mesh>
+                  <mesh position={[0.5, 0.3, 0.1]}>
+                    <coneGeometry args={[0.1, 0.2, 3]} />
+                    <meshStandardMaterial color="#606060" />
+                  </mesh>
+                  {/* Tail */}
+                  <mesh position={[-0.4, 0.1, 0]} rotation={[0, 0, 0.3]}>
+                    <cylinderGeometry args={[0.05, 0.1, 0.6]} />
+                    <meshStandardMaterial color="#707070" />
+                  </mesh>
+                </group>
+              )}
+              
+              {/* African Grey Parrot perched */}
+              {showEffects.parrot && (
+                <group position={[-6, 8, -6]}>
+                  {/* Parrot body - light grey */}
+                  <mesh position={[0, 0, 0]}>
+                    <sphereGeometry args={[0.4]} />
+                    <meshStandardMaterial color="#a8a8a8" />
+                  </mesh>
+                  {/* Parrot head - lighter grey */}
+                  <mesh position={[0, 0.3, 0.2]}>
+                    <sphereGeometry args={[0.25]} />
+                    <meshStandardMaterial color="#c0c0c0" />
+                  </mesh>
+                  {/* Beak - black */}
+                  <mesh position={[0, 0.35, 0.4]} rotation={[0.3, 0, 0]}>
+                    <coneGeometry args={[0.08, 0.15, 6]} />
+                    <meshStandardMaterial color="#000000" />
+                  </mesh>
+                  {/* Wings - dark grey */}
+                  <mesh position={[-0.3, 0, -0.1]} rotation={[0, 0, 0.5]}>
+                    <boxGeometry args={[0.6, 0.1, 0.3]} />
+                    <meshStandardMaterial color="#808080" />
+                  </mesh>
+                  <mesh position={[0.3, 0, -0.1]} rotation={[0, 0, -0.5]}>
+                    <boxGeometry args={[0.6, 0.1, 0.3]} />
+                    <meshStandardMaterial color="#808080" />
+                  </mesh>
+                  {/* Tail - bright red (characteristic of African Grey) */}
+                  <mesh position={[0, -0.2, -0.4]} rotation={[0.3, 0, 0]}>
+                    <boxGeometry args={[0.4, 0.1, 0.6]} />
+                    <meshStandardMaterial color="#cc0000" />
+                  </mesh>
+                  {/* Eyes - small black dots */}
+                  <mesh position={[-0.1, 0.4, 0.35]}>
+                    <sphereGeometry args={[0.03]} />
+                    <meshStandardMaterial color="#000000" />
+                  </mesh>
+                  <mesh position={[0.1, 0.4, 0.35]}>
+                    <sphereGeometry args={[0.03]} />
+                    <meshStandardMaterial color="#000000" />
+                  </mesh>
+                </group>
+              )}
+              
+              {/* Special lighting for story mode */}
+              <ambientLight intensity={0.8} color="#fff8dc" />
+              <pointLight position={[0, 10, 0]} intensity={0.5} color="#ffd700" />
+            </>
+          )}
+          
           {viewMode === 'exterior' ? (
             <Hospital3D position={[0, 0, 0]} isNight={isNight} />
           ) : viewMode === 'interior' ? (
