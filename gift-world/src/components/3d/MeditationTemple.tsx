@@ -37,14 +37,14 @@ export function MeditationTemple() {
       </mesh>
 
       {/* MEDITATION ALTAR - Center */}
-      <group position={[0, 0.5, -1.5]}>
+      <group position={[0, 0, -1.5]}>
         {/* Base platform */}
-        <mesh position={[0, 0, 0]} castShadow receiveShadow>
+        <mesh position={[0, 0.1, 0]} castShadow receiveShadow>
           <boxGeometry args={[2.0, 0.2, 2.0]} />
           <meshStandardMaterial color="#6b5344" roughness={0.4} />
         </mesh>
         {/* Buddha statue silhouette */}
-        <mesh position={[0, 0.8, 0]} castShadow>
+        <mesh position={[0, 0.3, 0]} castShadow>
           <sphereGeometry args={[0.3, 16, 16]} />
           <meshStandardMaterial color="#4a3f35" roughness={0.5} emissive="#4a3f35" emissiveIntensity={0.2} />
         </mesh>
@@ -52,10 +52,10 @@ export function MeditationTemple() {
 
       {/* MEDITATION CUSHIONS - Seating area */}
       {[
-        { pos: [-2.0, 0.3, 0.5], color: '#8b4789' },
-        { pos: [2.0, 0.3, 0.5], color: '#4a6a8b' },
-        { pos: [-1.0, 0.3, 1.5], color: '#8b6b4a' },
-        { pos: [1.0, 0.3, 1.5], color: '#4a8b8b' }
+        { pos: [-2.0, 0.1, 0.5], color: '#8b4789' },
+        { pos: [2.0, 0.1, 0.5], color: '#4a6a8b' },
+        { pos: [-1.0, 0.1, 1.5], color: '#8b6b4a' },
+        { pos: [1.0, 0.1, 1.5], color: '#4a8b8b' }
       ].map((cushion, idx) => (
         <group key={`cushion-${idx}`} position={cushion.pos as [number, number, number]}>
           <mesh position={[0, 0, 0]} castShadow receiveShadow>
@@ -67,11 +67,11 @@ export function MeditationTemple() {
 
       {/* CANDLES - Ambient lighting */}
       {[
-        { pos: [-4.0, 0.5, 0], color: '#ff9900' },
-        { pos: [4.0, 0.5, 0], color: '#ff9900' },
-        { pos: [0, 0.5, -3.5], color: '#ffaa00' },
-        { pos: [-2.0, 0.5, -2.5], color: '#ff9900' },
-        { pos: [2.0, 0.5, -2.5], color: '#ffaa00' }
+        { pos: [-4.0, 0.08, 0], color: '#ff9900' },
+        { pos: [4.0, 0.08, 0], color: '#ff9900' },
+        { pos: [0, 0.08, -3.5], color: '#ffaa00' },
+        { pos: [-2.0, 0.08, -2.5], color: '#ff9900' },
+        { pos: [2.0, 0.08, -2.5], color: '#ffaa00' }
       ].map((candle, idx) => (
         <group key={`candle-${idx}`} position={candle.pos as [number, number, number]}>
           {/* Candle holder */}
@@ -97,7 +97,7 @@ export function MeditationTemple() {
       ))}
 
       {/* WATER FEATURE - Zen fountain */}
-      <group position={[0, 0.4, 2.0]}>
+      <group position={[0, 0, 2.0]}>
         {/* Bowl */}
         <mesh position={[0, 0, 0]} castShadow receiveShadow>
           <cylinderGeometry args={[0.6, 0.7, 0.25, 16]} />

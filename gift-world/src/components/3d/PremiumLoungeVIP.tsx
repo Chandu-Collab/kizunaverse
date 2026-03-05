@@ -37,28 +37,28 @@ export function PremiumLoungeVIP() {
       </mesh>
 
       {/* LUXURY SEATING - Left area */}
-      <group position={[-3.5, 0.6, 0.5]}>
+      <group position={[-3.5, 0, 0.5]}>
         {/* Sofa */}
-        <mesh position={[0, 0, 0]} castShadow receiveShadow>
+        <mesh position={[0, 0.3, 0]} castShadow receiveShadow>
           <boxGeometry args={[1.8, 0.6, 1.0]} />
           <meshStandardMaterial color="#8b4789" roughness={0.3} metalness={0.1} />
         </mesh>
         {/* Back cushion */}
-        <mesh position={[0, 0.5, -0.4]} castShadow>
+        <mesh position={[0, 0.8, -0.4]} castShadow>
           <boxGeometry args={[1.8, 0.4, 0.15]} />
           <meshStandardMaterial color="#9b5799" roughness={0.4} metalness={0.05} />
         </mesh>
       </group>
 
       {/* LUXURY SEATING - Right area */}
-      <group position={[3.5, 0.6, 0.5]}>
+      <group position={[3.5, 0, 0.5]}>
         {/* Sofa */}
-        <mesh position={[0, 0, 0]} castShadow receiveShadow>
+        <mesh position={[0, 0.3, 0]} castShadow receiveShadow>
           <boxGeometry args={[1.8, 0.6, 1.0]} />
           <meshStandardMaterial color="#4a6a8b" roughness={0.3} metalness={0.1} />
         </mesh>
         {/* Back cushion */}
-        <mesh position={[0, 0.5, -0.4]} castShadow>
+        <mesh position={[0, 0.8, -0.4]} castShadow>
           <boxGeometry args={[1.8, 0.4, 0.15]} />
           <meshStandardMaterial color="#5a7a9b" roughness={0.4} metalness={0.05} />
         </mesh>
@@ -66,19 +66,19 @@ export function PremiumLoungeVIP() {
 
       {/* EXCLUSIVE CHAIRS - Premium seating */}
       {[-1.5, 1.5].map((x, idx) => (
-        <group key={`chair-${idx}`} position={[x, 0.5, 1.5]}>
+        <group key={`chair-${idx}`} position={[x, 0, 1.5]}>
           {/* Seat */}
-          <mesh position={[0, 0.3, 0]} castShadow receiveShadow>
+          <mesh position={[0, 0.15, 0]} castShadow receiveShadow>
             <boxGeometry args={[0.7, 0.3, 0.7]} />
             <meshStandardMaterial color="#d4af37" roughness={0.2} metalness={0.4} />
           </mesh>
           {/* Backrest */}
-          <mesh position={[0, 0.85, -0.3]} castShadow receiveShadow>
+          <mesh position={[0, 0.55, -0.3]} castShadow receiveShadow>
             <boxGeometry args={[0.7, 0.5, 0.15]} />
             <meshStandardMaterial color="#d4af37" roughness={0.2} metalness={0.4} />
           </mesh>
           {/* Armrest */}
-          <mesh position={[0.4, 0.6, 0]} castShadow receiveShadow>
+          <mesh position={[0.4, 0.3, 0]} castShadow receiveShadow>
             <boxGeometry args={[0.15, 0.3, 0.6]} />
             <meshStandardMaterial color="#c9a03a" roughness={0.2} metalness={0.4} />
           </mesh>
@@ -86,14 +86,14 @@ export function PremiumLoungeVIP() {
       ))}
 
       {/* COFFEE TABLE - Center luxury */}
-      <group position={[0, 0.45, 0]}>
+      <group position={[0, 0, 0]}>
         {/* Glass top */}
-        <mesh position={[0, 0, 0]} castShadow receiveShadow>
+        <mesh position={[0, 0.25, 0]} castShadow receiveShadow>
           <boxGeometry args={[2.5, 0.05, 1.2]} />
           <meshStandardMaterial color="#e8e8e8" roughness={0.05} metalness={0.3} transparent opacity={0.8} />
         </mesh>
         {/* Frame */}
-        <mesh position={[0, -0.15, 0]} castShadow receiveShadow>
+        <mesh position={[0, 0.1, 0]} castShadow receiveShadow>
           <boxGeometry args={[2.5, 0.1, 1.2]} />
           <meshStandardMaterial color="#d4af37" roughness={0.3} metalness={0.5} />
         </mesh>
@@ -101,8 +101,8 @@ export function PremiumLoungeVIP() {
 
       {/* SIDE TABLES */}
       {[-3.5, 3.5].map((x, idx) => (
-        <group key={`sidetable-${idx}`} position={[x, 0.5, 1.5]}>
-          <mesh position={[0, 0, 0]} castShadow receiveShadow>
+        <group key={`sidetable-${idx}`} position={[x, 0, 1.5]}>
+          <mesh position={[0, 0.25, 0]} castShadow receiveShadow>
             <boxGeometry args={[0.6, 0.5, 0.6]} />
             <meshStandardMaterial color="#8b7355" roughness={0.2} metalness={0.3} />
           </mesh>
@@ -110,19 +110,19 @@ export function PremiumLoungeVIP() {
       ))}
 
       {/* LUXURY BAR - Back corner right */}
-      <group position={[4.5, 0.8, -2.0]}>
+      <group position={[4.5, 0, -2.0]}>
         {/* Counter top */}
-        <mesh position={[0, 0.3, 0]} castShadow receiveShadow>
+        <mesh position={[0, 0.35, 0]} castShadow receiveShadow>
           <boxGeometry args={[1.2, 0.05, 0.6]} />
           <meshStandardMaterial color="#e8d4a2" roughness={0.1} metalness={0.6} />
         </mesh>
         {/* Bar front */}
-        <mesh position={[0, 0, 0]} castShadow receiveShadow>
+        <mesh position={[0, 0.3, 0]} castShadow receiveShadow>
           <boxGeometry args={[1.2, 0.6, 0.6]} />
           <meshStandardMaterial color="#3a2a1a" roughness={0.3} metalness={0.2} />
         </mesh>
         {/* Glass shelf */}
-        <mesh position={[0, 0.5, 0.35]} castShadow>
+        <mesh position={[0, 0.8, 0.35]} castShadow>
           <boxGeometry args={[1.1, 0.05, 0.3]} />
           <meshStandardMaterial color="#e8e8e8" roughness={0.05} metalness={0.2} transparent opacity={0.7} />
         </mesh>
@@ -147,8 +147,8 @@ export function PremiumLoungeVIP() {
       </group>
 
       {/* WINE RACK - Left side */}
-      <group position={[-4.5, 1.0, -0.5]}>
-        <mesh position={[0, 0, 0]} castShadow receiveShadow>
+      <group position={[-4.5, 0, -0.5]}>
+        <mesh position={[0, 0.5, 0]} castShadow receiveShadow>
           <boxGeometry args={[0.5, 1.0, 0.4]} />
           <meshStandardMaterial color="#6b5344" roughness={0.3} />
         </mesh>
