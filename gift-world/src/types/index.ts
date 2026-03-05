@@ -11,15 +11,6 @@ export interface GameState {
   gameTime: number;
 }
 
-export interface JournalEntry {
-  id: string;
-  date: string;
-  content: string;
-  mood: MoodType;
-}
-
-export type MoodType = 'happy' | 'calm' | 'excited' | 'thoughtful' | 'grateful' | 'loved';
-
 export interface PomodoroState {
   isRunning: boolean;
   timeLeft: number;
