@@ -334,7 +334,7 @@ export default function ResortLobby() {
           <meshStandardMaterial color="#4169E1" roughness={0.7} />
         </mesh>
         {/* Sofa back */}
-        <mesh position={[0, 0.65, -0.3]} castShadow receiveShadow>
+        <mesh position={[0, 0.65, 0.3]} castShadow receiveShadow>
           <boxGeometry args={[1.8, 0.8, 0.2]} />
           <meshStandardMaterial color="#4169E1" roughness={0.7} />
         </mesh>
@@ -356,7 +356,7 @@ export default function ResortLobby() {
           <boxGeometry args={[1, 0.5, 0.8]} />
           <meshStandardMaterial color="#32CD32" roughness={0.7} />
         </mesh>
-        <mesh position={[0, 0.65, -0.3]} castShadow receiveShadow>
+        <mesh position={[0, 0.65, 0.3]} castShadow receiveShadow>
           <boxGeometry args={[1, 0.8, 0.2]} />
           <meshStandardMaterial color="#32CD32" roughness={0.7} />
         </mesh>
