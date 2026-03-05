@@ -1389,11 +1389,11 @@ function BeachVendors() {
 export default function GoaBeachScene({ 
   season = 'summer', 
   weather = 'sunny', 
-  character = 'priya' 
+  character = 'priya'
 }: { 
   season?: string; 
   weather?: string; 
-  character?: string; 
+  character?: string;
 } = {}) {
   const { currentTime, timeProgress, isTransitioning, userActivity, accelerateTime, currentConfig } = useBeachTime();
   const { isNight } = useTheme();
@@ -1572,291 +1572,467 @@ export default function GoaBeachScene({
         </group>
       )}
       
-      {/* Night-Only Beach Torches - Dramatic lighting effects */}
-      {isNight && (
-        <>
-          {/* Enhanced Torch Array with varied positions */}
-          {Array.from({ length: 8 }).map((_, i) => {
-            const angle = (i / 8) * Math.PI * 2;
-            const radius = 10 + Math.sin(i) * 3;
-            const x = Math.cos(angle) * radius;
-            const z = Math.sin(angle) * radius + 2;
-            
-            return (
-              <group key={`torch-${i}`} position={[x, 0, z]}>
-                {/* Torch Pole */}
-                <mesh position={[0, 1.5, 0]}>
-                  <cylinderGeometry args={[0.05, 0.08, 3, 8]} />
-                  <meshStandardMaterial color="#654321" />
-                </mesh>
-                
-                {/* Enhanced Torch Fire */}
-                <mesh position={[0, 3.2, 0]}>
-                  <coneGeometry args={[0.15, 0.4, 8]} />
-                  <meshStandardMaterial 
-                    color="#FF4500"
-                    emissive="#FF6347"
-                    emissiveIntensity={1.2}
-                  />
-                </mesh>
-                
-                {/* Primary Torch Light */}
-                <pointLight
-                  position={[0, 3.2, 0]}
-                  intensity={2.0}
-                  color="#FFA500"
-                  distance={12}
-                  decay={2}
-                />
-                
-                {/* Secondary ambient light for glow */}
-                <pointLight
-                  position={[0, 3.2, 0]}
-                  intensity={0.5}
-                  color="#FFD700"
-                  distance={20}
-                  decay={3}
-                />
-              </group>
-            );
-          })}
+      {/* Luxury Beach Resort - Realistic Architecture */}
+      <group position={[0, 0, 3]} rotation={[0, Math.PI, 0]}>
+        
+        {/* FOUNDATION & GROUND STRUCTURE */}
+        {/* Resort Foundation */}
+        <mesh position={[0, -0.3, 0]} receiveShadow>
+          <boxGeometry args={[12, 0.6, 8]} />
+          <meshStandardMaterial color="#D2B48C" roughness={0.8} />
+        </mesh>
+        
+        {/* Stone foundation edges */}
+        <mesh position={[0, -0.45, 0]} receiveShadow>
+          <boxGeometry args={[12.5, 0.3, 8.5]} />
+          <meshStandardMaterial color="#A0522D" roughness={0.9} />
+        </mesh>
+        
+        {/* MAIN RESORT BUILDING - Realistic Scale */}
+        {/* Ground Floor - Main Lobby & Reception */}
+        <mesh position={[0, 1.5, 0]} castShadow receiveShadow>
+          <boxGeometry args={[10, 3, 6]} />
+          <meshStandardMaterial color="#F5E6D3" roughness={0.4} metalness={0.1} />
+        </mesh>
+        
+        {/* Second Floor - Guest Rooms */}
+        <mesh position={[0, 4, 0]} castShadow receiveShadow>
+          <boxGeometry args={[9.5, 2.5, 5.5]} />
+          <meshStandardMaterial color="#FAEBD7" roughness={0.4} metalness={0.1} />
+        </mesh>
+        
+        {/* ARCHITECTURAL DETAILS */}
+        {/* Front Glass Facade - Large Windows */}
+        <mesh position={[0, 1.8, 3.1]}>
+          <boxGeometry args={[8, 2.4, 0.05]} />
+          <meshStandardMaterial 
+            color="#87CEEB" 
+            transparent 
+            opacity={0.7} 
+            metalness={0.8} 
+            roughness={0.1}
+          />
+        </mesh>
+        
+        {/* Second Floor Windows */}
+        <mesh position={[-3, 4, 2.8]}>
+          <boxGeometry args={[2, 1.5, 0.05]} />
+          <meshStandardMaterial color="#B0E0E6" transparent opacity={0.8} />
+        </mesh>
+        <mesh position={[0, 4, 2.8]}>
+          <boxGeometry args={[2, 1.5, 0.05]} />
+          <meshStandardMaterial color="#B0E0E6" transparent opacity={0.8} />
+        </mesh>
+        <mesh position={[3, 4, 2.8]}>
+          <boxGeometry args={[2, 1.5, 0.05]} />
+          <meshStandardMaterial color="#B0E0E6" transparent opacity={0.8} />
+        </mesh>
+        
+        
+        {/* GRAND ENTRANCE & LOBBY */}
+        {/* Main entrance doors */}
+        <mesh position={[0, 1, 3.15]}>
+          <boxGeometry args={[2, 2.2, 0.08]} />
+          <meshStandardMaterial color="#DAA520" metalness={0.9} roughness={0.2} />
+        </mesh>
+        
+        {/* Door handles and details */}
+        <mesh position={[0.6, 1, 3.2]}>
+          <cylinderGeometry args={[0.03, 0.03, 0.1, 8]} />
+          <meshStandardMaterial color="#B8860B" metalness={1.0} />
+        </mesh>
+        <mesh position={[-0.6, 1, 3.2]}>
+          <cylinderGeometry args={[0.03, 0.03, 0.1, 8]} />
+          <meshStandardMaterial color="#B8860B" metalness={1.0} />
+        </mesh>
+        
+        {/* Entrance overhang/canopy */}
+        <mesh position={[0, 2.6, 3.5]}>
+          <boxGeometry args={[3, 0.1, 0.8]} />
+          <meshStandardMaterial color="#8B4513" roughness={0.6} />
+        </mesh>
+        
+        {/* DECORATIVE COLUMNS */}
+        {Array.from({ length: 6 }).map((_, i) => (
+          <group key={i}>
+            {/* Main column */}
+            <mesh position={[-4 + i * 1.6, 2, 3.05]}>
+              <cylinderGeometry args={[0.12, 0.15, 3.5, 12]} />
+              <meshStandardMaterial color="#F5DEB3" roughness={0.4} />
+            </mesh>
+            {/* Column capital */}
+            <mesh position={[-4 + i * 1.6, 3.6, 3.05]}>
+              <cylinderGeometry args={[0.18, 0.12, 0.3, 12]} />
+              <meshStandardMaterial color="#DEB887" roughness={0.4} />
+            </mesh>
+            {/* Column base */}
+            <mesh position={[-4 + i * 1.6, 0.4, 3.05]}>
+              <cylinderGeometry args={[0.18, 0.15, 0.2, 12]} />
+              <meshStandardMaterial color="#DEB887" roughness={0.5} />
+            </mesh>
+          </group>
+        ))}
+        
+        
+        {/* RESORT SIGNAGE */}
+        <mesh position={[0, 4.8, 3.1]}>
+          <boxGeometry args={[6, 0.6, 0.08]} />
+          <meshStandardMaterial 
+            color={isNight ? "#DAA520" : "#FFFFFF"}
+            emissive={isNight ? "#FFD700" : "#000000"}
+            emissiveIntensity={isNight ? 0.3 : 0}
+            roughness={0.2}
+            metalness={0.1}
+          />
+        </mesh>
+        
+        {/* RESORT WINGS & AMENITIES */}
+        {/* Left Wing - Spa & Wellness */}
+        <mesh position={[-5.5, 1.2, -0.5]} castShadow receiveShadow>
+          <boxGeometry args={[3, 2.4, 4]} />
+          <meshStandardMaterial color="#E6E6FA" roughness={0.4} />
+        </mesh>
+        
+        {/* Left Wing Windows */}
+        <mesh position={[-5.5, 1.5, -2.51]}>
+          <boxGeometry args={[2, 1, 0.05]} />
+          <meshStandardMaterial color="#B0E0E6" transparent opacity={0.8} />
+        </mesh>
+        <mesh position={[-7.01, 1.5, -0.5]}>
+          <boxGeometry args={[0.05, 1.5, 2.5]} />
+          <meshStandardMaterial color="#B0E0E6" transparent opacity={0.8} />
+        </mesh>
+        
+        {/* Right Wing - Dining & Events */}
+        <mesh position={[5.5, 1.2, -0.5]} castShadow receiveShadow>
+          <boxGeometry args={[3, 2.4, 4]} />
+          <meshStandardMaterial color="#F0E68C" roughness={0.4} />
+        </mesh>
+        
+        {/* Right Wing Windows */}
+        <mesh position={[5.5, 1.5, -2.51]}>
+          <boxGeometry args={[2, 1, 0.05]} />
+          <meshStandardMaterial color="#B0E0E6" transparent opacity={0.8} />
+        </mesh>
+        <mesh position={[7.01, 1.5, -0.5]}>
+          <boxGeometry args={[0.05, 1.5, 2.5]} />
+          <meshStandardMaterial color="#B0E0E6" transparent opacity={0.8} />
+        </mesh>
+        
+        
+        {/* OUTDOOR AMENITIES */}
+        {/* Swimming Pool - Realistic shape */}
+        <group position={[6.5, 0.05, 1]}>
+          {/* Pool water */}
+          <mesh rotation={[-Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[4, 3]} />
+            <meshStandardMaterial 
+              color={isNight ? "#1E90FF" : "#00BFFF"}
+              transparent
+              opacity={0.8}
+              metalness={0.1}
+              roughness={0.1}
+            />
+          </mesh>
+          {/* Pool edge/border */}
+          <mesh position={[0, -0.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <ringGeometry args={[2, 2.2]} />
+            <meshStandardMaterial color="#F5DEB3" roughness={0.6} />
+          </mesh>
+        </group>
+        
+        {/* Pool Deck & Lounge Area */}
+        <mesh position={[6.5, 0.02, 1]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+          <planeGeometry args={[6, 5]} />
+          <meshStandardMaterial color="#DEB887" roughness={0.7} />
+        </mesh>
+        
+        {/* Beach Access Walkway */}
+        <mesh position={[0, 0.02, 4.5]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+          <planeGeometry args={[3, 3]} />
+          <meshStandardMaterial color="#F5DEB3" roughness={0.6} />
+        </mesh>
+        
+        {/* Tropical Landscaping */}
+        {/* Palm trees near resort */}
+        <group position={[-3, 0, 1]}>
+          <mesh position={[0, 2.5, 0]} castShadow>
+            <cylinderGeometry args={[0.15, 0.2, 5, 8]} />
+            <meshStandardMaterial color="#8B4513" roughness={0.8} />
+          </mesh>
+          {/* Palm fronds */}
+          {Array.from({ length: 6 }).map((_, i) => (
+            <mesh key={i} position={[Math.cos(i) * 0.8, 5.2, Math.sin(i) * 0.8]}>
+              <boxGeometry args={[0.1, 2, 0.05]} />
+              <meshStandardMaterial color="#228B22" roughness={0.6} />
+            </mesh>
+          ))}
+        </group>
+        
+        <group position={[3, 0, 1]}>
+          <mesh position={[0, 2, 0]} castShadow>
+            <cylinderGeometry args={[0.12, 0.18, 4, 8]} />
+            <meshStandardMaterial color="#8B4513" roughness={0.8} />
+          </mesh>
+          {/* Palm fronds */}
+          {Array.from({ length: 5 }).map((_, i) => (
+            <mesh key={i} position={[Math.cos(i * 1.2) * 0.6, 4.2, Math.sin(i * 1.2) * 0.6]}>
+              <boxGeometry args={[0.08, 1.5, 0.04]} />
+              <meshStandardMaterial color="#32CD32" roughness={0.6} />
+            </mesh>
+          ))}
+        </group>
+        
+        {/* RESORT INTERIORS - Main Lobby & Reception (Todo #1) */}
+        <group>
+          {/* LOBBY FLOOR - Marble/Tile Flooring */}
+          <mesh position={[0, 0.05, 0.5]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+            <planeGeometry args={[9, 5]} />
+            <meshStandardMaterial color="#F5F5DC" roughness={0.2} metalness={0.1} />
+          </mesh>
           
-          {/* Decorative String Lights along path */}
-          {Array.from({ length: 12 }).map((_, i) => {
-            const angle = (i / 12) * Math.PI * 2;
-            const radius = 7;
-            const x = Math.cos(angle) * radius;
-            const z = Math.sin(angle) * radius + 1;
-            
-            return (
-              <group key={`string-light-${i}`} position={[x, 2.5, z]}>
-                <mesh>
-                  <sphereGeometry args={[0.08, 12, 12]} />
-                  <meshStandardMaterial 
-                    color="#FFEB3B"
-                    emissive="#FFA500"
-                    emissiveIntensity={1.0}
-                  />
-                </mesh>
-                <pointLight
-                  intensity={1.2}
-                  color="#FFEB3B"
-                  distance={6}
-                  decay={2}
-                />
-              </group>
-            );
-          })}
+          {/* Elegant Carpet Runner */}
+          <mesh position={[0, 0.06, 1]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+            <planeGeometry args={[6, 2]} />
+            <meshStandardMaterial color="#B22222" roughness={0.9} />
+          </mesh>
           
-          {/* Beach Bonfire - Enhanced */}
-          <group position={[2, -0.4, 3]}>
-            {/* Fire Logs */}
-            {Array.from({ length: 4 }).map((_, i) => (
-              <mesh 
-                key={i}
-                position={[
-                  Math.cos((i * Math.PI) / 2) * 0.3,
-                  0.1,
-                  Math.sin((i * Math.PI) / 2) * 0.3
-                ]}
-                rotation={[0, (i * Math.PI) / 2, 0]}
-              >
-                <cylinderGeometry args={[0.05, 0.08, 0.8, 8]} />
-                <meshStandardMaterial color="#8B4513" />
-              </mesh>
-            ))}
-            
-            {/* Enhanced Fire Flames */}
-            <mesh position={[0, 0.4, 0]}>
-              <coneGeometry args={[0.25, 0.6, 8]} />
-              <meshStandardMaterial 
-                color="#FF4500"
-                emissive="#FF6347"
-                emissiveIntensity={1.4}
-              />
+          {/* LOBBY WALLS - Interior Walls */}
+          {/* Back wall behind reception */}
+          <mesh position={[0, 1.8, -2]} receiveShadow>
+            <boxGeometry args={[8, 3.6, 0.2]} />
+            <meshStandardMaterial color="#F5F5DC" roughness={0.6} />
+          </mesh>
+          
+          {/* Left wall */}
+          <mesh position={[-4, 1.8, 0.5]} receiveShadow>
+            <boxGeometry args={[0.2, 3.6, 4]} />
+            <meshStandardMaterial color="#FFFAF0" roughness={0.6} />
+          </mesh>
+          
+          {/* Right wall */}
+          <mesh position={[4, 1.8, 0.5]} receiveShadow>
+            <boxGeometry args={[0.2, 3.6, 4]} />
+            <meshStandardMaterial color="#FFFAF0" roughness={0.6} />
+          </mesh>
+          
+          {/* RECEPTION DESK - Realistic Design */}
+          <group position={[0, 0, -1]}>
+            {/* Main reception counter */}
+            <mesh position={[0, 0.6, 0]} castShadow receiveShadow>
+              <boxGeometry args={[4, 1.2, 0.8]} />
+              <meshStandardMaterial color="#8B4513" roughness={0.4} metalness={0.1} />
             </mesh>
             
-            {/* Main Bonfire Light */}
-            <pointLight
-              position={[0, 0.6, 0]}
-              intensity={2.5}
-              color="#FF6347"
-              distance={15}
-            />
+            {/* Counter top - Marble surface */}
+            <mesh position={[0, 1.2, 0]} castShadow receiveShadow>
+              <boxGeometry args={[4.2, 0.1, 0.9]} />
+              <meshStandardMaterial color="#DCDCDC" roughness={0.1} metalness={0.2} />
+            </mesh>
             
-            {/* Bonfire Glow */}
-            <pointLight
-              position={[0, 0.6, 0]}
-              intensity={1.0}
-              color="#FFB347"
-              distance={25}
-              decay={2}
-            />
+            {/* Reception computer/screen */}
+            <mesh position={[-1, 1.35, 0]} castShadow>
+              <boxGeometry args={[0.4, 0.3, 0.05]} />
+              <meshStandardMaterial color="#000000" />
+            </mesh>
+            
+            {/* Desk accessories */}
+            <mesh position={[0.5, 1.3, 0.2]} castShadow>
+              <cylinderGeometry args={[0.05, 0.05, 0.15, 8]} />
+              <meshStandardMaterial color="#FFD700" metalness={0.8} />
+            </mesh>
+            
+            {/* Bell for service */}
+            <mesh position={[1.2, 1.28, 0]} castShadow>
+              <sphereGeometry args={[0.08, 8, 8]} />
+              <meshStandardMaterial color="#B8860B" metalness={0.9} />
+            </mesh>
+            
+            {/* Reception desk chair */}
+            <group position={[0, 0, -0.8]}>
+              <mesh position={[0, 0.3, 0]} castShadow>
+                <cylinderGeometry args={[0.25, 0.25, 0.6, 8]} />
+                <meshStandardMaterial color="#8B4513" />
+              </mesh>
+              <mesh position={[0, 0.65, 0.15]} castShadow>
+                <boxGeometry args={[0.4, 0.1, 0.3]} />
+                <meshStandardMaterial color="#654321" />
+              </mesh>
+            </group>
           </group>
           
-          {/* Path Lanterns leading to house */}
-          {Array.from({ length: 5 }).map((_, i) => {
-            const x = -2 + i * 1.5;
-            const z = 1 + i * 0.8;
+          {/* LOBBY SEATING AREA - Elegant Sofas */}
+          <group position={[-2.5, 0, 1.5]}>
+            {/* Main sofa */}
+            <mesh position={[0, 0.25, 0]} castShadow receiveShadow>
+              <boxGeometry args={[1.8, 0.5, 0.8]} />
+              <meshStandardMaterial color="#4169E1" roughness={0.7} />
+            </mesh>
+            {/* Sofa back */}
+            <mesh position={[0, 0.65, -0.3]} castShadow receiveShadow>
+              <boxGeometry args={[1.8, 0.8, 0.2]} />
+              <meshStandardMaterial color="#4169E1" roughness={0.7} />
+            </mesh>
+            {/* Armrests */}
+            <mesh position={[-0.8, 0.55, 0]} castShadow receiveShadow>
+              <boxGeometry args={[0.2, 0.6, 0.8]} />
+              <meshStandardMaterial color="#4169E1" roughness={0.7} />
+            </mesh>
+            <mesh position={[0.8, 0.55, 0]} castShadow receiveShadow>
+              <boxGeometry args={[0.2, 0.6, 0.8]} />
+              <meshStandardMaterial color="#4169E1" roughness={0.7} />
+            </mesh>
+          </group>
+          
+          {/* Second seating area */}
+          <group position={[2.5, 0, 1.5]}>
+            {/* Armchair */}
+            <mesh position={[0, 0.25, 0]} castShadow receiveShadow>
+              <boxGeometry args={[0.8, 0.5, 0.8]} />
+              <meshStandardMaterial color="#32CD32" roughness={0.7} />
+            </mesh>
+            <mesh position={[0, 0.65, -0.3]} castShadow receiveShadow>
+              <boxGeometry args={[0.8, 0.8, 0.2]} />
+              <meshStandardMaterial color="#32CD32" roughness={0.7} />
+            </mesh>
+          </group>
+          
+          {/* COFFEE TABLE */}
+          <group position={[0, 0, 2]}>
+            <mesh position={[0, 0.25, 0]} castShadow receiveShadow>
+              <boxGeometry args={[1.2, 0.05, 0.6]} />
+              <meshStandardMaterial color="#8B4513" roughness={0.3} metalness={0.1} />
+            </mesh>
+            {/* Table legs */}
+            <mesh position={[-0.4, 0.125, -0.2]} castShadow>
+              <boxGeometry args={[0.05, 0.25, 0.05]} />
+              <meshStandardMaterial color="#654321" />
+            </mesh>
+            <mesh position={[0.4, 0.125, -0.2]} castShadow>
+              <boxGeometry args={[0.05, 0.25, 0.05]} />
+              <meshStandardMaterial color="#654321" />
+            </mesh>
+            <mesh position={[-0.4, 0.125, 0.2]} castShadow>
+              <boxGeometry args={[0.05, 0.25, 0.05]} />
+              <meshStandardMaterial color="#654321" />
+            </mesh>
+            <mesh position={[0.4, 0.125, 0.2]} castShadow>
+              <boxGeometry args={[0.05, 0.25, 0.05]} />
+              <meshStandardMaterial color="#654321" />
+            </mesh>
             
-            return (
-              <group key={`path-lantern-${i}`} position={[x, 0, z]}>
-                <mesh position={[0, 0.8, 0]}>
-                  <cylinderGeometry args={[0.08, 0.08, 1.6, 6]} />
-                  <meshStandardMaterial color="#2F4F4F" />
-                </mesh>
-                
-                <mesh position={[0, 1.5, 0]}>
-                  <boxGeometry args={[0.3, 0.3, 0.3]} />
-                  <meshStandardMaterial 
-                    color="#FFD700"
-                    emissive="#FFA500"
-                    emissiveIntensity={0.9}
-                  />
-                </mesh>
-                
-                <pointLight
-                  position={[0, 1.5, 0]}
-                  intensity={1.5}
-                  color="#FFD700"
-                  distance={5}
-                />
-              </group>
-            );
-          })}
+            {/* Table decorations */}
+            <mesh position={[0, 0.32, 0]} castShadow>
+              <cylinderGeometry args={[0.08, 0.08, 0.15, 8]} />
+              <meshStandardMaterial color="#FFD700" metalness={0.8} />
+            </mesh>
+          </group>
           
-          {/* Water Reflection Glow - Bioluminescent effect */}
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.48, -8]}>
-            <planeGeometry args={[40, 15]} />
-            <meshStandardMaterial 
-              color="#001a4d"
-              emissive="#0066cc"
-              emissiveIntensity={0.3}
-              transparent
-              opacity={0.4}
-            />
-          </mesh>
+          {/* LOBBY PLANTS & DECORATION */}
+          {/* Large potted plant */}
+          <group position={[-3.5, 0, -1]}>
+            <mesh position={[0, 0.15, 0]} castShadow>
+              <cylinderGeometry args={[0.2, 0.25, 0.3, 8]} />
+              <meshStandardMaterial color="#8B4513" roughness={0.8} />
+            </mesh>
+            <mesh position={[0, 0.6, 0]} castShadow>
+              <sphereGeometry args={[0.3, 8, 8]} />
+              <meshStandardMaterial color="#228B22" roughness={0.6} />
+            </mesh>
+          </group>
           
-          {/* Underwater Lights - Magical glow from beneath */}
-          {Array.from({ length: 6 }).map((_, i) => (
-            <pointLight
-              key={`underwater-${i}`}
-              position={[(Math.random() - 0.5) * 30, -2, -10 + Math.random() * 5]}
-              intensity={0.8}
-              color="#00FFFF"
-              distance={8}
-            />
-          ))}
+          <group position={[3.5, 0, -1]}>
+            <mesh position={[0, 0.15, 0]} castShadow>
+              <cylinderGeometry args={[0.2, 0.25, 0.3, 8]} />
+              <meshStandardMaterial color="#8B4513" roughness={0.8} />
+            </mesh>
+            <mesh position={[0, 0.6, 0]} castShadow>
+              <sphereGeometry args={[0.3, 8, 8]} />
+              <meshStandardMaterial color="#32CD32" roughness={0.6} />
+            </mesh>
+          </group>
           
-          {/* House/Villa Window Lights - Warm glow */}
-          {Array.from({ length: 4 }).map((_, i) => {
-            const x = -1 + Math.floor(i / 2) * 2;
-            const y = 1.2 - (i % 2) * 0.6;
-            return (
-              <group key={`window-${i}`} position={[x, y, 5]}>
-                <mesh>
-                  <planeGeometry args={[0.4, 0.3]} />
-                  <meshStandardMaterial 
-                    color="#FFEB3B"
-                    emissive="#FFD700"
-                    emissiveIntensity={1.0}
-                  />
-                </mesh>
-                <pointLight
-                  position={[0, 0, 0.3]}
-                  intensity={1.0}
-                  color="#FFF8DC"
-                  distance={4}
-                />
-              </group>
-            );
-          })}
-          
-          {/* Enhanced Fireflies with glow */}
-          {Array.from({ length: 20 }).map((_, i) => (
-            <group key={`firefly-${i}`}>
-              <mesh 
-                position={[
-                  (Math.random() - 0.5) * 25,
-                  1.5 + Math.random() * 2,
-                  Math.random() * 12
-                ]}
-              >
-                <sphereGeometry args={[0.02, 8, 8]} />
-                <meshStandardMaterial 
-                  color="#ADFF2F"
-                  emissive="#ADFF2F"
-                  emissiveIntensity={2.0}
-                />
-              </mesh>
-              
-              {/* Firefly light aura */}
-              <pointLight
-                position={[
-                  (Math.random() - 0.5) * 25,
-                  1.5 + Math.random() * 2,
-                  Math.random() * 12
-                ]}
-                intensity={0.4}
-                color="#ADFF2F"
-                distance={1.5}
+          {/* CEILING LIGHTING */}
+          {/* Chandelier/Main light */}
+          <group position={[0, 3.2, 0]}>
+            <mesh position={[0, 0, 0]} castShadow>
+              <cylinderGeometry args={[0.15, 0.15, 0.3, 8]} />
+              <meshStandardMaterial 
+                color={isNight ? "#FFD700" : "#FFFFFF"}
+                emissive={isNight ? "#FFD700" : "#000000"}
+                emissiveIntensity={isNight ? 0.6 : 0}
+                metalness={0.8}
               />
-            </group>
-          ))}
-          
-          {/* Enhanced Stars with twinkling effect */}
-          {Array.from({ length: 80 }).map((_, i) => {
-            const brightness = Math.random();
-            return (
-              <mesh 
-                key={`star-${i}`}
-                position={[
-                  (Math.random() - 0.5) * 100,
-                  20 + Math.random() * 30,
-                  (Math.random() - 0.5) * 100
-                ]}
-              >
-                <sphereGeometry args={[0.05 + brightness * 0.05, 8, 8]} />
+            </mesh>
+            {/* Light rays */}
+            {Array.from({ length: 6 }).map((_, i) => (
+              <mesh key={i} position={[Math.cos(i) * 0.3, -0.1, Math.sin(i) * 0.3]} castShadow>
+                <sphereGeometry args={[0.05, 6, 6]} />
                 <meshStandardMaterial 
-                  color="#FFFFFF"
-                  emissive="#FFFFFF"
-                  emissiveIntensity={0.5 + brightness * 0.5}
+                  color="#FFF8DC"
+                  emissive={isNight ? "#FFF8DC" : "#000000"}
+                  emissiveIntensity={isNight ? 0.4 : 0}
                 />
               </mesh>
-            );
-          })}
+            ))}
+          </group>
           
-          {/* Bright Moon with glow */}
-          <mesh position={[25, 30, -40]}>
-            <sphereGeometry args={[4, 32, 32]} />
-            <meshStandardMaterial 
-              color="#F5F5DC"
-              emissive="#F5F5DC"
-              emissiveIntensity={0.4}
-            />
-          </mesh>
+          {/* Wall art and decorations */}
+          <group position={[-3.8, 2.5, 0]}>
+            <mesh position={[0, 0, 0]} castShadow>
+              <boxGeometry args={[0.05, 0.8, 0.6]} />
+              <meshStandardMaterial color="#8B4513" />
+            </mesh>
+            <mesh position={[0.02, 0, 0]} castShadow>
+              <boxGeometry args={[0.02, 0.7, 0.5]} />
+              <meshStandardMaterial color="#87CEEB" />
+            </mesh>
+          </group>
           
-          {/* Moon Glow Sphere */}
-          <mesh position={[25, 30, -40]}>
-            <sphereGeometry args={[6, 16, 16]} />
-            <meshStandardMaterial 
-              color="#E6E6FA"
-              transparent
-              opacity={0.2}
-              emissive="#E6E6FA"
-              emissiveIntensity={0.3}
-            />
-          </mesh>
+          <group position={[3.8, 2.5, 0]}>
+            <mesh position={[0, 0, 0]} castShadow>
+              <boxGeometry args={[0.05, 0.8, 0.6]} />
+              <meshStandardMaterial color="#8B4513" />
+            </mesh>
+            <mesh position={[-0.02, 0, 0]} castShadow>
+              <boxGeometry args={[0.02, 0.7, 0.5]} />
+              <meshStandardMaterial color="#FFD700" />
+            </mesh>
+          </group>
           
-          {/* Moon Light Source */}
-          <pointLight
-            position={[25, 30, -40]}
-            intensity={1.5}
-            color="#E6E6FA"
-            distance={60}
-          />
-        </>
-      )}
+          {/* Lobby lighting system */}
+          {isNight && (
+            <>
+              <pointLight
+                position={[0, 3, 0]}
+                intensity={1.2}
+                color="#FFF8DC"
+                distance={8}
+                castShadow
+              />
+              <pointLight
+                position={[-2, 2.5, 1]}
+                intensity={0.6}
+                color="#FFD700"
+                distance={5}
+              />
+              <pointLight
+                position={[2, 2.5, 1]}
+                intensity={0.6}
+                color="#FFD700"
+                distance={5}
+              />
+            </>
+          )}
+        </group>
+      </group>
+      
+      {/* Floating Traditional Fishing Boats */}
+      <FishingBoat position={[2, -0.3, -6]} />
+      <FishingBoat position={[-4, -0.25, -7]} />
+      <FishingBoat position={[6, -0.28, -8]} />
+      <FishingBoat position={[-7, -0.27, -5]} />
+      <FishingBoat position={[4, -0.29, -9]} />
       
       {/* Character in scene */}
       {renderCharacter()}
@@ -2028,38 +2204,7 @@ export default function GoaBeachScene({
       <DetailedBeachSand />
       <DetailedOcean season={season} waterColor={seasonalConfig.waterColor} />
       
-      {/* Strategic palm tree layout for perfect balcony view */}
-      {/* Side trees to frame the house - not blocking ocean view */}
-      <CoconutPalm position={[-3, 0, 2]} />
-      <CoconutPalm position={[1, 0, 2]} />
-      
-      {/* Behind the house for tropical ambiance */}
-      <CoconutPalm position={[-2, 0, 5]} />
-      <CoconutPalm position={[0, 0, 6]} />
-      
-      {/* Left corner palm trees */}
-      <CoconutPalm position={[-12, 0, 2]} />
-      <CoconutPalm position={[-10, 0, 5]} />
-      
-      {/* Right corner palm trees */}
-      <CoconutPalm position={[10, 0, 2]} />
-      <CoconutPalm position={[12, 0, 5]} />
-      
-      {/* Clean tropical vegetation around the house */}
-      <BeachVegetation position={[-4, 0, 3]} />
-      <BeachVegetation position={[2, 0, 3]} />
-      <BeachVegetation position={[-2, 0, 4]} />
-      <BeachVegetation position={[-11, 0, 3]} />
-      <BeachVegetation position={[11, 0, 3]} />
-      
-      {/* Single beautiful beach house with perfect ocean view */}
-      <GoaBeachShack 
-        position={[-1, 0, 3]} 
-        onClick={() => {
-          setShowShackInfo(!showShackInfo);
-          accelerateTime();
-        }}
-      />
+      {/* Clean beach environment - resort focused */}
       
       {/* Time Control Button - Interactive beach elements */}
       <mesh 
@@ -2101,14 +2246,13 @@ export default function GoaBeachScene({
         />
       </mesh>
       
-      {/* Floating traditional boats */}
-      <FishingBoat position={[2, -0.3, -6]} />
-      <FishingBoat position={[-4, -0.25, -7]} />
-      <FishingBoat position={[6, -0.28, -8]} />
+      {/* Resort-focused beach environment */}
       
-      {/* Premium beach lifestyle */}
-      <BeachActivities />
-      <BeachVendors />
+      {/* Enhanced Beach Experience */}
+      <DetailedOcean season={season} waterColor={seasonalConfig.waterColor} />
+      <DetailedBeachSand />
+      
+      {/* Clean beach for resort experience */}
       
       {/* Enhanced wildlife */}
       <DetailedSeagull position={[-3, 3, 2]} flightPath={seagullFlightPaths[0]} />
