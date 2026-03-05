@@ -7,6 +7,7 @@ import GoaBeachScene from '@/components/3d/GoaBeachScene';
 import GoaResort3D from '@/components/3d/GoaResort3D';
 import ResortLobby from '@/components/3d/ResortLobby';
 import ConciergeDesk from '@/components/3d/ConciergeDesk';
+import LuxuryPoolArea from '@/components/3d/LuxuryPoolArea';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import { useWeatherSystem } from '@/components/3d/weather/WeatherSystem';
 import { useCharacter } from '@/hooks/useCharacter';
@@ -23,7 +24,7 @@ export default function YourSpace() {
   const [showWelcomeOverlay, setShowWelcomeOverlay] = useState(true);
   const [showResort, setShowResort] = useState(false);
   const [showInterior, setShowInterior] = useState(false);
-  const [currentResortArea, setCurrentResortArea] = useState<'main-lobby' | 'concierge-desk' | 'exterior'>('exterior');
+  const [currentResortArea, setCurrentResortArea] = useState<'main-lobby' | 'concierge-desk' | 'pool-area' | 'exterior'>('exterior');
   const [viewMode, setViewMode] = useState<'exterior' | 'interior'>('exterior');
   
   // Automatic Season and Weather Cycling (Every 30 seconds)
@@ -92,6 +93,8 @@ export default function YourSpace() {
               <Scene 
                 cameraPosition={
                   currentResortArea === 'main-lobby' ? [0, 3, 4] :
+                  currentResortArea === 'concierge-desk' ? [0, 3, 6] :
+                  currentResortArea === 'pool-area' ? [0, 6, 12] :
                   currentResortArea === 'exterior' ? [12, 8, 15] : 
                   [0, 3, 6]
                 } 
@@ -104,6 +107,9 @@ export default function YourSpace() {
                 ) : currentResortArea === 'concierge-desk' ? (
                   // Show concierge & travel desk area
                   <ConciergeDesk />
+                ) : currentResortArea === 'pool-area' ? (
+                  // Show luxury pool area
+                  <LuxuryPoolArea />
                 ) : (
                   // Show resort exterior or other areas when implemented
                   <GoaResort3D 
@@ -119,13 +125,15 @@ export default function YourSpace() {
                 <GlassCard className="p-4 max-w-sm">
                   <h3 className="font-semibold text-lg mb-3">🏨 Resort Areas</h3>
                   
-                  {(currentResortArea === 'main-lobby' || currentResortArea === 'concierge-desk') && (
+                  {(currentResortArea === 'main-lobby' || currentResortArea === 'concierge-desk' || currentResortArea === 'pool-area') && (
                     <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-2 mb-3">
                       <div className="text-green-300 text-xs font-semibold">✅ INTERIOR VIEW</div>
                       <div className="text-white text-xs">
                         {currentResortArea === 'main-lobby' 
                           ? 'Showing realistic lobby interior with detailed furniture and decor'
-                          : 'Showing concierge & travel desk with professional consultation areas'
+                          : currentResortArea === 'concierge-desk'
+                          ? 'Showing concierge & travel desk with professional consultation areas'
+                          : 'Showing luxury pool complex with hot tubs, slides & cabanas'
                         }
                       </div>
                     </div>
@@ -151,9 +159,18 @@ export default function YourSpace() {
                       ✅ 🗺️ Concierge & Travel Desk
                     </Button>
                     
+                    <Button
+                      variant={currentResortArea === 'pool-area' ? "primary" : "secondary"}
+                      size="sm"
+                      onClick={() => setCurrentResortArea('pool-area')}
+                      className="text-xs"
+                    >
+                      ✅ 🏊 Luxury Pool Area
+                    </Button>
+                    
                     {/* Coming Soon Areas */}
                     <div className="text-xs text-gray-500 mt-2 mb-1">Coming Soon:</div>
-                    {['Luxury Pool Area', 'Oceanview Restaurant', 'Spa & Wellness Center', 'Guest Suites (Deluxe)'].map((area, i) => (
+                    {['Oceanview Restaurant', 'Spa & Wellness Center', 'Guest Suites (Deluxe)'].map((area, i) => (
                       <Button
                         key={area}
                         variant="secondary"
