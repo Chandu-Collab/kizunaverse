@@ -94,12 +94,12 @@ export default function ConferenceRooms() {
           <meshStandardMaterial color="#8b4513" roughness={0.35} metalness={0.05} />
         </mesh>
 
-        {/* Chairs around table - 4 chairs */}
+        {/* Chairs around table - 4 chairs (positioned outside table bounds) */}
         {[
-          [-1.0, 0.4],
-          [1.0, 0.4],
-          [0, 0.4, -0.7],
-          [0, 0.4, 0.7],
+          [-1.2, 0.4, 0],      // Left side
+          [1.2, 0.4, 0],       // Right side
+          [0, 0.4, -1.0],      // Front
+          [0, 0.4, 1.0],       // Back
         ].map((pos, idx) => (
           <mesh key={`chair-mr1-${idx}`} position={pos as [number, number, number]} castShadow>
             <boxGeometry args={[0.45, 0.8, 0.45]} />
@@ -132,12 +132,12 @@ export default function ConferenceRooms() {
           <meshStandardMaterial color="#8b4513" roughness={0.35} metalness={0.05} />
         </mesh>
 
-        {/* Chairs around table - 4 chairs */}
+        {/* Chairs around table - 4 chairs (positioned outside table bounds) */}
         {[
-          [-1.0, 0.4],
-          [1.0, 0.4],
-          [0, 0.4, -0.7],
-          [0, 0.4, 0.7],
+          [-1.2, 0.4, 0],      // Left side
+          [1.2, 0.4, 0],       // Right side
+          [0, 0.4, -1.0],      // Front
+          [0, 0.4, 1.0],       // Back
         ].map((pos, idx) => (
           <mesh key={`chair-mr2-${idx}`} position={pos as [number, number, number]} castShadow>
             <boxGeometry args={[0.45, 0.8, 0.45]} />
@@ -170,16 +170,20 @@ export default function ConferenceRooms() {
           <meshStandardMaterial color="#2c3e50" roughness={0.4} metalness={0.1} />
         </mesh>
 
-        {/* Boardroom chairs - 8 chairs around table */}
+        {/* Boardroom chairs - 8 chairs around table (properly spaced) */}
         {[
-          [-1.6, 0.4],
-          [-0.4, 0.4],
-          [0.4, 0.4],
-          [1.6, 0.4],
-          [0, 0.4, -0.85],
-          [0, 0.4, 0.85],
-          [-1.8, 0.4, -0.4],
-          [1.8, 0.4, 0.4],
+          // Left side (3 chairs)
+          [-1.2, 0.4, -0.5],
+          [-1.2, 0.4, 0],
+          [-1.2, 0.4, 0.5],
+          // Right side (3 chairs)
+          [1.2, 0.4, -0.5],
+          [1.2, 0.4, 0],
+          [1.2, 0.4, 0.5],
+          // Front (1 chair)
+          [0, 0.4, -1.15],
+          // Back (1 chair)
+          [0, 0.4, 1.15],
         ].map((pos, idx) => (
           <mesh key={`bchair-${idx}`} position={pos as [number, number, number]} castShadow>
             <boxGeometry args={[0.5, 0.9, 0.5]} />
@@ -219,12 +223,12 @@ export default function ConferenceRooms() {
           <meshStandardMaterial color="#8b4513" roughness={0.35} metalness={0.05} />
         </mesh>
 
-        {/* Chairs - 4 chairs */}
+        {/* Chairs - 4 chairs (positioned outside table bounds) */}
         {[
-          [-0.8, 0.35],
-          [0.8, 0.35],
-          [0, 0.35, -0.5],
-          [0, 0.35, 0.5],
+          [-1.0, 0.35, 0],     // Left side
+          [1.0, 0.35, 0],      // Right side
+          [0, 0.35, -0.7],     // Front
+          [0, 0.35, 0.7],      // Back
         ].map((pos, idx) => (
           <mesh key={`chair-mr3-${idx}`} position={pos as [number, number, number]} castShadow>
             <boxGeometry args={[0.4, 0.7, 0.4]} />
@@ -247,12 +251,12 @@ export default function ConferenceRooms() {
           <meshStandardMaterial color="#8b4513" roughness={0.35} metalness={0.05} />
         </mesh>
 
-        {/* Chairs - 4 chairs */}
+        {/* Chairs - 4 chairs (positioned outside table bounds) */}
         {[
-          [-0.8, 0.35],
-          [0.8, 0.35],
-          [0, 0.35, -0.5],
-          [0, 0.35, 0.5],
+          [-1.0, 0.35, 0],     // Left side
+          [1.0, 0.35, 0],      // Right side
+          [0, 0.35, -0.7],     // Front
+          [0, 0.35, 0.7],      // Back
         ].map((pos, idx) => (
           <mesh key={`chair-mr4-${idx}`} position={pos as [number, number, number]} castShadow>
             <boxGeometry args={[0.4, 0.7, 0.4]} />
