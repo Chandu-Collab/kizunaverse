@@ -4,10 +4,13 @@ import { useNavigation } from '@/hooks/useNavigation';
 import { motion } from 'framer-motion';
 import Scene from '@/components/3d/Scene';
 import GoaBeachScene from '@/components/3d/GoaBeachScene';
+import GoaResort3D from '@/components/3d/GoaResort3D';
+import ResortLobby from '@/components/3d/ResortLobby';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import { useWeatherSystem } from '@/components/3d/weather/WeatherSystem';
 import { useCharacter } from '@/hooks/useCharacter';
 import { useTheme } from '@/hooks/useTheme';
+import GlassCard from '@/components/ui/GlassCard';
 
 export default function YourSpace() {
   const { navigateTo } = useNavigation();
@@ -17,6 +20,10 @@ export default function YourSpace() {
   const [season, setSeason] = useState('summer'); // Beach default to summer
   const [isAutoEnvironmentEnabled, setIsAutoEnvironmentEnabled] = useState(true);
   const [showWelcomeOverlay, setShowWelcomeOverlay] = useState(true);
+  const [showResort, setShowResort] = useState(false);
+  const [showInterior, setShowInterior] = useState(false);
+  const [currentResortArea, setCurrentResortArea] = useState<'main-lobby' | 'exterior'>('exterior');
+  const [viewMode, setViewMode] = useState<'exterior' | 'interior'>('exterior');
   
   // Automatic Season and Weather Cycling (Every 30 seconds)
   useEffect(() => {
@@ -78,15 +85,107 @@ export default function YourSpace() {
             </div>
           </div>
         }>
-          <div className="h-full">
-            <Scene cameraPosition={[0, 5, 10]}>
-              <GoaBeachScene 
-                season={season} 
-                weather={weather} 
-                character={selectedCharacter}
-              />
-            </Scene>
-          </div>
+          {showResort ? (
+            // 3D Resort View
+            <div className="relative w-full h-screen">
+              <Scene 
+                cameraPosition={
+                  currentResortArea === 'main-lobby' ? [0, 3, 4] :
+                  currentResortArea === 'exterior' ? [12, 8, 15] : 
+                  [0, 3, 6]
+                } 
+                enableControls={true}
+                enableShadows={true}
+              >
+                {currentResortArea === 'main-lobby' ? (
+                  // Show dedicated lobby interior only
+                  <ResortLobby />
+                ) : (
+                  // Show resort exterior or other areas when implemented
+                  <GoaResort3D 
+                    showResort={showInterior} 
+                    currentArea={currentResortArea as any}
+                    viewMode={viewMode}
+                  />
+                )}
+              </Scene>
+              
+              {/* 3D Resort Controls */}
+              <div className="absolute top-4 right-4 z-10">
+                <GlassCard className="p-4 max-w-sm">
+                  <h3 className="font-semibold text-lg mb-3">🏨 Resort Areas</h3>
+                  
+                  {currentResortArea === 'main-lobby' && (
+                    <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-2 mb-3">
+                      <div className="text-green-300 text-xs font-semibold">✅ INTERIOR VIEW</div>
+                      <div className="text-white text-xs">Showing realistic lobby interior with detailed furniture and decor</div>
+                    </div>
+                  )}
+                  
+                  {/* Resort Area Selection - Only Implemented Areas */}
+                  <div className="grid grid-cols-1 gap-2 mb-4">
+                    <Button
+                      variant={currentResortArea === 'main-lobby' ? "primary" : "secondary"}
+                      size="sm"
+                      onClick={() => setCurrentResortArea('main-lobby')}
+                      className="text-xs"
+                    >
+                      ✅ 🏨 Main Lobby & Reception
+                    </Button>
+                    
+                    {/* Coming Soon Areas */}
+                    <div className="text-xs text-gray-500 mt-2 mb-1">Coming Soon:</div>
+                    {['Concierge & Travel Desk', 'Lounge / Chill Area', 'Indoor Bar / Cocktail Lounge', 'Deluxe Ocean View Suite'].map((area, i) => (
+                      <Button
+                        key={area}
+                        variant="secondary"
+                        size="sm"
+                        disabled
+                        className="text-xs opacity-50"
+                      >
+                        🚧 {area}
+                      </Button>
+                    ))}
+                  </div>
+                  
+                  {/* View Mode Toggle - Only for exterior */}
+                  {currentResortArea === 'exterior' && (
+                    <div className="mb-4">
+                      <Button
+                        variant={viewMode === 'exterior' ? "primary" : "secondary"}
+                        size="sm"
+                        onClick={() => setViewMode(viewMode === 'exterior' ? 'interior' : 'exterior')}
+                        className="w-full"
+                      >
+                        {viewMode === 'exterior' ? '🏢 Exterior View' : '🏠 Interior View'}
+                      </Button>
+                    </div>
+                  )}
+                  
+                  {/* Back to Beach Button */}
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => setShowResort(false)}
+                    className="w-full"
+                  >
+                    🏖️ Back to Beach
+                  </Button>
+                </GlassCard>
+              </div>
+            </div>
+          ) : (
+            // Beach Scene
+            <div className="h-full">
+              <Scene cameraPosition={[0, 5, 10]}>
+                <GoaBeachScene 
+                  season={season} 
+                  weather={weather} 
+                  character={selectedCharacter}
+                />
+              </Scene>
+            </div>
+          )}
         </Suspense>
         
         {/* Enhanced Beach Overlay with Character & Environment Controls */}
@@ -107,13 +206,26 @@ export default function YourSpace() {
               </button>
               
               <h1 className="text-2xl font-bold text-white mb-2">
-                🏖️ Welcome to Goa {isNight ? '🌙' : '☀️'}
+                � Goa Luxury Resort {isNight ? '🌙' : '☀️'}
               </h1>
               <p className="text-white/90 text-sm mb-4">
-                Experience the {isNight ? 'moonlit beaches' : 'sun-kissed shores'} of Goa - a dream destination filled with palm trees, 
-                gentle waves, and peaceful vibes. This special place represents achievements and 
-                beautiful memories {isNight ? 'under the stars' : 'in golden sunlight'}.
+                Experience an exclusive {isNight ? 'moonlit' : 'sun-kissed'} 5-star resort in Goa with stunning ocean views, 
+                luxurious amenities, and world-class hospitality. From beachfront suites to infinity pools, 
+                every moment here is designed to create {isNight ? 'magical memories under the stars' : 'unforgettable golden memories'}.
               </p>
+              
+              {/* Resort Area Selection */}
+              {/* Enter Resort Button */}
+              <div className="mb-4">
+                <motion.button
+                  onClick={() => { setShowResort(true); setCurrentResortArea('exterior'); }}
+                  className="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300"
+                  whileHover={{ scale: 1.02, boxShadow: '0 8px 25px rgba(0,0,0,0.2)' }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  🏨 Enter Luxury Resort
+                </motion.button>
+              </div>
               
               {/* Character Selection */}
               <div className="mb-4">
@@ -180,10 +292,23 @@ export default function YourSpace() {
               >
                 <div className="grid grid-cols-2 gap-3 text-white/90 text-sm">
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">🌡️</span>
+                    <span className="text-lg">�</span>
                     <div>
-                      <div className="font-semibold">Season {isAutoEnvironmentEnabled && '🔄'}</div>
-                      <div className="text-xs opacity-80 capitalize">{season}</div>
+                      <div className="font-semibold">Current Area</div>
+                      <div className="text-xs opacity-80 capitalize">
+                        {currentResortArea === 'main-lobby' ? 'Main Lobby & Reception' : 
+                         currentResortArea === 'exterior' ? 'Resort Exterior' : 
+                         currentResortArea}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">{viewMode === 'interior' ? '🏨' : '🌅'}</span>
+                    <div>
+                      <div className="font-semibold">View Mode</div>
+                      <div className="text-xs opacity-80 capitalize">
+                        {currentResortArea === 'main-lobby' ? 'Interior' : viewMode}
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -197,13 +322,6 @@ export default function YourSpace() {
                     <div>
                       <div className="font-semibold">Weather {isAutoEnvironmentEnabled && '🔄'}</div>
                       <div className="text-xs opacity-80 capitalize">{weather}</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">{isNight ? '🌙' : '☀️'}</span>
-                    <div>
-                      <div className="font-semibold">Time</div>
-                      <div className="text-xs opacity-80">{isNight ? 'Night' : 'Day'}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -231,7 +349,7 @@ export default function YourSpace() {
                 
                 <div className="mt-3 pt-3 border-t border-white/20">
                   <div className="text-white/80 text-xs text-center">
-                    💡 <strong>Tip:</strong> Use controls in the top corners to change season, weather, and time!
+                    💡 <strong>Tip:</strong> Explore different resort areas and switch between interior/exterior views for the full luxury experience!
                   </div>
                 </div>
               </motion.div>
