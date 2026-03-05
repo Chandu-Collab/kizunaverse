@@ -36,33 +36,33 @@ export function GuestSuitesDeluxe() {
         <meshStandardMaterial color="#c2b5a3" roughness={0.5} />
       </mesh>
 
-      {/* KING BED - Center left */}
-      <group position={[-2.5, 0, 0.5]}>
+      {/* KING BED - Center left, against wall */}
+      <group position={[-3.0, 0, -1.0]}>
         {/* Bed frame */}
         <mesh position={[0, 0.35, 0]} castShadow receiveShadow>
-          <boxGeometry args={[2.2, 0.7, 2.0]} />
+          <boxGeometry args={[2.8, 0.7, 3.0]} />
           <meshStandardMaterial color="#3d2817" roughness={0.3} metalness={0.2} />
         </mesh>
         {/* Mattress */}
         <mesh position={[0, 0.65, 0]} castShadow receiveShadow>
-          <boxGeometry args={[2.0, 0.3, 1.8]} />
+          <boxGeometry args={[2.6, 0.3, 2.8]} />
           <meshStandardMaterial color="#8b7355" roughness={0.5} metalness={0} />
         </mesh>
-        {/* Pillows */}
-        {[-0.5, 0.5].map((x, idx) => (
-          <mesh key={`pillow-${idx}`} position={[x, 1.0, -0.55]} castShadow>
-            <boxGeometry args={[0.4, 0.3, 0.25]} />
+        {/* Pillows - at head of bed */}
+        {[-0.7, 0.7].map((x, idx) => (
+          <mesh key={`pillow-${idx}`} position={[x, 1.0, -1.25]} castShadow>
+            <boxGeometry args={[0.45, 0.3, 0.3]} />
             <meshStandardMaterial color="#e6d7c3" roughness={0.4} metalness={0} />
           </mesh>
         ))}
         {/* Bedcover */}
-        <mesh position={[0, 0.8, 0.3]} castShadow>
-          <boxGeometry args={[2.0, 0.1, 1.2]} />
+        <mesh position={[0, 0.8, 0.1]} castShadow>
+          <boxGeometry args={[2.6, 0.1, 2.2]} />
           <meshStandardMaterial color="#cc9966" roughness={0.3} metalness={0.05} />
         </mesh>
         {/* Headboard */}
-        <mesh position={[0, 1.0, -0.95]} castShadow receiveShadow>
-          <boxGeometry args={[2.3, 0.8, 0.15]} />
+        <mesh position={[0, 1.0, -1.5]} castShadow receiveShadow>
+          <boxGeometry args={[2.9, 0.8, 0.15]} />
           <meshStandardMaterial color="#4a3728" roughness={0.3} metalness={0.1} />
         </mesh>
       </group>
@@ -144,7 +144,7 @@ export function GuestSuitesDeluxe() {
       </group>
 
       {/* LIVING SOFA - Front left area */}
-      <group position={[-3.5, 0, 1.5]}>
+      <group position={[-4.0, 0, 2.3]}>
         {/* Sofa frame */}
         <mesh position={[0, 0.3, 0]} castShadow receiveShadow>
           <boxGeometry args={[2.2, 0.6, 1.0]} />
@@ -163,7 +163,7 @@ export function GuestSuitesDeluxe() {
       </group>
 
       {/* COFFEE TABLE - Front center */}
-      <group position={[-1.5, 0, 1.2]}>
+      <group position={[0, 0, 2.3]}>
         {/* Table top */}
         <mesh position={[0, 0.4, 0]} castShadow receiveShadow>
           <boxGeometry args={[1.2, 0.8, 0.8]} />
@@ -177,7 +177,7 @@ export function GuestSuitesDeluxe() {
       </group>
 
       {/* WORK DESK - Right side */}
-      <group position={[4.0, 0, 0.0]}>
+      <group position={[4.0, 0, -0.5]}>
         {/* Desk */}
         <mesh position={[0, 0.4, 0]} castShadow receiveShadow>
           <boxGeometry args={[1.6, 0.8, 0.8]} />
@@ -200,7 +200,7 @@ export function GuestSuitesDeluxe() {
       </group>
 
       {/* OFFICE CHAIR - At desk */}
-      <group position={[4.0, 0, 1.0]}>
+      <group position={[4.0, 0, 1.2]}>
         {/* Seat cushion */}
         <mesh position={[0, 0.35, 0]} castShadow receiveShadow>
           <cylinderGeometry args={[0.35, 0.35, 0.15, 8]} />
@@ -239,8 +239,8 @@ export function GuestSuitesDeluxe() {
         ))}
       </group>
 
-      {/* WARDROBE CLOSET - Left wall */}
-      <group position={[-5.5, 0, 1.5]}>
+      {/* WARDROBE CLOSET - Left wall (attached to wall) */}
+      <group position={[-5.7, 0, 1.5]}>
         {/* Cabinet body */}
         <mesh position={[0, 0.8, 0]} castShadow receiveShadow>
           <boxGeometry args={[0.7, 1.6, 0.6]} />
@@ -275,8 +275,8 @@ export function GuestSuitesDeluxe() {
         </mesh>
       </group>
 
-      {/* AMBIENT SIDE TABLE - By sofa */}
-      <group position={[-2.0, 0, 0.2]}>
+      {/* AMBIENT SIDE TABLE - By sofa (repositioned away from bed) */}
+      <group position={[3.5, 0, 2.3]}>
         {/* Table top */}
         <mesh position={[0, 0.4, 0]} castShadow receiveShadow>
           <boxGeometry args={[0.5, 0.8, 0.4]} />
@@ -305,8 +305,8 @@ export function GuestSuitesDeluxe() {
         <pointLight position={[0, 0, 0.5]} intensity={0.6} color="#87ceeb" />
       </group>
 
-      {/* WALL MIRROR - Left wall */}
-      <group position={[-5.8, 1.5, -1.0]}>
+      {/* WALL MIRROR - Left wall (attached to wall) */}
+      <group position={[-5.96, 1.5, -1.0]}>
         {/* Frame */}
         <mesh position={[0, 0, 0]} castShadow receiveShadow>
           <boxGeometry args={[0.7, 0.9, 0.08]} />
@@ -320,8 +320,8 @@ export function GuestSuitesDeluxe() {
       </group>
 
       {/* TASK LIGHTING OVER AREA */}
-      <pointLight position={[-2.5, 2.0, 0.5]} intensity={1.5} castShadow color="#ffffff" />
-      <pointLight position={[4.0, 2.0, 0.0]} intensity={1.4} castShadow color="#ffffff" />
+      <pointLight position={[-3.0, 2.0, -1.0]} intensity={1.5} castShadow color="#ffffff" />
+      <pointLight position={[4.0, 2.0, -0.5]} intensity={1.4} castShadow color="#ffffff" />
       <pointLight position={[3.0, 2.0, -2.0]} intensity={1.6} castShadow color="#ffffff" />
     </group>
   );
