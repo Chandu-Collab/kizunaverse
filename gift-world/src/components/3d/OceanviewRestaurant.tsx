@@ -258,7 +258,7 @@ export default function OceanviewRestaurant() {
         </mesh>
         {/* Booth chairs (2 sides) */}
         {[-1.2, 1.2].map((x, idx) => (
-          <group key={`booth-chair-left-${idx}`} position={[x, 0, -1.2]}>
+          <group key={`booth-chair-left-${idx}`} position={[x, 0, 0.8]}>
             <mesh castShadow>
               <boxGeometry args={[0.5, 0.7, 0.5]} />
               <meshStandardMaterial color="#456789" roughness={0.6} />
@@ -286,7 +286,7 @@ export default function OceanviewRestaurant() {
         </mesh>
         {/* Booth chairs */}
         {[-1.2, 1.2].map((x, idx) => (
-          <group key={`booth-chair-right-${idx}`} position={[x, 0, -1.2]}>
+          <group key={`booth-chair-right-${idx}`} position={[x, 0, 0.8]}>
             <mesh castShadow>
               <boxGeometry args={[0.5, 0.7, 0.5]} />
               <meshStandardMaterial color="#456789" roughness={0.6} />
