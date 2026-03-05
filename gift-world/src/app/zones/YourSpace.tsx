@@ -10,6 +10,7 @@ import ConciergeDesk from '@/components/3d/ConciergeDesk';
 import LuxuryPoolArea from '@/components/3d/LuxuryPoolArea';
 import OceanviewRestaurant from '@/components/3d/OceanviewRestaurant';
 import SpaWellnessCenter from '@/components/3d/SpaWellnessCenter';
+import FitnessCenter from '@/components/3d/FitnessCenter';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import { useWeatherSystem } from '@/components/3d/weather/WeatherSystem';
 import { useCharacter } from '@/hooks/useCharacter';
@@ -26,7 +27,7 @@ export default function YourSpace() {
   const [showWelcomeOverlay, setShowWelcomeOverlay] = useState(true);
   const [showResort, setShowResort] = useState(false);
   const [showInterior, setShowInterior] = useState(false);
-  const [currentResortArea, setCurrentResortArea] = useState<'main-lobby' | 'concierge-desk' | 'pool-area' | 'oceanview-restaurant' | 'spa-wellness' | 'exterior'>('exterior');
+  const [currentResortArea, setCurrentResortArea] = useState<'main-lobby' | 'concierge-desk' | 'pool-area' | 'oceanview-restaurant' | 'spa-wellness' | 'fitness-center' | 'exterior'>('exterior');
   const [viewMode, setViewMode] = useState<'exterior' | 'interior'>('exterior');
   
   // Automatic Season and Weather Cycling (Every 30 seconds)
@@ -99,6 +100,7 @@ export default function YourSpace() {
                   currentResortArea === 'pool-area' ? [0, 6, 12] :
                   currentResortArea === 'oceanview-restaurant' ? [0, 3.2, 6] :
                   currentResortArea === 'spa-wellness' ? [0, 3.5, 5.5] :
+                  currentResortArea === 'fitness-center' ? [5, 4, 5] :
                   currentResortArea === 'exterior' ? [12, 8, 15] : 
                   [0, 3, 6]
                 } 
@@ -120,6 +122,9 @@ export default function YourSpace() {
                 ) : currentResortArea === 'spa-wellness' ? (
                   // Show spa wellness center
                   <SpaWellnessCenter />
+                ) : currentResortArea === 'fitness-center' ? (
+                  // Show fitness center
+                  <FitnessCenter />
                 ) : (
                   // Show resort exterior or other areas when implemented
                   <GoaResort3D 
@@ -135,7 +140,7 @@ export default function YourSpace() {
                 <GlassCard className="p-4 max-w-sm">
                   <h3 className="font-semibold text-lg mb-3">🏨 Resort Areas</h3>
                   
-                  {(currentResortArea === 'main-lobby' || currentResortArea === 'concierge-desk' || currentResortArea === 'pool-area' || currentResortArea === 'oceanview-restaurant' || currentResortArea === 'spa-wellness') && (
+                  {(currentResortArea === 'main-lobby' || currentResortArea === 'concierge-desk' || currentResortArea === 'pool-area' || currentResortArea === 'oceanview-restaurant' || currentResortArea === 'spa-wellness' || currentResortArea === 'fitness-center') && (
                     <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-2 mb-3">
                       <div className="text-green-300 text-xs font-semibold">✅ INTERIOR VIEW</div>
                       <div className="text-white text-xs">
@@ -147,6 +152,8 @@ export default function YourSpace() {
                           ? 'Showing oceanview restaurant with host desk, dining layout and sea-facing ambiance'
                           : currentResortArea === 'spa-wellness'
                           ? 'Showing spa wellness center with massage rooms, sauna, steam room & relaxation lounge'
+                          : currentResortArea === 'fitness-center'
+                          ? 'Showing fitness center with cardio zone, strength training, yoga area & locker rooms'
                           : 'Showing luxury pool complex with hot tubs, slides & cabanas'
                         }
                       </div>
@@ -197,7 +204,16 @@ export default function YourSpace() {
                       onClick={() => setCurrentResortArea('spa-wellness')}
                       className="text-xs"
                     >
-                      🚧 🧖 Spa & Wellness Center
+                      ✅ 🧖 Spa & Wellness Center
+                    </Button>
+
+                    <Button
+                      variant={currentResortArea === 'fitness-center' ? "primary" : "secondary"}
+                      size="sm"
+                      onClick={() => setCurrentResortArea('fitness-center')}
+                      className="text-xs"
+                    >
+                      🚧 💪 Fitness Center
                     </Button>
                     
                     {/* Coming Soon Areas */}
