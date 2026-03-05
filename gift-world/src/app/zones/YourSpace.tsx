@@ -11,6 +11,10 @@ import LuxuryPoolArea from '@/components/3d/LuxuryPoolArea';
 import OceanviewRestaurant from '@/components/3d/OceanviewRestaurant';
 import SpaWellnessCenter from '@/components/3d/SpaWellnessCenter';
 import FitnessCenter from '@/components/3d/FitnessCenter';
+import ConferenceRooms from '@/components/3d/ConferenceRooms';
+import { GuestSuitesDeluxe } from '@/components/3d/GuestSuitesDeluxe';
+import { BusinessLounge } from '@/components/3d/BusinessLounge';
+import { ArtGallery } from '@/components/3d/ArtGallery';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import { useWeatherSystem } from '@/components/3d/weather/WeatherSystem';
 import { useCharacter } from '@/hooks/useCharacter';
@@ -27,7 +31,7 @@ export default function YourSpace() {
   const [showWelcomeOverlay, setShowWelcomeOverlay] = useState(true);
   const [showResort, setShowResort] = useState(false);
   const [showInterior, setShowInterior] = useState(false);
-  const [currentResortArea, setCurrentResortArea] = useState<'main-lobby' | 'concierge-desk' | 'pool-area' | 'oceanview-restaurant' | 'spa-wellness' | 'fitness-center' | 'exterior'>('exterior');
+  const [currentResortArea, setCurrentResortArea] = useState<'main-lobby' | 'concierge-desk' | 'pool-area' | 'oceanview-restaurant' | 'spa-wellness' | 'fitness-center' | 'conference-rooms' | 'guest-suites' | 'business-lounge' | 'art-gallery' | 'exterior'>('exterior');
   const [viewMode, setViewMode] = useState<'exterior' | 'interior'>('exterior');
   
   // Automatic Season and Weather Cycling (Every 30 seconds)
@@ -101,6 +105,10 @@ export default function YourSpace() {
                   currentResortArea === 'oceanview-restaurant' ? [0, 3.2, 6] :
                   currentResortArea === 'spa-wellness' ? [0, 3.5, 5.5] :
                   currentResortArea === 'fitness-center' ? [5, 4, 5] :
+                  currentResortArea === 'conference-rooms' ? [5, 4, 5] :
+                  currentResortArea === 'guest-suites' ? [5, 3, 4] :
+                  currentResortArea === 'business-lounge' ? [0, 3, 5] :
+                  currentResortArea === 'art-gallery' ? [0, 2.5, 5] :
                   currentResortArea === 'exterior' ? [12, 8, 15] : 
                   [0, 3, 6]
                 } 
@@ -125,6 +133,18 @@ export default function YourSpace() {
                 ) : currentResortArea === 'fitness-center' ? (
                   // Show fitness center
                   <FitnessCenter />
+                ) : currentResortArea === 'conference-rooms' ? (
+                  // Show conference rooms
+                  <ConferenceRooms />
+                ) : currentResortArea === 'guest-suites' ? (
+                  // Show guest suites deluxe
+                  <GuestSuitesDeluxe />
+                ) : currentResortArea === 'business-lounge' ? (
+                  // Show business lounge
+                  <BusinessLounge />
+                ) : currentResortArea === 'art-gallery' ? (
+                  // Show art gallery
+                  <ArtGallery />
                 ) : (
                   // Show resort exterior or other areas when implemented
                   <GoaResort3D 
@@ -140,7 +160,7 @@ export default function YourSpace() {
                 <GlassCard className="p-4 max-w-sm">
                   <h3 className="font-semibold text-lg mb-3">🏨 Resort Areas</h3>
                   
-                  {(currentResortArea === 'main-lobby' || currentResortArea === 'concierge-desk' || currentResortArea === 'pool-area' || currentResortArea === 'oceanview-restaurant' || currentResortArea === 'spa-wellness' || currentResortArea === 'fitness-center') && (
+                  {(currentResortArea === 'main-lobby' || currentResortArea === 'concierge-desk' || currentResortArea === 'pool-area' || currentResortArea === 'oceanview-restaurant' || currentResortArea === 'spa-wellness' || currentResortArea === 'fitness-center' || currentResortArea === 'conference-rooms' || currentResortArea === 'guest-suites' || currentResortArea === 'business-lounge' || currentResortArea === 'art-gallery') && (
                     <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-2 mb-3">
                       <div className="text-green-300 text-xs font-semibold">✅ INTERIOR VIEW</div>
                       <div className="text-white text-xs">
@@ -154,6 +174,14 @@ export default function YourSpace() {
                           ? 'Showing spa wellness center with massage rooms, sauna, steam room & relaxation lounge'
                           : currentResortArea === 'fitness-center'
                           ? 'Showing fitness center with cardio zone, strength training, yoga area & locker rooms'
+                          : currentResortArea === 'conference-rooms'
+                          ? 'Showing conference rooms with boardroom, meeting spaces, AV equipment & video conferencing'
+                          : currentResortArea === 'guest-suites'
+                          ? 'Showing luxurious guest suite with king bed, spa bathroom, lounge & work desk'
+                          : currentResortArea === 'business-lounge'
+                          ? 'Showing sophisticated business lounge with bar, seating, AV displays & meeting area'
+                          : currentResortArea === 'art-gallery'
+                          ? 'Showing premier art gallery with sculptures, framed paintings & exhibition lighting'
                           : 'Showing luxury pool complex with hot tubs, slides & cabanas'
                         }
                       </div>
@@ -215,10 +243,46 @@ export default function YourSpace() {
                     >
                       🚧 💪 Fitness Center
                     </Button>
+
+                    <Button
+                      variant={currentResortArea === 'conference-rooms' ? "primary" : "secondary"}
+                      size="sm"
+                      onClick={() => setCurrentResortArea('conference-rooms')}
+                      className="text-xs"
+                    >
+                      📊 📋 Conference Rooms
+                    </Button>
+
+                    <Button
+                      variant={currentResortArea === 'guest-suites' ? "primary" : "secondary"}
+                      size="sm"
+                      onClick={() => setCurrentResortArea('guest-suites')}
+                      className="text-xs"
+                    >
+                      ✅ 🛏️ Guest Suites (Deluxe)
+                    </Button>
+
+                    <Button
+                      variant={currentResortArea === 'business-lounge' ? "primary" : "secondary"}
+                      size="sm"
+                      onClick={() => setCurrentResortArea('business-lounge')}
+                      className="text-xs"
+                    >
+                      ✅ 🍸 Business Lounge
+                    </Button>
+
+                    <Button
+                      variant={currentResortArea === 'art-gallery' ? "primary" : "secondary"}
+                      size="sm"
+                      onClick={() => setCurrentResortArea('art-gallery')}
+                      className="text-xs"
+                    >
+                      ✅ 🎨 Art Gallery
+                    </Button>
                     
                     {/* Coming Soon Areas */}
                     <div className="text-xs text-gray-500 mt-2 mb-1">Coming Soon:</div>
-                    {['Guest Suites (Deluxe)'].map((area, i) => (
+                    {['Art Gallery', 'Kids Play Area', 'Library Study'].map((area, i) => (
                       <Button
                         key={area}
                         variant="secondary"
