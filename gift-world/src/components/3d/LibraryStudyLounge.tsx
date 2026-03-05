@@ -185,7 +185,7 @@ export function LibraryStudyLounge() {
       </group>
 
       {/* READING CHAIR 1 - Left front */}
-      <group position={[-4.0, 0, 1.8]}>
+      <group position={[-4.0, 0, -1.5]}>
         {/* Seat */}
         <mesh position={[0, 0.35, 0]} castShadow receiveShadow>
           <boxGeometry args={[0.6, 0.25, 0.6]} />
@@ -206,7 +206,7 @@ export function LibraryStudyLounge() {
       </group>
 
       {/* READING CHAIR 2 - Right front */}
-      <group position={[4.0, 0, 1.8]}>
+      <group position={[4.0, 0, -1.5]}>
         {/* Seat */}
         <mesh position={[0, 0.35, 0]} castShadow receiveShadow>
           <boxGeometry args={[0.6, 0.25, 0.6]} />

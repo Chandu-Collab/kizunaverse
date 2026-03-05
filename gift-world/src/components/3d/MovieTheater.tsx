@@ -70,12 +70,12 @@ export function MovieTheater() {
               <meshStandardMaterial color="#660000" roughness={0.4} metalness={0.05} />
             </mesh>
             {/* Backrest */}
-            <mesh position={[0, 0.45, -0.2]} castShadow receiveShadow>
+            <mesh position={[0, 0.45, 0.2]} castShadow receiveShadow>
               <boxGeometry args={[0.45, 0.35, 0.15]} />
               <meshStandardMaterial color="#660000" roughness={0.4} metalness={0.05} />
             </mesh>
             {/* Armrest right */}
-            <mesh position={[0.25, 0.35, -0.1]} castShadow>
+            <mesh position={[0.25, 0.35, 0.1]} castShadow>
               <boxGeometry args={[0.05, 0.25, 0.25]} />
               <meshStandardMaterial color="#333333" roughness={0.4} metalness={0.1} />
             </mesh>
@@ -93,7 +93,7 @@ export function MovieTheater() {
               <meshStandardMaterial color="#660000" roughness={0.4} metalness={0.05} />
             </mesh>
             {/* Backrest */}
-            <mesh position={[0, 0.45, -0.2]} castShadow receiveShadow>
+            <mesh position={[0, 0.45, 0.2]} castShadow receiveShadow>
               <boxGeometry args={[0.45, 0.35, 0.15]} />
               <meshStandardMaterial color="#660000" roughness={0.4} metalness={0.05} />
             </mesh>
@@ -111,12 +111,12 @@ export function MovieTheater() {
               <meshStandardMaterial color="#660000" roughness={0.4} metalness={0.05} />
             </mesh>
             {/* Backrest */}
-            <mesh position={[0, 0.45, -0.2]} castShadow receiveShadow>
+            <mesh position={[0, 0.45, 0.2]} castShadow receiveShadow>
               <boxGeometry args={[0.45, 0.35, 0.15]} />
               <meshStandardMaterial color="#660000" roughness={0.4} metalness={0.05} />
             </mesh>
             {/* Armrest left */}
-            <mesh position={[-0.25, 0.35, -0.1]} castShadow>
+            <mesh position={[-0.25, 0.35, 0.1]} castShadow>
               <boxGeometry args={[0.05, 0.25, 0.25]} />
               <meshStandardMaterial color="#333333" roughness={0.4} metalness={0.1} />
             </mesh>
@@ -133,7 +133,7 @@ export function MovieTheater() {
             <meshStandardMaterial color="#8b0000" roughness={0.4} metalness={0.05} />
           </mesh>
           {/* Backrest - angled */}
-          <mesh position={[0, 0.55, -0.2]} castShadow receiveShadow>
+          <mesh position={[0, 0.55, 0.2]} castShadow receiveShadow>
             <boxGeometry args={[0.5, 0.4, 0.15]} />
             <meshStandardMaterial color="#8b0000" roughness={0.4} metalness={0.05} />
           </mesh>
