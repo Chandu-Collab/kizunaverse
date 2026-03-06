@@ -11,6 +11,22 @@ export function LibraryStudyLounge() {
       <ambientLight intensity={0.7} />
       <directionalLight position={[3, 3, 2]} intensity={0.9} castShadow />
 
+      {/* ENTRANCE SIGNAGE - Library Study Lounge */}
+      <group position={[0, 2.85, 3.2]}>
+        <mesh castShadow receiveShadow>
+          <boxGeometry args={[2.2, 0.4, 0.08]} />
+          <meshStandardMaterial color="#6b5344" roughness={0.3} metalness={0.15} />
+        </mesh>
+        <mesh position={[0, 0.06, 0.05]}>
+          <boxGeometry args={[1.2, 0.05, 0.02]} />
+          <meshStandardMaterial color="#f5f1e8" roughness={0.2} metalness={0.1} />
+        </mesh>
+        <mesh position={[0, -0.04, 0.05]}>
+          <boxGeometry args={[0.85, 0.04, 0.02]} />
+          <meshStandardMaterial color="#d4a574" roughness={0.2} metalness={0.1} />
+        </mesh>
+      </group>
+
       {/* WALLS */}
       <mesh position={[-6, 1.8, 0]} scale={[0.1, 3.6, 8]} castShadow receiveShadow>
         <boxGeometry />
@@ -34,6 +50,41 @@ export function LibraryStudyLounge() {
         <boxGeometry />
         <meshStandardMaterial color="#a0826d" roughness={0.4} />
       </mesh>
+
+      {/* STUDY QUIET NOTICE - Left wall */}
+      <group position={[-5.7, 1.5, 0.5]}>
+        {/* Mount bracket */}
+        <mesh position={[0.08, 0, 0]} castShadow>
+          <boxGeometry args={[0.06, 0.2, 0.12]} />
+          <meshStandardMaterial color="#888888" roughness={0.35} metalness={0.4} />
+        </mesh>
+        {/* Notice board */}
+        <mesh position={[0.05, 0, 0]} castShadow>
+          <boxGeometry args={[0.08, 0.3, 0.36]} />
+          <meshStandardMaterial color="#f5f1e8" roughness={0.25} metalness={0.1} />
+        </mesh>
+        {/* Content stripes */}
+        <mesh position={[0.065, 0.06, 0]}>
+          <boxGeometry args={[0.04, 0.1, 0.25]} />
+          <meshStandardMaterial color="#6b5344" roughness={0.3} metalness={0.1} />
+        </mesh>
+      </group>
+
+      {/* MAGAZINE RACK - Front left, clear spacing */}
+      <group position={[-5.2, 0, 1.5]}>
+        {/* Rack frame */}
+        <mesh position={[0, 0.3, 0]} castShadow receiveShadow>
+          <boxGeometry args={[0.45, 0.6, 0.35]} />
+          <meshStandardMaterial color="#6b5344" roughness={0.3} metalness={0.1} />
+        </mesh>
+        {/* Dividers for magazines */}
+        {[0, 0.3].map((y, idx) => (
+          <mesh key={`mag-${idx}`} position={[0, 0.25 + y, 0]} castShadow>
+            <boxGeometry args={[0.4, 0.08, 0.3]} />
+            <meshStandardMaterial color="#d4a574" roughness={0.3} metalness={0.1} />
+          </mesh>
+        ))}
+      </group>
 
       {/* TALL BOOKSHELF - Left wall back */}
       <group position={[-5.3, 0, -2.5]}>
@@ -226,6 +277,54 @@ export function LibraryStudyLounge() {
         ))}
       </group>
 
+      {/* READING LAMP BY CHAIR 1 - Left side */}
+      <group position={[-4.8, 0, -1.8]}>
+        {/* Base */}
+        <mesh castShadow>
+          <cylinderGeometry args={[0.06, 0.06, 0.08, 8]} />
+          <meshStandardMaterial color="#333333" roughness={0.4} metalness={0.3} />
+        </mesh>
+        {/* Pole */}
+        <mesh position={[0, 0.18, 0]} castShadow>
+          <boxGeometry args={[0.025, 0.3, 0.025]} />
+          <meshStandardMaterial color="#333333" roughness={0.4} metalness={0.3} />
+        </mesh>
+        {/* Lamp head */}
+        <mesh position={[0, 0.38, 0]} castShadow>
+          <cylinderGeometry args={[0.1, 0.08, 0.12, 8]} />
+          <meshStandardMaterial color="#ffffcc" roughness={0.4} metalness={0.1} />
+        </mesh>
+        {/* Light glow */}
+        <mesh position={[0, 0.38, 0]}>
+          <cylinderGeometry args={[0.08, 0.06, 0.06, 8]} />
+          <meshStandardMaterial color="#ffff99" emissive="#ffff99" emissiveIntensity={0.35} roughness={0.2} metalness={0.2} />
+        </mesh>
+      </group>
+
+      {/* READING LAMP BY CHAIR 2 - Right side */}
+      <group position={[4.8, 0, -1.8]}>
+        {/* Base */}
+        <mesh castShadow>
+          <cylinderGeometry args={[0.06, 0.06, 0.08, 8]} />
+          <meshStandardMaterial color="#333333" roughness={0.4} metalness={0.3} />
+        </mesh>
+        {/* Pole */}
+        <mesh position={[0, 0.18, 0]} castShadow>
+          <boxGeometry args={[0.025, 0.3, 0.025]} />
+          <meshStandardMaterial color="#333333" roughness={0.4} metalness={0.3} />
+        </mesh>
+        {/* Lamp head */}
+        <mesh position={[0, 0.38, 0]} castShadow>
+          <cylinderGeometry args={[0.1, 0.08, 0.12, 8]} />
+          <meshStandardMaterial color="#ffffcc" roughness={0.4} metalness={0.1} />
+        </mesh>
+        {/* Light glow */}
+        <mesh position={[0, 0.38, 0]}>
+          <cylinderGeometry args={[0.08, 0.06, 0.06, 8]} />
+          <meshStandardMaterial color="#ffff99" emissive="#ffff99" emissiveIntensity={0.35} roughness={0.2} metalness={0.2} />
+        </mesh>
+      </group>
+
       {/* FIREPLACE - Back wall center */}
       <group position={[0, 0, -3.85]}>
         {/* Fireplace opening */}
@@ -365,6 +464,60 @@ export function LibraryStudyLounge() {
             roughness={0.3} 
             metalness={0.1} 
           />
+        </mesh>
+      </group>
+
+      {/* COFFEE STATION - Back right corner, well spaced */}
+      <group position={[5.0, 0, -3.2]}>
+        {/* Small table */}
+        <mesh position={[0, 0.35, 0]} castShadow receiveShadow>
+          <boxGeometry args={[0.6, 0.7, 0.5]} />
+          <meshStandardMaterial color="#6b5344" roughness={0.3} metalness={0.15} />
+        </mesh>
+        {/* Coffee maker base */}
+        <mesh position={[-0.15, 0.65, 0]} castShadow>
+          <cylinderGeometry args={[0.12, 0.12, 0.15, 8]} />
+          <meshStandardMaterial color="#888888" roughness={0.35} metalness={0.4} />
+        </mesh>
+        {/* Cup holder slots */}
+        {[-0.1, 0.1].map((x, idx) => (
+          <mesh key={`cup-${idx}`} position={[x, 0.62, 0]} castShadow>
+            <cylinderGeometry args={[0.08, 0.08, 0.08, 8]} />
+            <meshStandardMaterial color="#d4a574" roughness={0.4} metalness={0.1} />
+          </mesh>
+        ))}
+      </group>
+
+      {/* DECORATIVE FLOOR PLANT - Front right corner */}
+      <group position={[5.3, 0, 2.5]}>
+        {/* Pot */}
+        <mesh position={[0, 0.25, 0]} castShadow receiveShadow>
+          <cylinderGeometry args={[0.15, 0.18, 0.5, 8]} />
+          <meshStandardMaterial color="#8b6f47" roughness={0.4} metalness={0.1} />
+        </mesh>
+        {/* Soil */}
+        <mesh position={[0, 0.48, 0]} castShadow>
+          <cylinderGeometry args={[0.14, 0.14, 0.08, 8]} />
+          <meshStandardMaterial color="#654321" roughness={0.6} metalness={0.05} />
+        </mesh>
+        {/* Plant foliage */}
+        <mesh position={[0, 0.75, -0.05]} castShadow receiveShadow>
+          <sphereGeometry args={[0.22, 8, 8]} />
+          <meshStandardMaterial color="#2d5016" roughness={0.5} metalness={0.05} />
+        </mesh>
+      </group>
+
+      {/* WALL ART - Academic poster left */}
+      <group position={[-5.8, 2.0, 1.5]}>
+        {/* Frame */}
+        <mesh castShadow>
+          <boxGeometry args={[0.05, 0.6, 0.5]} />
+          <meshStandardMaterial color="#8b7355" roughness={0.3} metalness={0.15} />
+        </mesh>
+        {/* Art canvas */}
+        <mesh position={[0.03, 0, 0]}>
+          <boxGeometry args={[0.02, 0.55, 0.45]} />
+          <meshStandardMaterial color="#e8dcc8" roughness={0.3} metalness={0.05} />
         </mesh>
       </group>
 
