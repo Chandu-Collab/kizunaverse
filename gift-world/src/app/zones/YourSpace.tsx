@@ -117,7 +117,7 @@ export default function YourSpace() {
                   currentResortArea === 'fitness-center' ? [5, 4, 5] :
                   currentResortArea === 'conference-rooms' ? [5, 4, 5] :
                   currentResortArea === 'guest-suites' ? [5, 3, 4] :
-                  currentResortArea === 'business-lounge' ? [0, 3, 5] :
+                  currentResortArea === 'business-lounge' ? [0, 3.2, 6.5] :
                   currentResortArea === 'art-gallery' ? [0, 2.5, 5] :
                   currentResortArea === 'kids-play' ? [0, 3, 5] :
                   currentResortArea === 'library-study' ? [0, 2.5, 5] :

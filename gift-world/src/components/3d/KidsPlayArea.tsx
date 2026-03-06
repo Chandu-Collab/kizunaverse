@@ -11,6 +11,22 @@ export function KidsPlayArea() {
       <ambientLight intensity={0.85} />
       <directionalLight position={[2, 4, 2]} intensity={1.0} castShadow />
 
+      {/* ENTRANCE SIGNAGE - Kids Play Area */}
+      <group position={[0, 2.9, 3.2]}>
+        <mesh castShadow receiveShadow>
+          <boxGeometry args={[2.6, 0.45, 0.08]} />
+          <meshStandardMaterial color="#ff6600" roughness={0.3} metalness={0.15} />
+        </mesh>
+        <mesh position={[0, 0.08, 0.05]}>
+          <boxGeometry args={[1.4, 0.06, 0.02]} />
+          <meshStandardMaterial color="#ffffff" roughness={0.2} metalness={0.1} />
+        </mesh>
+        <mesh position={[0, -0.05, 0.05]}>
+          <boxGeometry args={[0.8, 0.05, 0.02]} />
+          <meshStandardMaterial color="#ffff00" roughness={0.2} metalness={0.1} />
+        </mesh>
+      </group>
+
       {/* WALLS */}
       <mesh position={[-6, 1.8, 0]} scale={[0.1, 3.6, 8]} castShadow receiveShadow>
         <boxGeometry />
@@ -260,16 +276,21 @@ export function KidsPlayArea() {
         </mesh>
       ))}
 
-      {/* TOYS ON SHELVES - Left corner */}
-      <group position={[-5.3, 0.8, 2.0]}>
+      {/* TOYS ON SHELVES - Left wall mounted */}
+      <group position={[-5.7, 1.0, 2.0]}>
+        {/* Wall mounting bracket */}
+        <mesh position={[0.05, 0, 0]} castShadow>
+          <boxGeometry args={[0.1, 0.3, 0.3]} />
+          <meshStandardMaterial color="#888888" roughness={0.35} metalness={0.3} />
+        </mesh>
         {/* Shelf frame */}
-        <mesh position={[0, 0.35, 0]} castShadow receiveShadow>
-          <boxGeometry args={[0.5, 0.7, 0.4]} />
+        <mesh position={[0.1, 0.25, 0]} castShadow receiveShadow>
+          <boxGeometry args={[0.5, 0.08, 0.4]} />
           <meshStandardMaterial color="#4a4a4a" roughness={0.3} metalness={0.1} />
         </mesh>
         {/* Toy cubes on shelf */}
         {[0, 0.3].map((z, idx) => (
-          <mesh key={`toy-${idx}`} position={[0, 0.65, z - 0.15]} castShadow>
+          <mesh key={`toy-${idx}`} position={[0.1, 0.35, z - 0.15]} castShadow>
             <boxGeometry args={[0.2, 0.2, 0.2]} />
             <meshStandardMaterial 
               color={['#ff1493', '#ffff00'][idx % 2]} 
@@ -280,9 +301,9 @@ export function KidsPlayArea() {
         ))}
       </group>
 
-      {/* BALLS SCATTERED AREA - Center */}
+      {/* BALLS SCATTERED AREA - Left side open space */}
       {[0, 0.35, 0.7].map((offset, idx) => (
-        <mesh key={`scattered-ball-${idx}`} position={[-0.3 + offset * 0.2, 0.15, -0.5 + offset * 0.3]} castShadow>
+        <mesh key={`scattered-ball-${idx}`} position={[-4.2 + offset * 0.3, 0.15, 1.2 + offset * 0.2]} castShadow>
           <sphereGeometry args={[0.1, 16, 16]} />
           <meshStandardMaterial 
             color={['#ff1493', '#0fff00', '#00ffff', '#ffff00'][idx % 4]} 
@@ -291,6 +312,58 @@ export function KidsPlayArea() {
           />
         </mesh>
       ))}
+
+      {/* COLORFUL WALL MURAL PANELS - Left wall accent */}
+      <mesh position={[-5.8, 1.8, -2.5]} castShadow>
+        <boxGeometry args={[0.05, 1.2, 1.2]} />
+        <meshStandardMaterial color="#ffcccc" roughness={0.4} metalness={0.05} />
+      </mesh>
+      <mesh position={[-5.75, 1.8, -2.5]}>
+        <boxGeometry args={[0.02, 0.9, 0.8]} />
+        <meshStandardMaterial color="#ff6600" roughness={0.3} metalness={0.1} />
+      </mesh>
+      <mesh position={[-5.8, 1.2, -1.2]} castShadow>
+        <boxGeometry args={[0.05, 0.8, 0.9]} />
+        <meshStandardMaterial color="#ffff99" roughness={0.4} metalness={0.05} />
+      </mesh>
+      <mesh position={[-5.75, 1.2, -1.2]}>
+        <boxGeometry args={[0.02, 0.5, 0.6]} />
+        <meshStandardMaterial color="#0fff00" roughness={0.3} metalness={0.1} />
+      </mesh>
+
+      {/* COLORFUL WALL MURAL PANELS - Right wall accent */}
+      <mesh position={[5.8, 1.8, -2.5]} castShadow>
+        <boxGeometry args={[0.05, 1.2, 1.2]} />
+        <meshStandardMaterial color="#ccccff" roughness={0.4} metalness={0.05} />
+      </mesh>
+      <mesh position={[5.75, 1.8, -2.5]}>
+        <boxGeometry args={[0.02, 0.9, 0.8]} />
+        <meshStandardMaterial color="#00ffff" roughness={0.3} metalness={0.1} />
+      </mesh>
+      <mesh position={[5.8, 1.2, -1.2]} castShadow>
+        <boxGeometry args={[0.05, 0.8, 0.9]} />
+        <meshStandardMaterial color="#ff99ff" roughness={0.4} metalness={0.05} />
+      </mesh>
+      <mesh position={[5.75, 1.2, -1.2]}>
+        <boxGeometry args={[0.02, 0.5, 0.6]} />
+        <meshStandardMaterial color="#ffff00" roughness={0.3} metalness={0.1} />
+      </mesh>
+
+      {/* COLORFUL PLAY TUNNEL - Back center, away from boxes */}
+      <group position={[0, 0.35, -3.8]}>
+        <mesh castShadow receiveShadow>
+          <cylinderGeometry args={[0.4, 0.4, 1.2, 16]} />
+          <meshStandardMaterial color="#0fff00" roughness={0.4} metalness={0.05} />
+        </mesh>
+        <mesh position={[0, 0.05, -0.6]} castShadow>
+          <cylinderGeometry args={[0.38, 0.38, 0.08, 16]} />
+          <meshStandardMaterial color="#ff1493" roughness={0.4} metalness={0.05} />
+        </mesh>
+        <mesh position={[0, 0.05, 0.6]} castShadow>
+          <cylinderGeometry args={[0.38, 0.38, 0.08, 16]} />
+          <meshStandardMaterial color="#00ffff" roughness={0.4} metalness={0.05} />
+        </mesh>
+      </group>
 
       {/* SAFETY MATTING - Center floor */}
       <mesh position={[0, 0.02, 0.5]} scale={[4, 0.04, 3]} castShadow>
@@ -303,6 +376,76 @@ export function KidsPlayArea() {
       <pointLight position={[3.5, 2.0, 0.5]} intensity={1.2} castShadow color="#ffffff" />
       <pointLight position={[0, 2.0, -1.5]} intensity={1.3} castShadow color="#ffffff" />
       <pointLight position={[0, 1.8, 1.8]} intensity={1.1} castShadow color="#ffffff" />
+
+      {/* PARENTAL SUPERVISION BENCH - Right side, clear view */}
+      <group position={[4.8, 0, 0]}>
+        {/* Bench seat */}
+        <mesh position={[0, 0.35, 0]} castShadow receiveShadow>
+          <boxGeometry args={[1.6, 0.65, 0.5]} />
+          <meshStandardMaterial color="#8b4513" roughness={0.35} metalness={0.1} />
+        </mesh>
+        {/* Back support */}
+        <mesh position={[0, 0.85, -0.2]} castShadow receiveShadow>
+          <boxGeometry args={[1.6, 0.35, 0.1]} />
+          <meshStandardMaterial color="#8b4513" roughness={0.35} metalness={0.1} />
+        </mesh>
+        {/* Armrest left */}
+        <mesh position={[-0.9, 0.6, 0]} castShadow receiveShadow>
+          <boxGeometry args={[0.08, 0.5, 0.48]} />
+          <meshStandardMaterial color="#8b4513" roughness={0.35} metalness={0.1} />
+        </mesh>
+        {/* Armrest right */}
+        <mesh position={[0.9, 0.6, 0]} castShadow receiveShadow>
+          <boxGeometry args={[0.08, 0.5, 0.48]} />
+          <meshStandardMaterial color="#8b4513" roughness={0.35} metalness={0.1} />
+        </mesh>
+      </group>
+
+      {/* SAFETY RULES NOTICE - Left wall mounted */}
+      <group position={[-5.75, 1.5, 0.2]}>
+        {/* Wall mounting bracket */}
+        <mesh position={[0.08, 0, 0]} castShadow>
+          <boxGeometry args={[0.06, 0.2, 0.15]} />
+          <meshStandardMaterial color="#666666" roughness={0.35} metalness={0.4} />
+        </mesh>
+        {/* Notice board */}
+        <mesh position={[0.05, 0, 0]} castShadow>
+          <boxGeometry args={[0.08, 0.35, 0.45]} />
+          <meshStandardMaterial color="#ffffff" roughness={0.25} metalness={0.1} />
+        </mesh>
+        {/* Notice content stripes */}
+        <mesh position={[0.065, 0.08, 0]}>
+          <boxGeometry args={[0.04, 0.12, 0.35]} />
+          <meshStandardMaterial color="#ff6600" roughness={0.3} metalness={0.1} />
+        </mesh>
+        <mesh position={[0.065, -0.04, 0]}>
+          <boxGeometry args={[0.04, 0.08, 0.28]} />
+          <meshStandardMaterial color="#ffff00" roughness={0.3} metalness={0.1} />
+        </mesh>
+      </group>
+
+      {/* AGE RANGE MARKER - Right wall mounted */}
+      <group position={[5.75, 1.5, 0.2]}>
+        {/* Wall mounting bracket */}
+        <mesh position={[-0.08, 0, 0]} castShadow>
+          <boxGeometry args={[0.06, 0.2, 0.15]} />
+          <meshStandardMaterial color="#666666" roughness={0.35} metalness={0.4} />
+        </mesh>
+        {/* Notice board */}
+        <mesh position={[-0.05, 0, 0]} castShadow>
+          <boxGeometry args={[0.08, 0.35, 0.45]} />
+          <meshStandardMaterial color="#ffff99" roughness={0.25} metalness={0.1} />
+        </mesh>
+        {/* Age content stripes */}
+        <mesh position={[-0.065, 0.08, 0]}>
+          <boxGeometry args={[0.04, 0.12, 0.3]} />
+          <meshStandardMaterial color="#0fff00" roughness={0.3} metalness={0.1} />
+        </mesh>
+        <mesh position={[-0.065, -0.04, 0]}>
+          <boxGeometry args={[0.04, 0.06, 0.25]} />
+          <meshStandardMaterial color="#ff1493" roughness={0.3} metalness={0.1} />
+        </mesh>
+      </group>
     </group>
   );
 }
