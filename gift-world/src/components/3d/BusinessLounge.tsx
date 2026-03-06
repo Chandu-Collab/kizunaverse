@@ -4,35 +4,42 @@ import { useRef } from 'react';
 
 export function BusinessLounge() {
   const groupRef = useRef(null);
+  const meetingChairs = [
+    { position: [0, 0, 2.0] as const, rotationY: Math.PI },
+    { position: [0, 0, -0.4] as const, rotationY: 0 },
+    { position: [-1.95, 0, 0.8] as const, rotationY: -Math.PI / 2 },
+    { position: [1.95, 0, 0.8] as const, rotationY: Math.PI / 2 },
+  ];
 
   return (
     <group ref={groupRef}>
       {/* AMBIENT LIGHTING */}
-      <ambientLight intensity={0.85} />
-      <directionalLight position={[3, 4, 2]} intensity={1.1} castShadow />
+      <ambientLight intensity={1.05} color="#f4f1e8" />
+      <hemisphereLight intensity={0.6} groundColor="#2f3d4a" color="#ffffff" />
+      <directionalLight position={[2, 5, 4]} intensity={1.35} color="#fff4d6" castShadow />
 
       {/* WALLS */}
       <mesh position={[-6, 1.8, 0]} scale={[0.1, 3.6, 8]} castShadow receiveShadow>
         <boxGeometry />
-        <meshStandardMaterial color="#2c3e50" roughness={0.4} />
+        <meshStandardMaterial color="#3b5369" roughness={0.4} />
       </mesh>
       <mesh position={[6, 1.8, 0]} scale={[0.1, 3.6, 8]} castShadow receiveShadow>
         <boxGeometry />
-        <meshStandardMaterial color="#2c3e50" roughness={0.4} />
+        <meshStandardMaterial color="#3b5369" roughness={0.4} />
       </mesh>
       <mesh position={[0, 1.8, -4]} scale={[12, 3.6, 0.1]} castShadow receiveShadow>
         <boxGeometry />
-        <meshStandardMaterial color="#34495e" roughness={0.4} />
+        <meshStandardMaterial color="#425d75" roughness={0.4} />
       </mesh>
       <mesh position={[0, 3.5, 0]} scale={[12, 0.1, 8]} castShadow receiveShadow>
         <boxGeometry />
-        <meshStandardMaterial color="#2c2c2c" roughness={0.3} />
+        <meshStandardMaterial color="#3a3a3a" roughness={0.3} />
       </mesh>
 
       {/* FLOOR */}
       <mesh position={[0, -0.05, 0]} scale={[12, 0.1, 8]} receiveShadow>
         <boxGeometry />
-        <meshStandardMaterial color="#1a1a1a" roughness={0.6} />
+        <meshStandardMaterial color="#2a2a2a" roughness={0.55} />
       </mesh>
 
       {/* MAIN BAR COUNTER - Back right */}
@@ -43,7 +50,7 @@ export function BusinessLounge() {
           <meshStandardMaterial color="#3d2817" roughness={0.3} metalness={0.2} />
         </mesh>
         {/* Counter top */}
-        <mesh position={[0, 0.45, 0]} castShadow>
+        <mesh position={[0, 1.05, 0]} castShadow>
           <boxGeometry args={[2.4, 0.1, 0.7]} />
           <meshStandardMaterial color="#d4a574" roughness={0.2} metalness={0.4} />
         </mesh>
@@ -114,7 +121,7 @@ export function BusinessLounge() {
           <boxGeometry args={[1.8, 0.7, 0.9]} />
           <meshStandardMaterial color="#3d2817" roughness={0.3} metalness={0.2} />
         </mesh>
-        <mesh position={[0, 0.3, 0]} castShadow>
+        <mesh position={[0, 0.75, 0]} castShadow>
           <boxGeometry args={[1.6, 0.1, 0.7]} />
           <meshStandardMaterial color="#d4a574" roughness={0.2} metalness={0.3} />
         </mesh>
@@ -154,7 +161,7 @@ export function BusinessLounge() {
           <boxGeometry args={[1.8, 0.7, 0.9]} />
           <meshStandardMaterial color="#3d2817" roughness={0.3} metalness={0.2} />
         </mesh>
-        <mesh position={[0, 0.3, 0]} castShadow>
+        <mesh position={[0, 0.75, 0]} castShadow>
           <boxGeometry args={[1.6, 0.1, 0.7]} />
           <meshStandardMaterial color="#d4a574" roughness={0.2} metalness={0.3} />
         </mesh>
@@ -168,27 +175,27 @@ export function BusinessLounge() {
           <meshStandardMaterial color="#4a3728" roughness={0.3} metalness={0.2} />
         </mesh>
         {/* Surface */}
-        <mesh position={[0, 0.4, 0]} castShadow>
+        <mesh position={[0, 0.95, 0]} castShadow>
           <boxGeometry args={[2.8, 0.1, 1.0]} />
           <meshStandardMaterial color="#d4a574" roughness={0.2} metalness={0.3} />
         </mesh>
       </group>
 
       {/* EXECUTIVE CHAIRS - Around meeting table */}
-      {[-1.2, 0, 1.2].map((x, idx) => (
-        <group key={`chair-${idx}`} position={[x, 0, 0.8]}>
+      {meetingChairs.map((chair, idx) => (
+        <group key={`chair-${idx}`} position={chair.position} rotation={[0, chair.rotationY, 0]}>
           {/* Seat */}
-          <mesh position={[0, 0.35, 0.8]} castShadow receiveShadow>
+          <mesh position={[0, 0.35, 0]} castShadow receiveShadow>
             <boxGeometry args={[0.45, 0.2, 0.45]} />
             <meshStandardMaterial color="#1a1a1a" roughness={0.4} metalness={0.15} />
           </mesh>
           {/* Backrest */}
-          <mesh position={[0, 0.65, 0.8]} castShadow receiveShadow>
+          <mesh position={[0, 0.65, -0.2]} castShadow receiveShadow>
             <boxGeometry args={[0.45, 0.35, 0.15]} />
             <meshStandardMaterial color="#1a1a1a" roughness={0.4} metalness={0.15} />
           </mesh>
           {/* Base */}
-          <mesh position={[0, 0.1, 0.8]} castShadow>
+          <mesh position={[0, 0.1, 0]} castShadow>
             <cylinderGeometry args={[0.25, 0.25, 0.2, 8]} />
             <meshStandardMaterial color="#2c2c2c" roughness={0.4} metalness={0.3} />
           </mesh>
@@ -307,10 +314,11 @@ export function BusinessLounge() {
       ))}
 
       {/* AMBIENT LIGHTING POINTS */}
-      <pointLight position={[-3.5, 2.2, 0.5]} intensity={1.4} castShadow color="#ffffff" />
-      <pointLight position={[3.5, 2.2, 0.5]} intensity={1.4} castShadow color="#ffffff" />
-      <pointLight position={[0, 2.2, -1.0]} intensity={1.6} castShadow color="#ffffff" />
-      <pointLight position={[3.5, 1.5, -2.5]} intensity={1.3} castShadow color="#ffd700" />
+      <pointLight position={[-3.5, 2.2, 0.5]} intensity={1.8} castShadow color="#ffffff" />
+      <pointLight position={[3.5, 2.2, 0.5]} intensity={1.8} castShadow color="#ffffff" />
+      <pointLight position={[0, 2.4, -1.0]} intensity={2.0} castShadow color="#fff9ef" />
+      <pointLight position={[3.5, 1.8, -2.5]} intensity={1.6} castShadow color="#ffd700" />
+      <pointLight position={[-3.2, 1.9, -2.0]} intensity={1.25} color="#ffe4b8" />
     </group>
   );
 }
