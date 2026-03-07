@@ -1,7 +1,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import Button from '@/components/ui/Button';
 import { useNavigation } from '@/hooks/useNavigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Scene from '@/components/3d/Scene';
 import GoaBeachScene from '@/components/3d/GoaBeachScene';
 import GoaResort3D from '@/components/3d/GoaResort3D';
@@ -30,6 +30,7 @@ import { useWeatherSystem } from '@/components/3d/weather/WeatherSystem';
 import { useCharacter } from '@/hooks/useCharacter';
 import { useTheme } from '@/hooks/useTheme';
 import GlassCard from '@/components/ui/GlassCard';
+import { goaYourSpaceStory } from '@/data/goa-your-space-story';
 
 export default function YourSpace() {
   const { navigateTo } = useNavigation();
@@ -38,11 +39,80 @@ export default function YourSpace() {
   const { weather, changeWeather } = useWeatherSystem();
   const [season, setSeason] = useState('summer'); // Beach default to summer
   const [isAutoEnvironmentEnabled, setIsAutoEnvironmentEnabled] = useState(true);
-  const [showWelcomeOverlay, setShowWelcomeOverlay] = useState(true);
+  const [showWelcomeOverlay, setShowWelcomeOverlay] = useState(false);
   const [showResort, setShowResort] = useState(false);
   const [showInterior, setShowInterior] = useState(false);
   const [currentResortArea, setCurrentResortArea] = useState<'main-lobby' | 'concierge-desk' | 'pool-area' | 'oceanview-restaurant' | 'spa-wellness' | 'fitness-center' | 'conference-rooms' | 'guest-suites' | 'business-lounge' | 'art-gallery' | 'kids-play' | 'library-study' | 'movie-theater' | 'outdoor-market' | 'adventure-zone' | 'music-studio' | 'botanical-garden' | 'meditation-temple' | 'arcade-gaming' | 'premium-lounge' | 'exterior'>('exterior');
   const [viewMode, setViewMode] = useState<'exterior' | 'interior'>('exterior');
+  const [isStoryMode, setIsStoryMode] = useState(true);
+  const [isStoryFinished, setIsStoryFinished] = useState(false);
+  const [storySceneIndex, setStorySceneIndex] = useState(0);
+  const [storyLineIndex, setStoryLineIndex] = useState(0);
+
+  const activeScene = goaYourSpaceStory.scenes[storySceneIndex];
+  const activeLine = activeScene?.lines[storyLineIndex] ?? '';
+
+  const startStoryMode = () => {
+    setIsAutoEnvironmentEnabled(false);
+    setSeason('summer');
+    changeWeather('sunny' as any);
+    setShowWelcomeOverlay(false);
+    setShowResort(false);
+    setCurrentResortArea('exterior');
+    setViewMode('exterior');
+    setStorySceneIndex(0);
+    setStoryLineIndex(0);
+    setIsStoryFinished(false);
+    setIsStoryMode(true);
+  };
+
+  const skipStoryMode = () => {
+    setIsAutoEnvironmentEnabled(true);
+    setIsStoryMode(false);
+    setIsStoryFinished(true);
+    setStorySceneIndex(0);
+    setStoryLineIndex(0);
+    setShowWelcomeOverlay(true);
+  };
+
+  const goToPreviousStoryStep = () => {
+    if (!activeScene) return;
+
+    if (storyLineIndex > 0) {
+      setStoryLineIndex((prev) => prev - 1);
+      return;
+    }
+
+    if (storySceneIndex > 0) {
+      const previousSceneIndex = storySceneIndex - 1;
+      const previousScene = goaYourSpaceStory.scenes[previousSceneIndex];
+      setStorySceneIndex(previousSceneIndex);
+      setStoryLineIndex(previousScene.lines.length - 1);
+    }
+  };
+
+  const goToNextStoryStep = () => {
+    if (!activeScene) return;
+
+    const isLastLineInScene = storyLineIndex === activeScene.lines.length - 1;
+    const isLastScene = storySceneIndex === goaYourSpaceStory.scenes.length - 1;
+
+    if (!isLastLineInScene) {
+      setStoryLineIndex((prev) => prev + 1);
+      return;
+    }
+
+    if (!isLastScene) {
+      setStorySceneIndex((prev) => prev + 1);
+      setStoryLineIndex(0);
+      return;
+    }
+
+    setIsStoryFinished(true);
+    setIsStoryMode(false);
+    setIsAutoEnvironmentEnabled(true);
+    setShowWelcomeOverlay(true);
+  };
   
   // Automatic Season and Weather Cycling (Every 30 seconds)
   useEffect(() => {
@@ -68,6 +138,69 @@ export default function YourSpace() {
       clearInterval(weatherTimer);
     };
   }, [season, weather, isAutoEnvironmentEnabled, changeWeather]);
+
+  useEffect(() => {
+    if (!isStoryMode || !activeScene) return;
+
+    // Sync world state to each story scene for cinematic flow.
+    if (activeScene.key === 'memory' || activeScene.key === 'thought' || activeScene.key === 'idea' || activeScene.key === 'goa-world') {
+      if (showResort) {
+        setShowResort(false);
+      }
+      if (showWelcomeOverlay) {
+        setShowWelcomeOverlay(false);
+      }
+
+      if (activeScene.key === 'memory') {
+        setSeason('monsoon');
+        changeWeather('cloudy' as any);
+      }
+
+      if (activeScene.key === 'thought') {
+        setSeason('summer');
+        changeWeather('sunny' as any);
+      }
+
+      if (activeScene.key === 'idea' || activeScene.key === 'goa-world') {
+        setSeason('summer');
+        changeWeather('sunny' as any);
+      }
+    }
+
+    if (activeScene.key === 'resort-discovery') {
+      if (!showResort) {
+        setShowResort(true);
+      }
+      if (currentResortArea !== 'exterior') {
+        setCurrentResortArea('exterior');
+      }
+      if (viewMode !== 'exterior') {
+        setViewMode('exterior');
+      }
+      setSeason('summer');
+      changeWeather('sunny' as any);
+    }
+
+    if (activeScene.key === 'meaning') {
+      if (!showResort) {
+        setShowResort(true);
+      }
+      if (currentResortArea !== 'botanical-garden') {
+        setCurrentResortArea('botanical-garden');
+      }
+      setSeason('spring');
+      changeWeather('cloudy' as any);
+    }
+  }, [
+    isStoryMode,
+    activeScene,
+    showResort,
+    showWelcomeOverlay,
+    currentResortArea,
+    viewMode,
+    changeWeather,
+  ]);
+
 
   return (
     <div className={`relative w-full h-screen overflow-hidden transition-all duration-1000 ${
@@ -125,7 +258,7 @@ export default function YourSpace() {
                   currentResortArea === 'outdoor-market' ? [0, 2.5, 5] :
                   currentResortArea === 'adventure-zone' ? [0, 2.5, 5] :
                   currentResortArea === 'music-studio' ? [0, 2.5, 5] :
-                  currentResortArea === 'botanical-garden' ? [0, 3.5, 5] :
+                  currentResortArea === 'botanical-garden' ? [1.2, 3.2, 6.4] :
                   currentResortArea === 'meditation-temple' ? [0, 2.5, 5] :
                   currentResortArea === 'arcade-gaming' ? [0, 2.5, 5] :
                   currentResortArea === 'premium-lounge' ? [0, 2.5, 5] :
@@ -185,7 +318,7 @@ export default function YourSpace() {
                   <MusicRecordingStudio />
                 ) : currentResortArea === 'botanical-garden' ? (
                   // Show botanical garden
-                  <BotanicalGarden />
+                  <BotanicalGarden weatherType={weather} />
                 ) : currentResortArea === 'meditation-temple' ? (
                   // Show meditation temple
                   <MeditationTemple />
@@ -658,6 +791,127 @@ export default function YourSpace() {
                   size="sm"
                 >
                   ← Home
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Cinematic Story Overlay */}
+        {isStoryMode && activeScene && (
+          <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
+            <motion.div
+              className="absolute inset-0"
+              style={{
+                background:
+                  activeScene.key === 'memory'
+                    ? 'radial-gradient(circle at center, rgba(0,0,0,0.9) 0%, rgba(8,15,31,0.8) 50%, rgba(0,0,0,0.95) 100%)'
+                    : activeScene.key === 'meaning'
+                    ? 'radial-gradient(circle at center, rgba(18,42,66,0.35) 0%, rgba(8,15,31,0.74) 65%, rgba(0,0,0,0.86) 100%)'
+                    : 'radial-gradient(circle at center, rgba(4,20,40,0.42) 0%, rgba(7,26,58,0.62) 50%, rgba(0,0,0,0.8) 100%)',
+              }}
+              animate={{ opacity: [0.55, 0.82, 0.55] }}
+              transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
+            />
+
+            <div className="absolute top-6 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/25 text-white text-sm tracking-wide">
+              {goaYourSpaceStory.title} • {activeScene.title}
+            </div>
+
+            <div className="absolute inset-0 flex items-center justify-center px-6">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`${activeScene.id}-${storyLineIndex}`}
+                  initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, y: -20, filter: 'blur(6px)' }}
+                  transition={{ duration: 0.9, ease: 'easeOut' }}
+                  className="max-w-4xl text-center"
+                >
+                  <p className="text-2xl md:text-4xl font-semibold text-white leading-relaxed drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
+                    {activeLine}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            <motion.div
+              className="absolute bottom-5 left-1/2 -translate-x-1/2 w-[94%] max-w-4xl rounded-2xl border border-white/20 bg-black/35 backdrop-blur-xl p-4 pointer-events-auto"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="text-white/70 text-xs mb-2">{activeScene.visualCue}</div>
+
+              <div className="grid grid-cols-6 gap-2 mb-4">
+                {goaYourSpaceStory.scenes.map((scene, index) => (
+                  <div
+                    key={scene.id}
+                    className={`h-1.5 rounded-full transition-all duration-500 ${
+                      index < storySceneIndex
+                        ? 'bg-emerald-300'
+                        : index === storySceneIndex
+                        ? 'bg-white shadow-[0_0_14px_rgba(255,255,255,0.75)]'
+                        : 'bg-white/25'
+                    }`}
+                  />
+                ))}
+              </div>
+
+              <div className="flex items-center justify-between gap-3">
+                <div className="text-white text-sm md:text-base">
+                  Scene {storySceneIndex + 1} / {goaYourSpaceStory.scenes.length} • Line {storyLineIndex + 1} / {activeScene.lines.length}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={goToPreviousStoryStep}
+                    className="text-xs"
+                    disabled={storySceneIndex === 0 && storyLineIndex === 0}
+                  >
+                    ← Previous
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={goToNextStoryStep}
+                    className="text-xs"
+                  >
+                    {storySceneIndex === goaYourSpaceStory.scenes.length - 1 && storyLineIndex === activeScene.lines.length - 1
+                      ? 'Finish Story'
+                      : 'Next →'}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={skipStoryMode}
+                    className="text-xs"
+                  >
+                    ⏭ Skip Story
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Final Story Message */}
+        {!isStoryMode && isStoryFinished && (
+          <div className="absolute inset-x-0 bottom-6 z-20 flex justify-center px-4 pointer-events-none">
+            <motion.div
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-3xl w-full rounded-2xl border border-amber-200/40 bg-gradient-to-r from-amber-500/20 via-orange-400/15 to-sky-400/20 backdrop-blur-lg p-5 text-center pointer-events-auto"
+            >
+              <p className="text-base md:text-2xl text-white font-semibold mb-4 leading-relaxed">
+                {goaYourSpaceStory.finalLine}
+              </p>
+              <div className="flex gap-3 justify-center">
+                <Button size="sm" onClick={startStoryMode}>
+                  🎬 Replay Story
+                </Button>
+                <Button size="sm" variant="secondary" onClick={() => setShowResort(true)}>
+                  🏨 Continue Exploring
                 </Button>
               </div>
             </motion.div>
