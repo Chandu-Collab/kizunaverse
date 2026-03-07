@@ -53,13 +53,27 @@ export default function StudyZone() {
   const [showCareerGuidance, setShowCareerGuidance] = useState(false);
   
   // Story mode states
-  const [isStoryMode, setIsStoryMode] = useState(true);
+  const [isStoryMode, setIsStoryMode] = useState(false);
   const [isStoryFinished, setIsStoryFinished] = useState(false);
   const [storySceneIndex, setStorySceneIndex] = useState(0);
   const [storyLineIndex, setStoryLineIndex] = useState(0);
+  const [storyUnlockAnswer, setStoryUnlockAnswer] = useState('');
+  const [isStoryUnlocked, setIsStoryUnlocked] = useState(false);
+  const [storyUnlockError, setStoryUnlockError] = useState('');
 
   const activeScene = homeTerraceStory.scenes[storySceneIndex];
   const activeLine = activeScene?.lines[storyLineIndex] ?? '';
+
+  const handleStoryUnlock = () => {
+    const normalizedAnswer = storyUnlockAnswer.trim().toLowerCase().replace(/\s+/g, ' ');
+    if (normalizedAnswer === '08 jan' || normalizedAnswer === '8 jan') {
+      setIsStoryUnlocked(true);
+      setStoryUnlockError('');
+      return;
+    }
+
+    setStoryUnlockError('Incorrect answer. Story access is private.');
+  };
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -103,6 +117,11 @@ export default function StudyZone() {
 
   // Story mode handlers
   const startStoryMode = () => {
+    if (!isStoryUnlocked) {
+      setStoryUnlockError('Answer the birthday question to unlock story.');
+      return;
+    }
+
     setShowStudyHome(true);
     setViewMode('exterior');
     setCurrentRoom('exterior');
@@ -366,14 +385,41 @@ export default function StudyZone() {
               </div>
               
               <div className="space-y-2">
-                <Button
-                  onClick={startStoryMode}
-                  variant="primary"
-                  size="sm"
-                  className="w-full bg-gradient-to-r from-purple-500 to-pink-600"
-                >
-                  ✨ Watch Story
-                </Button>
+                <div className="rounded-lg border border-amber-300/40 bg-amber-100/10 p-3">
+                  <p className="text-white text-xs mb-2">🔒 Private Story Access</p>
+                  {!isStoryUnlocked ? (
+                    <>
+                      <label className="text-white/90 text-xs block mb-2">When is ur bday</label>
+                      <input
+                        value={storyUnlockAnswer}
+                        onChange={(event) => {
+                          setStoryUnlockAnswer(event.target.value);
+                          if (storyUnlockError) setStoryUnlockError('');
+                        }}
+                        placeholder="Type answer"
+                        className="w-full rounded-md bg-black/30 border border-white/30 text-white text-xs px-2 py-1.5 mb-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                      />
+                      {storyUnlockError && (
+                        <p className="text-red-200 text-[11px] mb-2">{storyUnlockError}</p>
+                      )}
+                      <Button size="sm" className="w-full text-xs" onClick={handleStoryUnlock}>
+                        Unlock Story
+                      </Button>
+                    </>
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-emerald-200 text-[11px]">Access granted. Story is only for her.</p>
+                      <Button
+                        onClick={startStoryMode}
+                        variant="primary"
+                        size="sm"
+                        className="w-full bg-gradient-to-r from-purple-500 to-pink-600"
+                      >
+                        ✨ Watch Story
+                      </Button>
+                    </div>
+                  )}
+                </div>
                 <Button
                   onClick={() => setShowStudyHome(false)}
                   variant="secondary"
@@ -664,14 +710,34 @@ export default function StudyZone() {
                   <p className="text-xl text-white/70 mb-6">Your personal career guidance and study companion</p>
                   
                   <div className="flex justify-center gap-4 mb-8">
-                    <Button
-                      onClick={startStoryMode}
-                      variant="primary"
-                      size="lg"
-                      className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700"
-                    >
-                      ✨ Watch Story: A Place That Feels Like Yours
-                    </Button>
+                    {!isStoryUnlocked ? (
+                      <div className="w-full max-w-md bg-amber-100/10 border border-amber-300/40 rounded-xl p-4">
+                        <p className="text-white text-sm mb-2">🔒 Private Story Access</p>
+                        <label className="text-white/90 text-sm block mb-2">When is ur bday</label>
+                        <input
+                          value={storyUnlockAnswer}
+                          onChange={(event) => {
+                            setStoryUnlockAnswer(event.target.value);
+                            if (storyUnlockError) setStoryUnlockError('');
+                          }}
+                          placeholder="Type answer"
+                          className="w-full rounded-md bg-black/30 border border-white/30 text-white text-sm px-3 py-2 mb-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                        />
+                        {storyUnlockError && <p className="text-red-200 text-xs mb-2">{storyUnlockError}</p>}
+                        <Button onClick={handleStoryUnlock} variant="primary" size="md" className="w-full">
+                          Unlock Story
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={startStoryMode}
+                        variant="primary"
+                        size="lg"
+                        className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700"
+                      >
+                        ✨ Watch Story: A Place That Feels Like Yours
+                      </Button>
+                    )}
                     <Button
                       onClick={() => { setShowStudyHome(true); setCurrentRoom('exterior'); setIsStoryMode(false); }}
                       variant="secondary"
