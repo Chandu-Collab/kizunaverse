@@ -39,20 +39,36 @@ export default function YourSpace() {
   const { weather, changeWeather } = useWeatherSystem();
   const [season, setSeason] = useState('summer'); // Beach default to summer
   const [isAutoEnvironmentEnabled, setIsAutoEnvironmentEnabled] = useState(true);
-  const [showWelcomeOverlay, setShowWelcomeOverlay] = useState(false);
+  const [showWelcomeOverlay, setShowWelcomeOverlay] = useState(true);
   const [showResort, setShowResort] = useState(false);
   const [showInterior, setShowInterior] = useState(false);
   const [currentResortArea, setCurrentResortArea] = useState<'main-lobby' | 'concierge-desk' | 'pool-area' | 'oceanview-restaurant' | 'spa-wellness' | 'fitness-center' | 'conference-rooms' | 'guest-suites' | 'business-lounge' | 'art-gallery' | 'kids-play' | 'library-study' | 'movie-theater' | 'outdoor-market' | 'adventure-zone' | 'music-studio' | 'botanical-garden' | 'meditation-temple' | 'arcade-gaming' | 'premium-lounge' | 'exterior'>('exterior');
   const [viewMode, setViewMode] = useState<'exterior' | 'interior'>('exterior');
-  const [isStoryMode, setIsStoryMode] = useState(true);
+  const [isStoryMode, setIsStoryMode] = useState(false);
   const [isStoryFinished, setIsStoryFinished] = useState(false);
   const [storySceneIndex, setStorySceneIndex] = useState(0);
   const [storyLineIndex, setStoryLineIndex] = useState(0);
+  const [storyUnlockAnswer, setStoryUnlockAnswer] = useState('');
+  const [isStoryUnlocked, setIsStoryUnlocked] = useState(false);
+  const [storyUnlockError, setStoryUnlockError] = useState('');
 
   const activeScene = goaYourSpaceStory.scenes[storySceneIndex];
   const activeLine = activeScene?.lines[storyLineIndex] ?? '';
+  const isInsideResort = currentResortArea !== 'exterior';
+
+  const handleStoryUnlock = () => {
+    if (storyUnlockAnswer.trim().toLowerCase() === 'bunny') {
+      setIsStoryUnlocked(true);
+      setStoryUnlockError('');
+      return;
+    }
+
+    setStoryUnlockError('Incorrect answer. This story is private.');
+  };
 
   const startStoryMode = () => {
+    if (!isStoryUnlocked) return;
+
     setIsAutoEnvironmentEnabled(false);
     setSeason('summer');
     changeWeather('sunny' as any);
@@ -342,6 +358,41 @@ export default function YourSpace() {
               <div className="absolute top-4 right-4 z-10">
                 <GlassCard className="p-4 max-w-sm">
                   <h3 className="font-semibold text-lg mb-3">🏨 Resort Areas</h3>
+
+                  {isInsideResort && (
+                    <div className="mb-4 rounded-lg border border-amber-300/40 bg-amber-100/10 p-3">
+                      <p className="text-white text-xs mb-2">🔒 Private Story Access</p>
+                      {!isStoryUnlocked ? (
+                        <>
+                          <label className="text-white/90 text-xs block mb-2">
+                            What name i will call u..?
+                          </label>
+                          <input
+                            value={storyUnlockAnswer}
+                            onChange={(event) => {
+                              setStoryUnlockAnswer(event.target.value);
+                              if (storyUnlockError) setStoryUnlockError('');
+                            }}
+                            placeholder="Type answer"
+                            className="w-full rounded-md bg-black/30 border border-white/30 text-white text-xs px-2 py-1.5 mb-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                          />
+                          {storyUnlockError && (
+                            <p className="text-red-200 text-[11px] mb-2">{storyUnlockError}</p>
+                          )}
+                          <Button size="sm" className="w-full text-xs" onClick={handleStoryUnlock}>
+                            Unlock Story
+                          </Button>
+                        </>
+                      ) : (
+                        <div className="space-y-2">
+                          <p className="text-emerald-200 text-[11px]">Access granted. Story is only for her.</p>
+                          <Button size="sm" className="w-full text-xs" onClick={startStoryMode}>
+                            🎬 Start Private Story
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   
                   {(currentResortArea === 'main-lobby' || currentResortArea === 'concierge-desk' || currentResortArea === 'pool-area' || currentResortArea === 'oceanview-restaurant' || currentResortArea === 'spa-wellness' || currentResortArea === 'fitness-center' || currentResortArea === 'conference-rooms' || currentResortArea === 'guest-suites' || currentResortArea === 'business-lounge' || currentResortArea === 'art-gallery' || currentResortArea === 'kids-play' || currentResortArea === 'library-study' || currentResortArea === 'movie-theater' || currentResortArea === 'outdoor-market' || currentResortArea === 'adventure-zone' || currentResortArea === 'music-studio' || currentResortArea === 'botanical-garden' || currentResortArea === 'meditation-temple' || currentResortArea === 'arcade-gaming' || currentResortArea === 'premium-lounge') && (
                     <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-2 mb-3">
