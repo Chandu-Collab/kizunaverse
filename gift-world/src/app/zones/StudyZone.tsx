@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react';
 import GlassCard from '@/components/ui/GlassCard';
 import Button from '@/components/ui/Button';
 import { useNavigation } from '@/hooks/useNavigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import ParticleBackground from '@/components/ui/ParticleBackground';
 import Scene from '@/components/3d/Scene';
 import StudyHome3D from '@/components/3d/StudyHome3D';
 import CareerGuidanceSystem from '@/components/ui/CareerGuidanceSystem';
+import { homeTerraceStory } from '@/data/home-terrace-story';
 
 const MOTIVATIONAL_QUOTES = [
   "🎯 Your career path is unique - trust the process of discovery",
@@ -50,6 +51,29 @@ export default function StudyZone() {
   const [currentRoom, setCurrentRoom] = useState<'library' | 'bedroom' | 'kitchen' | 'washroom' | 'hall' | 'terrace' | 'exterior'>('exterior');
   const [viewMode, setViewMode] = useState<'exterior' | 'interior'>('exterior');
   const [showCareerGuidance, setShowCareerGuidance] = useState(false);
+  
+  // Story mode states
+  const [isStoryMode, setIsStoryMode] = useState(false);
+  const [isStoryFinished, setIsStoryFinished] = useState(false);
+  const [storySceneIndex, setStorySceneIndex] = useState(0);
+  const [storyLineIndex, setStoryLineIndex] = useState(0);
+  const [storyUnlockAnswer, setStoryUnlockAnswer] = useState('');
+  const [isStoryUnlocked, setIsStoryUnlocked] = useState(false);
+  const [storyUnlockError, setStoryUnlockError] = useState('');
+
+  const activeScene = homeTerraceStory.scenes[storySceneIndex];
+  const activeLine = activeScene?.lines[storyLineIndex] ?? '';
+
+  const handleStoryUnlock = () => {
+    const normalizedAnswer = storyUnlockAnswer.trim().toLowerCase().replace(/\s+/g, ' ');
+    if (normalizedAnswer === '08 jan' || normalizedAnswer === '8 jan') {
+      setIsStoryUnlocked(true);
+      setStoryUnlockError('');
+      return;
+    }
+
+    setStoryUnlockError('Incorrect answer. Story access is private.');
+  };
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -90,6 +114,104 @@ export default function StudyZone() {
     setIsRunning(false);
     setTimeLeft(sessionType === 'work' ? 25 * 60 : 5 * 60);
   };
+
+  // Story mode handlers
+  const startStoryMode = () => {
+    if (!isStoryUnlocked) {
+      setStoryUnlockError('Answer the birthday question to unlock story.');
+      return;
+    }
+
+    setShowStudyHome(true);
+    setViewMode('exterior');
+    setCurrentRoom('exterior');
+    setStorySceneIndex(0);
+    setStoryLineIndex(0);
+    setIsStoryFinished(false);
+    setIsStoryMode(true);
+  };
+
+  const skipStoryMode = () => {
+    setIsStoryMode(false);
+    setIsStoryFinished(true);
+    setStorySceneIndex(0);
+    setStoryLineIndex(0);
+  };
+
+  const goToPreviousStoryStep = () => {
+    if (!activeScene) return;
+
+    if (storyLineIndex > 0) {
+      setStoryLineIndex((prev) => prev - 1);
+      return;
+    }
+
+    if (storySceneIndex > 0) {
+      const previousSceneIndex = storySceneIndex - 1;
+      const previousScene = homeTerraceStory.scenes[previousSceneIndex];
+      setStorySceneIndex(previousSceneIndex);
+      setStoryLineIndex(previousScene.lines.length - 1);
+    }
+  };
+
+  const goToNextStoryStep = () => {
+    if (!activeScene) return;
+
+    const isLastLineInScene = storyLineIndex === activeScene.lines.length - 1;
+    const isLastScene = storySceneIndex === homeTerraceStory.scenes.length - 1;
+
+    if (!isLastLineInScene) {
+      setStoryLineIndex((prev) => prev + 1);
+      return;
+    }
+
+    if (!isLastScene) {
+      setStorySceneIndex((prev) => prev + 1);
+      setStoryLineIndex(0);
+      return;
+    }
+
+    setIsStoryFinished(true);
+    setIsStoryMode(false);
+  };
+
+  // Sync story scenes with room changes
+  useEffect(() => {
+    if (!isStoryMode || !activeScene) return;
+
+    if (activeScene.key === 'observation') {
+      if (viewMode !== 'exterior') setViewMode('exterior');
+      if (currentRoom !== 'exterior') setCurrentRoom('exterior');
+    }
+
+    if (activeScene.key === 'terrace') {
+      if (viewMode !== 'exterior') setViewMode('exterior');
+      if (currentRoom !== 'terrace') setCurrentRoom('terrace');
+    }
+
+    if (activeScene.key === 'idea') {
+      if (viewMode !== 'exterior') setViewMode('exterior');
+      if (currentRoom !== 'exterior') setCurrentRoom('exterior');
+    }
+
+    if (activeScene.key === 'home') {
+      if (viewMode !== 'interior') setViewMode('interior');
+      if (currentRoom !== 'hall') setCurrentRoom('hall');
+    }
+
+    if (activeScene.key === 'meaning') {
+      if (viewMode !== 'interior') setViewMode('interior');
+      // Cycle through rooms
+      const rooms: ('library' | 'bedroom' | 'kitchen' | 'hall')[] = ['library', 'bedroom', 'kitchen', 'hall'];
+      const roomIndex = Math.floor(storyLineIndex / activeScene.lines.length * rooms.length);
+      if (currentRoom !== rooms[roomIndex]) setCurrentRoom(rooms[roomIndex]);
+    }
+
+    if (activeScene.key === 'terrace-final') {
+      if (viewMode !== 'exterior') setViewMode('exterior');
+      if (currentRoom !== 'terrace') setCurrentRoom('terrace');
+    }
+  }, [isStoryMode, activeScene, storyLineIndex]);
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
@@ -263,6 +385,41 @@ export default function StudyZone() {
               </div>
               
               <div className="space-y-2">
+                <div className="rounded-lg border border-amber-300/40 bg-amber-100/10 p-3">
+                  <p className="text-white text-xs mb-2">🔒 Private Story Access</p>
+                  {!isStoryUnlocked ? (
+                    <>
+                      <label className="text-white/90 text-xs block mb-2">When is ur bday</label>
+                      <input
+                        value={storyUnlockAnswer}
+                        onChange={(event) => {
+                          setStoryUnlockAnswer(event.target.value);
+                          if (storyUnlockError) setStoryUnlockError('');
+                        }}
+                        placeholder="Type answer"
+                        className="w-full rounded-md bg-black/30 border border-white/30 text-white text-xs px-2 py-1.5 mb-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                      />
+                      {storyUnlockError && (
+                        <p className="text-red-200 text-[11px] mb-2">{storyUnlockError}</p>
+                      )}
+                      <Button size="sm" className="w-full text-xs" onClick={handleStoryUnlock}>
+                        Unlock Story
+                      </Button>
+                    </>
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-emerald-200 text-[11px]">Access granted. Story is only for her.</p>
+                      <Button
+                        onClick={startStoryMode}
+                        variant="primary"
+                        size="sm"
+                        className="w-full bg-gradient-to-r from-purple-500 to-pink-600"
+                      >
+                        ✨ Watch Story
+                      </Button>
+                    </div>
+                  )}
+                </div>
                 <Button
                   onClick={() => setShowStudyHome(false)}
                   variant="secondary"
@@ -340,6 +497,179 @@ export default function StudyZone() {
               ← Back Home
             </Button>
           </div>
+
+          {/* ========== CINEMATIC STORY OVERLAY ========== */}
+          <AnimatePresence>
+            {isStoryMode && activeScene && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1 }}
+                className="absolute inset-0 z-50 pointer-events-none"
+              >
+                {/* Atmospheric Background Gradient */}
+                <div className={`absolute inset-0 transition-all duration-1000 ${
+                  activeScene.key === 'observation' ? 'bg-gradient-to-b from-slate-900/60 via-transparent to-slate-900/60' :
+                  activeScene.key === 'terrace' ? 'bg-gradient-to-b from-emerald-900/50 via-transparent to-emerald-900/50' :
+                  activeScene.key === 'idea' ? 'bg-gradient-to-b from-blue-900/50 via-transparent to-blue-900/50' :
+                  activeScene.key === 'home' ? 'bg-gradient-to-b from-purple-900/50 via-transparent to-purple-900/50' :
+                  activeScene.key === 'meaning' ? 'bg-gradient-to-b from-amber-900/50 via-transparent to-amber-900/50' :
+                  activeScene.key === 'terrace-final' ? 'bg-gradient-to-b from-pink-900/50 via-transparent to-pink-900/50' :
+                  'bg-gradient-to-b from-black/60 via-transparent to-black/60'
+                }`} />
+
+                {/* Story Title Badge - Top Center */}
+                <motion.div
+                  initial={{ y: -50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.5, duration: 0.8 }}
+                  className="absolute top-8 left-1/2 -translate-x-1/2 pointer-events-auto"
+                >
+                  <div className="bg-gradient-to-r from-purple-900/90 via-pink-900/90 to-purple-900/90 backdrop-blur-md px-8 py-3 rounded-full border border-white/30 shadow-2xl">
+                    <h2 className="text-lg md:text-xl font-semibold text-white text-center tracking-wide">
+                      {homeTerraceStory.title} • {activeScene.title}
+                    </h2>
+                  </div>
+                </motion.div>
+
+                {/* Main Story Text - Center */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-4">
+                  <motion.div
+                    key={`${storySceneIndex}-${storyLineIndex}`}
+                    initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
+                    transition={{ duration: 1, ease: 'easeOut' }}
+                    className="max-w-4xl"
+                  >
+                    <p className="text-2xl md:text-4xl lg:text-5xl font-light text-white text-center leading-relaxed drop-shadow-2xl px-6 py-4">
+                      {activeLine}
+                    </p>
+                  </motion.div>
+                </div>
+
+                {/* Progress Indicators - Scene Progress Bar */}
+                <motion.div
+                  initial={{ y: 50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.8, duration: 0.8 }}
+                  className="absolute bottom-32 left-1/2 -translate-x-1/2 flex gap-2 pointer-events-none"
+                >
+                  {homeTerraceStory.scenes.map((scene, idx) => (
+                    <div
+                      key={scene.id}
+                      className={`h-1.5 rounded-full transition-all duration-500 ${
+                        idx < storySceneIndex
+                          ? 'w-12 bg-green-400 shadow-lg shadow-green-400/50'
+                          : idx === storySceneIndex
+                          ? 'w-16 bg-white shadow-lg shadow-white/50 animate-pulse'
+                          : 'w-8 bg-white/30'
+                      }`}
+                    />
+                  ))}
+                </motion.div>
+
+                {/* Story Controls - Bottom Center */}
+                <motion.div
+                  initial={{ y: 50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 1, duration: 0.8 }}
+                  className="absolute bottom-8 left-1/2 -translate-x-1/2 pointer-events-auto"
+                >
+                  <div className="bg-black/60 backdrop-blur-xl px-6 py-4 rounded-3xl border border-white/20 shadow-2xl">
+                    {/* Scene/Line Counter */}
+                    <div className="text-center mb-3">
+                      <span className="text-sm text-white/80 font-medium">
+                        Scene {storySceneIndex + 1} / {homeTerraceStory.scenes.length} • Line {storyLineIndex + 1} / {activeScene.lines.length}
+                      </span>
+                    </div>
+
+                    {/* Navigation Buttons */}
+                    <div className="flex gap-3 items-center justify-center">
+                      <Button
+                        onClick={goToPreviousStoryStep}
+                        variant="secondary"
+                        size="sm"
+                        disabled={storySceneIndex === 0 && storyLineIndex === 0}
+                        className="disabled:opacity-30"
+                      >
+                        ← Previous
+                      </Button>
+
+                      <Button
+                        onClick={goToNextStoryStep}
+                        variant="primary"
+                        size="sm"
+                      >
+                        {storySceneIndex === homeTerraceStory.scenes.length - 1 && 
+                         storyLineIndex === activeScene.lines.length - 1
+                          ? 'Finish ✨'
+                          : 'Next →'}
+                      </Button>
+
+                      <Button
+                        onClick={skipStoryMode}
+                        variant="ghost"
+                        size="sm"
+                        className="text-white/70 hover:text-white"
+                      >
+                        Skip Story
+                      </Button>
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+
+            {/* Story Finished - Final Message */}
+            {isStoryFinished && !isStoryMode && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.8 }}
+                className="absolute inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-lg pointer-events-auto"
+              >
+                <motion.div
+                  initial={{ y: 30, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.3, duration: 0.8 }}
+                  className="max-w-2xl mx-4 bg-gradient-to-br from-purple-900/90 via-pink-900/90 to-purple-900/90 backdrop-blur-xl p-8 md:p-12 rounded-3xl border border-white/30 shadow-2xl text-center"
+                >
+                  <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+                    {homeTerraceStory.title}
+                  </h2>
+                  <p className="text-xl md:text-2xl text-white/90 leading-relaxed mb-8 italic">
+                    "{homeTerraceStory.finalLine}"
+                  </p>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <Button
+                      onClick={startStoryMode}
+                      variant="secondary"
+                      size="lg"
+                      className="bg-white/20 hover:bg-white/30"
+                    >
+                      🔄 Replay Story
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setIsStoryFinished(false);
+                        setViewMode('interior');
+                        setCurrentRoom('hall');
+                      }}
+                      variant="primary"
+                      size="lg"
+                      className="bg-gradient-to-r from-blue-500 to-purple-600"
+                    >
+                      ✨ Explore The Home
+                    </Button>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       ) : (
         // Enhanced Study Zone with Career Focus
@@ -380,8 +710,36 @@ export default function StudyZone() {
                   <p className="text-xl text-white/70 mb-6">Your personal career guidance and study companion</p>
                   
                   <div className="flex justify-center gap-4 mb-8">
+                    {!isStoryUnlocked ? (
+                      <div className="w-full max-w-md bg-amber-100/10 border border-amber-300/40 rounded-xl p-4">
+                        <p className="text-white text-sm mb-2">🔒 Private Story Access</p>
+                        <label className="text-white/90 text-sm block mb-2">When is ur bday</label>
+                        <input
+                          value={storyUnlockAnswer}
+                          onChange={(event) => {
+                            setStoryUnlockAnswer(event.target.value);
+                            if (storyUnlockError) setStoryUnlockError('');
+                          }}
+                          placeholder="Type answer"
+                          className="w-full rounded-md bg-black/30 border border-white/30 text-white text-sm px-3 py-2 mb-2 focus:outline-none focus:ring-2 focus:ring-amber-300/60"
+                        />
+                        {storyUnlockError && <p className="text-red-200 text-xs mb-2">{storyUnlockError}</p>}
+                        <Button onClick={handleStoryUnlock} variant="primary" size="md" className="w-full">
+                          Unlock Story
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={startStoryMode}
+                        variant="primary"
+                        size="lg"
+                        className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700"
+                      >
+                        ✨ Watch Story: A Place That Feels Like Yours
+                      </Button>
+                    )}
                     <Button
-                      onClick={() => { setShowStudyHome(true); setCurrentRoom('exterior'); }}
+                      onClick={() => { setShowStudyHome(true); setCurrentRoom('exterior'); setIsStoryMode(false); }}
                       variant="secondary"
                       size="lg"
                       className="bg-white/10 hover:bg-white/20"
