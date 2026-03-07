@@ -166,6 +166,20 @@ The website is fully responsive and optimized for mobile devices:
 2. Import your repository on [Vercel](https://vercel.com)
 3. Deploy with default settings
 
+### Netlify
+
+This repository is configured for Netlify with `netlify.toml` at the repo root.
+
+1. Push your code to GitHub.
+2. In Netlify, click **Add new site** and import your repository.
+3. Keep default build settings (Netlify reads `netlify.toml` automatically):
+   - Base directory: `gift-world`
+   - Build command: `npm run build`
+   - Node version: `20`
+4. Deploy.
+
+If Netlify asks for a framework preset, choose **Next.js**.
+
 ### Other Platforms
 
 ```bash
