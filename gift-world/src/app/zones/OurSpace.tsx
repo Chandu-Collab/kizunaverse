@@ -21,7 +21,33 @@ export default function OurSpace() {
   const [showInfo, setShowInfo] = useState(true);
   const [showCityInfo, setShowCityInfo] = useState(true);
   const [showMemoryModal, setShowMemoryModal] = useState(false);
+  const [showStoryLockPrompt, setShowStoryLockPrompt] = useState(false);
+  const [storyUnlockAnswer, setStoryUnlockAnswer] = useState('');
+  const [isStoryUnlocked, setIsStoryUnlocked] = useState(false);
+  const [storyUnlockError, setStoryUnlockError] = useState('');
   const { weather, autoWeather, changeWeather, enableAutoWeather } = useWeatherSystem();
+
+  const requestStoryAccess = () => {
+    if (isStoryUnlocked) {
+      setShowMemoryModal(true);
+      return;
+    }
+
+    setShowStoryLockPrompt(true);
+  };
+
+  const handleStoryUnlock = () => {
+    const normalizedAnswer = storyUnlockAnswer.trim().toLowerCase().replace(/\s+/g, ' ');
+    if (normalizedAnswer === '10 days' || normalizedAnswer === '10 day') {
+      setIsStoryUnlocked(true);
+      setStoryUnlockError('');
+      setShowStoryLockPrompt(false);
+      setShowMemoryModal(true);
+      return;
+    }
+
+    setStoryUnlockError('Incorrect answer. Story is private.');
+  };
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
@@ -56,7 +82,7 @@ export default function OurSpace() {
                   🎓 Explore Journey
                 </Button>
                 <Button 
-                  onClick={() => setShowMemoryModal(true)} 
+                  onClick={requestStoryAccess} 
                   variant="ghost" 
                   size="sm"
                 >
@@ -107,7 +133,7 @@ export default function OurSpace() {
             </ul>
             <div className="border-t border-white/20 pt-2">
               <Button 
-                onClick={() => setShowMemoryModal(true)} 
+                onClick={requestStoryAccess} 
                 variant="primary" 
                 size="sm"
                 className="w-full bg-gradient-to-r from-blue-500 to-purple-600"
@@ -189,7 +215,7 @@ export default function OurSpace() {
               </Button>
             )}
             <Button 
-              onClick={() => setShowMemoryModal(true)} 
+              onClick={requestStoryAccess} 
               variant="primary" 
               size="sm"
               className="bg-gradient-to-r from-blue-500 to-purple-600"
@@ -225,6 +251,34 @@ export default function OurSpace() {
         onWeatherChange={changeWeather}
         onToggleAuto={enableAutoWeather}
       />
+
+      {/* Story Lock Prompt */}
+      {showStoryLockPrompt && (
+        <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/60 px-4">
+          <GlassCard className="w-full max-w-md p-5">
+            <h2 className="text-xl font-bold text-white mb-2">🔒 Private Story Access</h2>
+            <p className="text-white/90 text-sm mb-3">How many days late i was from ur bday to meet u..!</p>
+            <input
+              value={storyUnlockAnswer}
+              onChange={(event) => {
+                setStoryUnlockAnswer(event.target.value);
+                if (storyUnlockError) setStoryUnlockError('');
+              }}
+              placeholder="Type answer"
+              className="w-full rounded-md bg-black/30 border border-white/30 text-white text-sm px-3 py-2 mb-2 focus:outline-none focus:ring-2 focus:ring-blue-300/60"
+            />
+            {storyUnlockError && <p className="text-red-200 text-xs mb-3">{storyUnlockError}</p>}
+            <div className="flex gap-2">
+              <Button size="sm" variant="secondary" className="w-full" onClick={() => setShowStoryLockPrompt(false)}>
+                Cancel
+              </Button>
+              <Button size="sm" className="w-full" onClick={handleStoryUnlock}>
+                Unlock Story
+              </Button>
+            </div>
+          </GlassCard>
+        </div>
+      )}
 
       {/* Memory Modal - Our enhanced love story */}
       <EnhancedMemoryModal 
