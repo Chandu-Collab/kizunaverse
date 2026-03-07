@@ -125,7 +125,7 @@ export default function YourSpace() {
                   currentResortArea === 'outdoor-market' ? [0, 2.5, 5] :
                   currentResortArea === 'adventure-zone' ? [0, 2.5, 5] :
                   currentResortArea === 'music-studio' ? [0, 2.5, 5] :
-                  currentResortArea === 'botanical-garden' ? [0, 3.5, 5] :
+                  currentResortArea === 'botanical-garden' ? [1.2, 3.2, 6.4] :
                   currentResortArea === 'meditation-temple' ? [0, 2.5, 5] :
                   currentResortArea === 'arcade-gaming' ? [0, 2.5, 5] :
                   currentResortArea === 'premium-lounge' ? [0, 2.5, 5] :
@@ -185,7 +185,7 @@ export default function YourSpace() {
                   <MusicRecordingStudio />
                 ) : currentResortArea === 'botanical-garden' ? (
                   // Show botanical garden
-                  <BotanicalGarden />
+                  <BotanicalGarden weatherType={weather} />
                 ) : currentResortArea === 'meditation-temple' ? (
                   // Show meditation temple
                   <MeditationTemple />
