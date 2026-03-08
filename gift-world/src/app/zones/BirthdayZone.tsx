@@ -14,6 +14,7 @@ import WeatherControls from "@/components/ui/WeatherControls";
 import WeatherSystem from "@/components/3d/weather/WeatherSystem";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import { useTheme } from "@/hooks/useTheme";
+import { useNavigation } from "@/hooks/useNavigation";
 import { hospitalRoomMeanings } from "@/data/hospital-room-meanings";
 import { birthdayStory } from "@/data/birthday-story";
 import { Text } from '@react-three/drei';
@@ -142,6 +143,7 @@ export default function BirthdayZone() {
   const [weather, setWeather] = useState<WeatherType>('sunny');
   const [autoWeather, setAutoWeather] = useState(true);
   const { isNight, toggleTheme } = useTheme();
+  const { navigateTo } = useNavigation();
   const [isAutoCycle, setIsAutoCycle] = useState(true);
 
   // Hospital view state
@@ -362,6 +364,12 @@ export default function BirthdayZone() {
       {/* Hospital 3D View Controls */}
       <div className="absolute top-4 left-4 z-40">
         <div className="bg-black/60 rounded-lg p-4 flex flex-col gap-2 shadow">
+          <button
+            onClick={() => navigateTo('home')}
+            className="px-3 py-1 rounded text-xs border bg-white/10 text-white/90 hover:bg-white/20 transition-colors self-start"
+          >
+            ← Back To Home
+          </button>
           <div className="flex gap-2 mb-2">
             <button
               onClick={() => {
