@@ -1,8 +1,9 @@
 import { useRef } from 'react';
 import { Shape, ExtrudeGeometry } from 'three';
+import type { Mesh } from 'three';
 
 export default function Heart3D({ color = '#FF4F8B', scale = 1 }) {
-  const meshRef = useRef();
+  const meshRef = useRef<Mesh | null>(null);
   // Heart shape path
   const heartShape = new Shape();
   heartShape.moveTo(0, 0.25);

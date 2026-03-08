@@ -3,7 +3,13 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useTheme } from '@/hooks/useTheme';
 
-export function Bench({ position = [0, 0, 0] }) {
+type Vec3 = [number, number, number];
+
+interface PositionedProps {
+  position?: Vec3;
+}
+
+export function Bench({ position = [0, 0, 0] }: PositionedProps) {
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
   useFrame(() => {
@@ -37,7 +43,7 @@ export function Bench({ position = [0, 0, 0] }) {
   );
 }
 
-export function LampPost({ position = [0, 0, 0] }) {
+export function LampPost({ position = [0, 0, 0] }: PositionedProps) {
   const lampRef = useRef<THREE.Mesh>(null);
   const glowRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
@@ -50,14 +56,26 @@ export function LampPost({ position = [0, 0, 0] }) {
       // Enhanced lighting effects
       const baseIntensity = hovered ? 1.2 : 0.9;
       const flicker = Math.sin(t * 8 + position[0] + position[2]) * 0.1;
-      lampRef.current.material.emissiveIntensity = baseIntensity + flicker;
+      const lampMaterial = Array.isArray(lampRef.current.material)
+        ? lampRef.current.material[0]
+        : lampRef.current.material;
+
+      if (lampMaterial instanceof THREE.MeshStandardMaterial) {
+        lampMaterial.emissiveIntensity = baseIntensity + flicker;
+      }
       lampRef.current.scale.setScalar(hovered ? 1.15 : 1);
     }
     
     if (glowRef.current && isNight) {
       // Soft glow effect
       const glowIntensity = 0.3 + Math.sin(t * 2 + position[1]) * 0.1;
-      glowRef.current.material.opacity = glowIntensity;
+      const glowMaterial = Array.isArray(glowRef.current.material)
+        ? glowRef.current.material[0]
+        : glowRef.current.material;
+
+      if (glowMaterial instanceof THREE.MeshStandardMaterial) {
+        glowMaterial.opacity = glowIntensity;
+      }
       glowRef.current.scale.setScalar(1 + Math.sin(t * 3) * 0.1);
     }
   });

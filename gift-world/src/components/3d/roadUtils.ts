@@ -72,7 +72,7 @@ export function getBranchRoadCurves() {
   });
 }
 
-export function getRoadPointAndTangent(curve, t) {
+export function getRoadPointAndTangent(curve: CatmullRomCurve3, t: number) {
   // t in [0,1]
   const point = curve.getPoint(t);
   const tangent = curve.getTangent(t);

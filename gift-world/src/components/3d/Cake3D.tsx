@@ -1,7 +1,8 @@
 import { useRef } from 'react';
+import type { Mesh } from 'three';
 
 export default function Cake3D({ color = '#FFB6C1', scale = 1 }) {
-  const meshRef = useRef();
+  const meshRef = useRef<Mesh | null>(null);
   return (
     <group scale={[scale, scale, scale]}>
       {/* Cake base */}

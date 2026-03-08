@@ -1,7 +1,8 @@
 import { useRef } from 'react';
+import type { Mesh } from 'three';
 
 export default function Moon3D({ color = '#FFD700', scale = 1 }) {
-  const meshRef = useRef();
+  const meshRef = useRef<Mesh | null>(null);
   // Crescent moon: subtract a smaller sphere from a larger one
   return (
     <group scale={[scale, scale, scale]}>

@@ -1,7 +1,8 @@
 import { useRef } from 'react';
+import type { Mesh } from 'three';
 
 export default function Gamepad3D({ color = '#4F8BFF', scale = 1 }) {
-  const meshRef = useRef();
+  const meshRef = useRef<Mesh | null>(null);
   return (
     <group scale={[scale, scale, scale]}>
       {/* Main body */}
