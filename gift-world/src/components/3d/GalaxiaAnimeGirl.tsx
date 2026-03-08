@@ -16,7 +16,7 @@ const ANIMATIONS = {
 };
 
 export default function GalaxiaAnimeGirl() {
-  const { isDark } = useTheme();
+  const { isNight } = useTheme();
   const groupRef = useRef<THREE.Group>(null);
   const mixerRef = useRef<THREE.AnimationMixer | null>(null);
   const [actions, setActions] = useState<{ [key: string]: THREE.AnimationAction }>({});
@@ -86,7 +86,7 @@ export default function GalaxiaAnimeGirl() {
   return (
     <group ref={groupRef} position={[0, 0.5, 0]} scale={[0.08, 0.08, 0.08]}>
       {/* Night lighting for character visibility */}
-      {isDark && (
+      {isNight && (
         <group>
           <ambientLight intensity={0.6} />
           <pointLight position={[0, 2, 2]} intensity={0.8} color="#ff69b4" />

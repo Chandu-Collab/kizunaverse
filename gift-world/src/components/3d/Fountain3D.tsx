@@ -2,7 +2,14 @@ import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Color } from 'three';
 
-export default function Fountain3D({ position = [3, 0, -2], scale = 1 }) {
+type Vec3 = [number, number, number];
+
+interface Fountain3DProps {
+  position?: Vec3;
+  scale?: number;
+}
+
+export default function Fountain3D({ position = [3, 0, -2], scale = 1 }: Fountain3DProps) {
   const waterRef = useRef<any>(null);
   useFrame((state) => {
     if (waterRef.current) {
