@@ -30,7 +30,7 @@ export default function GalaxiaAnimeGirl() {
     const loader = new FBXLoader();
     let mounted = true;
 
-    loader.load(MODEL_PATH, (fbx) => {
+    loader.load(MODEL_PATH, (fbx: THREE.Group) => {
       if (!mounted) return;
       model = fbx as unknown as THREE.Group;
       if (groupRef.current && model) {
@@ -42,7 +42,7 @@ export default function GalaxiaAnimeGirl() {
 
       // Load animations
       Object.entries(ANIMATIONS).forEach(([name, path]) => {
-        loader.load(path, (anim) => {
+        loader.load(path, (anim: THREE.Group) => {
           if (!mounted || !mixer) return;
           // FBXLoader returns a Group, but animations are attached to the object
           const animObj = anim as any;
