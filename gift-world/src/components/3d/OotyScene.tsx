@@ -1,13 +1,21 @@
 "use client";
 // Falling Petals/Leaves Particle System
-import { useMemo } from 'react';
-
+import { useMemo, useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { Mesh, Group, Color } from 'three';
+import { useTheme } from '@/hooks/useTheme';
 
 // Generic animated particle system for seasonal effects
 // ...existing code...
 // ...existing code...
-function AnimatedParticles({ count = 24, type = 'petal', colors, sizeRange = [0.09, 0.13], shape = 'plane' }) {
-  const group = useRef();
+function AnimatedParticles({ count = 24, type = 'petal', colors, sizeRange = [0.09, 0.13], shape = 'plane' }: {
+  count?: number;
+  type?: string;
+  colors: string[];
+  sizeRange?: [number, number];
+  shape?: 'plane' | 'sphere';
+}) {
+  const group = useRef<Group>(null);
   // Precompute random properties for each particle
   const particles = useMemo(() => Array.from({ length: count }).map(() => ({
     x: (Math.random() - 0.5) * 24,
@@ -50,11 +58,6 @@ function AnimatedParticles({ count = 24, type = 'petal', colors, sizeRange = [0.
     </group>
   );
 }
-
-import { useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { Mesh, Group, Color } from 'three';
-import { useTheme } from '@/hooks/useTheme';
 
 // Refined Mountain with better proportions
 function Mountain({ position, scale = [1, 1, 1], color = '#4A7C59' }: {

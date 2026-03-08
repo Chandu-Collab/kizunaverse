@@ -14,9 +14,9 @@ function AnimatedFBXModel() {
   useEffect(() => {
     const loader = new FBXLoader();
     let mounted = true;
-    loader.load(MODEL_PATH, (fbx) => {
+    loader.load(MODEL_PATH, (fbx: any) => {
       if (!mounted) return;
-      modelRef.current = fbx as unknown as THREE.Group;
+      modelRef.current = fbx as THREE.Group;
       if (groupRef.current && modelRef.current) {
         groupRef.current.add(modelRef.current);
         setModelLoaded(true);
