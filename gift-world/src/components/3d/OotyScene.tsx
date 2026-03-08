@@ -2,7 +2,7 @@
 // Falling Petals/Leaves Particle System
 import { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Mesh, Group, Color } from 'three';
+import { Mesh, Group, Color, ShaderMaterial } from 'three';
 import { useTheme } from '@/hooks/useTheme';
 
 // Generic animated particle system for seasonal effects
@@ -150,7 +150,7 @@ function Lake() {
   useFrame((state) => {
     if (lakeRef.current) {
       const time = state.clock.elapsedTime;
-      lakeRef.current.material.uniforms.uTime.value = time;
+      (lakeRef.current.material as ShaderMaterial).uniforms.uTime.value = time;
       lakeRef.current.rotation.z = Math.sin(time * 0.25) * 0.003;
       lakeRef.current.position.y = 0.1 + Math.sin(time * 0.2) * 0.015;
     }
@@ -580,7 +580,7 @@ function Ground() {
 
 // Main Ooty Scene Component
 export default function OotyScene({ season = 'spring' }: { season?: string }) {
-  const { isNight, isDay, isMorning } = useTheme();
+  const { isNight, isDay } = useTheme();
   const sceneRef = useRef<Group>(null);
 
   useFrame((state) => {
@@ -595,9 +595,6 @@ export default function OotyScene({ season = 'spring' }: { season?: string }) {
   if (isNight) {
     fogColor = '#181a2a';
     fogNear = 18; fogFar = 55;
-  } else if (isMorning) {
-    fogColor = '#e0e6ef';
-    fogNear = 16; fogFar = 48;
   }
   const skyColor = isNight ? '#0a0a1a' : '#A8D8F8';
   const ambientIntensity = isNight ? 0.3 : 0.65;

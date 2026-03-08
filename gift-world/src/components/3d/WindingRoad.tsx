@@ -2,7 +2,11 @@ import { CatmullRomCurve3 } from 'three';
 import { getMainRoadCurve, getBranchRoadCurves } from './roadUtils';
 import { useMemo } from 'react';
 
-function RoadMesh({ curve, color = '#9B8365', width = 1.2 }) {
+function RoadMesh({ curve, color = '#9B8365', width = 1.2 }: {
+  curve: CatmullRomCurve3;
+  color?: string;
+  width?: number;
+}) {
   const roadPoints = useMemo(() => curve.getPoints(100), [curve]);
   const vertices = useMemo(() => {
     const verts = [];
@@ -24,15 +28,11 @@ function RoadMesh({ curve, color = '#9B8365', width = 1.2 }) {
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          count={vertices.length / 3}
-          array={new Float32Array(vertices)}
-          itemSize={3}
+          args={[new Float32Array(vertices), 3]}
         />
         <bufferAttribute
           attach="index"
-          count={indices.length}
-          array={new Uint16Array(indices)}
-          itemSize={1}
+          args={[new Uint16Array(indices), 1]}
         />
       </bufferGeometry>
       <meshStandardMaterial color={color} roughness={0.8} />
