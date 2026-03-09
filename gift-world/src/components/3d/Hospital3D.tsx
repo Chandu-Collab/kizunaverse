@@ -9,7 +9,7 @@ import { Environment, Float, Text, Sky, ContactShadows } from "@react-three/drei
 import * as THREE from "three";
 import StoreRoom3D from "./StoreRoom3D";
 import GeneratorRoom3D from "./GeneratorRoom3D";
-import { ReceptionRoom, WardRoom, OperationTheater } from "./HospitalRooms";
+import { WardRoom, OperationTheater } from "./HospitalRooms";
 import Ambulance3D from "./Ambulance3D";
 import ParkedCar3D from "./ParkedCar3D";
 import Male3D from "./Male3D";
@@ -1217,17 +1217,14 @@ function HospitalContent({ isNight = false }: { isNight?: boolean }) {
             </group>
             {/* Right Door (slides right, flush with building, no gap) */}
             <group position={[0.7 + 0.5 * sideDoorAnim, -2.3, 6.0]}>
-              {/* Frame */}
               <mesh>
                 <boxGeometry args={[0.74, 1.64, 0.09]} />
                 <primitive object={frameMaterial} attach="material" />
               </mesh>
-              {/* Glass */}
               <mesh position={[0, 0, 0.05]}>
                 <boxGeometry args={[0.66, 1.54, 0.03]} />
                 <meshStandardMaterial color="#e3f2fd" transparent opacity={0.6} metalness={0.4} />
               </mesh>
-              {/* Crossbars */}
               <mesh position={[0, 0, 0.07]}>
                 <boxGeometry args={[0.05, 1.54, 0.01]} />
                 <primitive object={crossbarMaterial} attach="material" />
@@ -1236,7 +1233,6 @@ function HospitalContent({ isNight = false }: { isNight?: boolean }) {
                 <boxGeometry args={[0.66, 0.05, 0.01]} />
                 <primitive object={crossbarMaterial} attach="material" />
               </mesh>
-              {/* Handle */}
               <mesh position={[-0.25, 0, 0.12]} ref={el => { if (el) el.rotation.set(Math.PI / 2, 0, 0); }}>
                 <cylinderGeometry args={[0.03, 0.03, 0.18, 16]} />
                 <primitive object={handleMaterial} attach="material" />
@@ -1791,8 +1787,7 @@ function HospitalContent({ isNight = false }: { isNight?: boolean }) {
       </Float>
       {/* Hospital Interior Layout (Ground Floor) */}
       <group position={[0, 0.11, 0]}>
-        {/* Reception at entrance */}
-        <ReceptionRoom position={[0, 0, 4.5]} />
+        {/* Removed Reception at entrance */}
         {/* Wards left and right */}
         <WardRoom position={[-5.5, 0, 0]} beds={3} />
         <WardRoom position={[5.5, 0, 0]} beds={3} />

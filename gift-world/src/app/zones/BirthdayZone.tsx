@@ -1960,20 +1960,32 @@ function RightWingLayout({ isNight, floor = 'ground', liftUpdateTrigger }: { isN
   const firstY = FLOOR_HEIGHT;
   const secondY = FLOOR_HEIGHT * 2;
 
-  // Right Wing Room Configurations (2 rooms per floor - front and back)
+  // Right Wing Room Configurations (Patient Care Support - NO DUPLICATES)
   const rightWingGroundRooms: RoomDef[] = [
     { name: 'Consultation Hub', room: 'consultation', position: [CENTER_X, groundY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Front
-    { name: 'Recovery Center', room: 'recovery', position: [CENTER_X, groundY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Public Bathrooms', room: 'bathroomRestroom', position: [CENTER_X + ROOM_SPACING, groundY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Back
+    { name: 'Recovery Center', room: 'recovery', position: [CENTER_X - ROOM_SPACING, groundY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Back
+    { name: 'Nurse Station', room: 'nurseStations', position: [CENTER_X, groundY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Family Bathrooms', room: 'bathroomRestroom', position: [CENTER_X + ROOM_SPACING, groundY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Linen Storage', room: 'store', position: [CENTER_X - ROOM_SPACING, groundY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
   ];
 
   const rightWingFirstRooms: RoomDef[] = [
-    { name: 'Public Bathrooms', room: 'bathroomRestroom', position: [CENTER_X, firstY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Front
-    { name: 'Nurse Station', room: 'nurseStations', position: [CENTER_X, firstY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Recovery Ward A', room: 'recovery', position: [CENTER_X, firstY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Front
+    { name: 'Recovery Ward B', room: 'recovery', position: [CENTER_X + ROOM_SPACING, firstY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Back
+    { name: 'Patient Bathrooms', room: 'bathroomRestroom', position: [CENTER_X - ROOM_SPACING, firstY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Back
+    { name: 'Nurse Station 3', room: 'nurseStations', position: [CENTER_X, firstY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Spiritual Care', room: 'chapelPrayerRoom', position: [CENTER_X + ROOM_SPACING, firstY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Consultation Room E', room: 'consultation', position: [CENTER_X - ROOM_SPACING, firstY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
   ];
 
   const rightWingSecondRooms: RoomDef[] = [
-    { name: 'Patient Storage', room: 'store', position: [CENTER_X, secondY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Front
-    { name: 'Recovery Suite', room: 'recovery', position: [CENTER_X, secondY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Recovery Suites', room: 'recovery', position: [CENTER_X, secondY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Front
+    { name: 'Private Bathrooms', room: 'bathroomRestroom', position: [CENTER_X + ROOM_SPACING, secondY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Back
+    { name: 'Nurse Station 4', room: 'nurseStations', position: [CENTER_X - ROOM_SPACING, secondY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Back
+    { name: 'Specialty Consultation', room: 'consultation', position: [CENTER_X, secondY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Meditation Room', room: 'chapelPrayerRoom', position: [CENTER_X + ROOM_SPACING, secondY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Patient Storage', room: 'store', position: [CENTER_X - ROOM_SPACING, secondY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
   ];
 
   let rooms: typeof rightWingGroundRooms = rightWingGroundRooms;
@@ -2304,21 +2316,21 @@ function RightWingLayout3D({ isNight, floor = 'ground', liftUpdateTrigger }: { i
   ];
 
   const rightWingFirstRooms: RoomDef[] = [
-    { name: 'Recovery Ward A', room: 'recovery', position: [WING_OFFSET_X, firstY, WING_OFFSET_Z], rotation: [0, 0, 0] },
-    { name: 'Recovery Ward B', room: 'recovery', position: [WING_OFFSET_X + ROOM_SPACING, firstY, WING_OFFSET_Z], rotation: [0, 0, 0] },
-    { name: 'Patient Bathrooms', room: 'bathroomRestroom', position: [WING_OFFSET_X - ROOM_SPACING, firstY, WING_OFFSET_Z], rotation: [0, 0, 0] },
-    { name: 'Nurse Station 3', room: 'nurseStations', position: [WING_OFFSET_X, firstY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
-    { name: 'Spiritual Care', room: 'chapelPrayerRoom', position: [WING_OFFSET_X + ROOM_SPACING, firstY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
-    { name: 'Consultation Room E', room: 'consultation', position: [WING_OFFSET_X - ROOM_SPACING, firstY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Recovery Ward A', room: 'recovery', position: [WING_OFFSET_X, firstY, WING_OFFSET_Z + 8], rotation: [0, 0, 0] },
+    { name: 'Recovery Ward B', room: 'recovery', position: [WING_OFFSET_X + ROOM_SPACING, firstY, WING_OFFSET_Z + 8], rotation: [0, 0, 0] },
+    { name: 'Patient Bathrooms', room: 'bathroomRestroom', position: [WING_OFFSET_X - ROOM_SPACING, firstY, WING_OFFSET_Z + 8], rotation: [0, 0, 0] },
+    { name: 'Nurse Station 3', room: 'nurseStations', position: [WING_OFFSET_X, firstY, WING_OFFSET_Z - 8], rotation: [0, Math.PI, 0] },
+    { name: 'Spiritual Care', room: 'chapelPrayerRoom', position: [WING_OFFSET_X + ROOM_SPACING, firstY, WING_OFFSET_Z - 8], rotation: [0, Math.PI, 0] },
+    { name: 'Consultation Room E', room: 'consultation', position: [WING_OFFSET_X - ROOM_SPACING, firstY, WING_OFFSET_Z - 8], rotation: [0, Math.PI, 0] },
   ];
 
   const rightWingSecondRooms: RoomDef[] = [
-    { name: 'Recovery Suites', room: 'recovery', position: [WING_OFFSET_X, secondY, WING_OFFSET_Z], rotation: [0, 0, 0] },
-    { name: 'Private Bathrooms', room: 'bathroomRestroom', position: [WING_OFFSET_X + ROOM_SPACING, secondY, WING_OFFSET_Z], rotation: [0, 0, 0] },
-    { name: 'Nurse Station 4', room: 'nurseStations', position: [WING_OFFSET_X - ROOM_SPACING, secondY, WING_OFFSET_Z], rotation: [0, 0, 0] },
-    { name: 'Specialty Consultation', room: 'consultation', position: [WING_OFFSET_X, secondY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
-    { name: 'Meditation Room', room: 'chapelPrayerRoom', position: [WING_OFFSET_X + ROOM_SPACING, secondY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
-    { name: 'Patient Storage', room: 'store', position: [WING_OFFSET_X - ROOM_SPACING, secondY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Recovery Suites', room: 'recovery', position: [WING_OFFSET_X, secondY, WING_OFFSET_Z + 8], rotation: [0, 0, 0] },
+    { name: 'Private Bathrooms', room: 'bathroomRestroom', position: [WING_OFFSET_X + ROOM_SPACING, secondY, WING_OFFSET_Z + 8], rotation: [0, 0, 0] },
+    { name: 'Nurse Station 4', room: 'nurseStations', position: [WING_OFFSET_X - ROOM_SPACING, secondY, WING_OFFSET_Z + 8], rotation: [0, 0, 0] },
+    { name: 'Specialty Consultation', room: 'consultation', position: [WING_OFFSET_X, secondY, WING_OFFSET_Z - 8], rotation: [0, Math.PI, 0] },
+    { name: 'Meditation Room', room: 'chapelPrayerRoom', position: [WING_OFFSET_X + ROOM_SPACING, secondY, WING_OFFSET_Z - 8], rotation: [0, Math.PI, 0] },
+    { name: 'Patient Storage', room: 'store', position: [WING_OFFSET_X - ROOM_SPACING, secondY, WING_OFFSET_Z - 8], rotation: [0, Math.PI, 0] },
   ];
 
   let rooms: typeof rightWingGroundRooms = rightWingGroundRooms;

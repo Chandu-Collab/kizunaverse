@@ -4,19 +4,19 @@ import { Mesh } from 'three';
 import { Html, useGLTF } from '@react-three/drei';
 import { useTheme } from '@/hooks/useTheme';
 
-interface UruruCharacterProps {
+interface RakshithaCharacterProps {
   initialPosition?: [number, number, number];
   roamRadius?: number;
   onInteract?: (pos?: [number, number, number]) => void;
 }
 
-export default UruruCharacter;
+export default RakshithaCharacter;
 
-function UruruCharacter({
+function RakshithaCharacter({
   initialPosition = [0, 1, 6],
   roamRadius = 4,
   onInteract,
-}: UruruCharacterProps) {
+}: RakshithaCharacterProps) {
   const { isNight } = useTheme();
   const meshRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);

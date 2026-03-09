@@ -4,20 +4,20 @@ import { Mesh } from 'three';
 import { Html, useGLTF } from '@react-three/drei';
 import { useTheme } from '@/hooks/useTheme';
 
-interface PriyaCharacterProps {
+interface BunnyCharacterProps {
   initialPosition?: [number, number, number];
   roamRadius?: number;
   onInteract?: (pos?: [number, number, number]) => void;
 }
 
-export default PriyaCharacter;
+export default BunnyCharacter;
 
-// Simple roaming logic: moves Priya in a circle
-function PriyaCharacter({
+// Simple roaming logic: moves Bunny in a circle
+function BunnyCharacter({
   initialPosition = [0, 1, 6],
   roamRadius = 4,
   onInteract,
-}: PriyaCharacterProps) {
+}: BunnyCharacterProps) {
   const { isNight } = useTheme();
   const meshRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
@@ -50,7 +50,7 @@ function PriyaCharacter({
     }
   });
 
-  // Load Priya's GLB model
+  // Load Bunny's GLB model
   const gltf = useGLTF('/cute_girl_character.glb');
 
   // (Removed duplicate useFrame)
