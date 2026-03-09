@@ -15,7 +15,7 @@ const ANIMATIONS = {
   talk: '/galaxia-anime-girl/talk.fbx',
 };
 
-export default function GalaxiaAnimeGirl() {
+const KizunaAnimeGirl = () => {
   const { isNight } = useTheme();
   const groupRef = useRef<THREE.Group>(null);
   const mixerRef = useRef<THREE.AnimationMixer | null>(null);
@@ -126,4 +126,6 @@ export default function GalaxiaAnimeGirl() {
       </Html>
     </group>
   );
-}
+};
+
+export default KizunaAnimeGirl;
