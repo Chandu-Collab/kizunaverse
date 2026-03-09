@@ -22,6 +22,9 @@ import FlockingBirds from '@/components/3d/FlockingBirds';
 import PriyaCharacter from '@/components/3d/PriyaCharacter';
 import UruruCharacter from '@/components/3d/UruruCharacter';
 import GalaxiaAnimeGirl from '@/components/3d/GalaxiaAnimeGirl';
+import BunnyCharacter from '@/components/3d/BunnyCharacter';
+import RakshithaCharacter from '@/components/3d/RakshithaCharacter';
+import KizunaAnimeGirl from '@/components/3d/KizunaAnimeGirl';
 import AnimatedGLBModel from '@/components/3d/AnimatedGLBModel';
 import { useCharacter } from '@/hooks/useCharacter';
 import Scene from '@/components/3d/Scene';
@@ -106,30 +109,33 @@ export default function HomeWorld() {
       {/* Character Selection UI */}
       <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 flex gap-6 bg-black/40 rounded-xl px-6 py-3 shadow-lg">
         <button
-          className={`flex flex-col items-center focus:outline-none ${selectedCharacter === 'priya' ? 'ring-2 ring-pink-400' : ''}`}
-          onClick={() => setSelectedCharacter('priya')}
+          className={`flex flex-col items-center focus:outline-none ${selectedCharacter === 'bunny' ? 'ring-2 ring-pink-400' : ''}`}
+          onClick={() => setSelectedCharacter('bunny')}
         >
-          <img src="/cute_girl_character.glb" alt="Priya" style={{ width: 48, height: 48, objectFit: 'contain' }} />
-          <span className="text-white mt-1">Priya</span>
+          <img src="/cute_girl_character.glb" alt="Bunny" style={{ width: 48, height: 48, objectFit: 'contain' }} />
+          <span className="text-white mt-1">Bunny</span>
         </button>
         <button
-          className={`flex flex-col items-center focus:outline-none ${selectedCharacter === 'ururu' ? 'ring-2 ring-blue-400' : ''}`}
-          onClick={() => setSelectedCharacter('ururu')}
+          className={`flex flex-col items-center focus:outline-none ${selectedCharacter === 'rakshitha' ? 'ring-2 ring-blue-400' : ''}`}
+          onClick={() => setSelectedCharacter('rakshitha')}
         >
-          <img src="/ururu.glb" alt="Ururu" style={{ width: 48, height: 48, objectFit: 'contain' }} />
-          <span className="text-white mt-1">Ururu</span>
+          <img src="/ururu.glb" alt="Rakshitha" style={{ width: 48, height: 48, objectFit: 'contain' }} />
+          <span className="text-white mt-1">Rakshitha</span>
         </button>
         <button
-          className={`flex flex-col items-center focus:outline-none ${selectedCharacter === 'galaxia' ? 'ring-2 ring-purple-400' : ''}`}
-          onClick={() => setSelectedCharacter('galaxia')}
+          className={`flex flex-col items-center focus:outline-none ${selectedCharacter === 'kizuna' ? 'ring-2 ring-purple-400' : ''}`}
+          onClick={() => setSelectedCharacter('kizuna')}
         >
-          <span className="text-white mt-1">Galaxia</span>
+          <span className="text-white mt-1">Kizuna</span>
         </button>
       </div>
       <Scene cameraPosition={[0, 7, 14]} enableControls={true}>
         <Suspense fallback={null}>
           <OotyScene season={season} />
-          {/* Realistic enhancements */}
+          {/* Add lighting for better visibility in night mode */}
+          <ambientLight intensity={0.5} />
+          <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
+          <pointLight position={[0, 5, 0]} intensity={0.8} />
           <WindingRoad />
 
           {/* Houses at ends of branch roads */}
@@ -194,8 +200,7 @@ export default function HomeWorld() {
                           emissive={isNight && (i + winIdx) % 3 !== 2 ? '#FFA500' : '#000000'}
                           emissiveIntensity={isNight ? 0.3 : 0}
                           transparent
-                          opacity={0.8}
-                        />
+                          opacity={0.8} />
                       </mesh>
                     ))}
                     

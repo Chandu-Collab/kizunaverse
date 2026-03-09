@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
-export type CharacterType = 'priya' | 'ururu' | 'galaxia';
+export type CharacterType = 'bunny' | 'rakshitha' | 'kizuna';
 
 interface CharacterContextProps {
   selectedCharacter: CharacterType;
@@ -10,7 +10,7 @@ interface CharacterContextProps {
 const CharacterContext = createContext<CharacterContextProps | undefined>(undefined);
 
 export function CharacterProvider({ children }: { children: ReactNode }) {
-  const [selectedCharacter, setSelectedCharacter] = useState<CharacterType>('priya');
+  const [selectedCharacter, setSelectedCharacter] = useState<CharacterType>('bunny');
   return (
     <CharacterContext.Provider value={{ selectedCharacter, setSelectedCharacter }}>
       {children}

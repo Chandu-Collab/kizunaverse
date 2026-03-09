@@ -708,7 +708,7 @@ export default function YourSpace() {
               <div className="mb-4">
                 <label className="text-white/80 text-sm mb-2 block">Choose Your Avatar:</label>
                 <div className="flex gap-3">
-                  {[{id: 'priya', name: 'Priya', emoji: '👩'}, {id: 'ururu', name: 'Ururu', emoji: '👨'}, {id: 'galaxia', name: 'Galaxia', emoji: '👸'}].map((char) => (
+                  {[{id: 'bunny', name: 'Bunny', emoji: '👩'}, {id: 'rakshitha', name: 'Rakshitha', emoji: '👨'}, {id: 'kizuna', name: 'Kizuna', emoji: '👸'}].map((char) => (
                     <motion.button
                       key={char.id}
                       onClick={() => setSelectedCharacter(char.id as any)}
