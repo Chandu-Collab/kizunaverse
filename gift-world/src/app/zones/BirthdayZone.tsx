@@ -232,9 +232,9 @@ export default function BirthdayZone() {
   // Quiz functions
   const handleQuizSubmit = () => {
     const isCorrect = 
-      quizAnswers.animal.toLowerCase().trim() === correctAnswers.animal &&
-      quizAnswers.bird.toLowerCase().trim() === correctAnswers.bird &&
-      quizAnswers.flower.toLowerCase().trim() === correctAnswers.flower;
+      quizAnswers.animal.localeCompare(correctAnswers.animal, undefined, { sensitivity: 'accent' }) === 0 &&
+      quizAnswers.bird.localeCompare(correctAnswers.bird, undefined, { sensitivity: 'accent' }) === 0 &&
+      quizAnswers.flower.localeCompare(correctAnswers.flower, undefined, { sensitivity: 'accent' }) === 0;
 
     if (isCorrect) {
       setIsAuthenticated(true);
@@ -1494,20 +1494,32 @@ function LeftWingLayout({ isNight, floor = 'ground', liftUpdateTrigger }: { isNi
   const firstY = FLOOR_HEIGHT;
   const secondY = FLOOR_HEIGHT * 2;
 
-  // Left Wing Room Configurations (2 rooms per floor - front and back)
+  // Left Wing Room Configurations (Support Services Focus - NO DUPLICATES)
   const leftWingGroundRooms: RoomDef[] = [
     { name: 'Main Pharmacy', room: 'pharmacy', position: [CENTER_X, groundY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Front
-    { name: 'Medical Storage', room: 'store', position: [CENTER_X, groundY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Medical Storage', room: 'store', position: [CENTER_X + ROOM_SPACING, groundY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Back
+    { name: 'Generator Room', room: 'generator', position: [CENTER_X - ROOM_SPACING, groundY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Back
+    { name: 'Consultation Room A', room: 'consultation', position: [CENTER_X, groundY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Consultation Room B', room: 'consultation', position: [CENTER_X + ROOM_SPACING, groundY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Equipment Storage', room: 'store', position: [CENTER_X - ROOM_SPACING, groundY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
   ];
 
   const leftWingFirstRooms: RoomDef[] = [
-    { name: 'Generator Room', room: 'generator', position: [CENTER_X, firstY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Front
-    { name: 'Consultation A', room: 'consultation', position: [CENTER_X, firstY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Pharmacy Lab', room: 'pharmacy', position: [CENTER_X, firstY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Front
+    { name: 'Recovery Room A', room: 'recovery', position: [CENTER_X + ROOM_SPACING, firstY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Back
+    { name: 'Recovery Room B', room: 'recovery', position: [CENTER_X - ROOM_SPACING, firstY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Back
+    { name: 'Nurse Station 1', room: 'nurseStations', position: [CENTER_X, firstY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Consultation Room C', room: 'consultation', position: [CENTER_X + ROOM_SPACING, firstY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Consultation Room D', room: 'consultation', position: [CENTER_X - ROOM_SPACING, firstY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
   ];
 
   const leftWingSecondRooms: RoomDef[] = [
-    { name: 'Nurse Station', room: 'nurseStations', position: [CENTER_X, secondY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Front
-    { name: 'Chapel & Prayer', room: 'chapelPrayerRoom', position: [CENTER_X, secondY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Pharmacy Storage', room: 'store', position: [CENTER_X, secondY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Front
+    { name: 'Recovery Suite', room: 'recovery', position: [CENTER_X + ROOM_SPACING, secondY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Back
+    { name: 'Nurse Station 2', room: 'nurseStations', position: [CENTER_X - ROOM_SPACING, secondY, CENTER_Z + 8], rotation: [0, 0, 0] }, // Back
+    { name: 'Consultation Suite', room: 'consultation', position: [CENTER_X, secondY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Chapel & Prayer', room: 'chapelPrayerRoom', position: [CENTER_X + ROOM_SPACING, secondY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Supply Storage', room: 'store', position: [CENTER_X - ROOM_SPACING, secondY, CENTER_Z - 8], rotation: [0, Math.PI, 0] }, // Back
   ];
 
   let rooms: typeof leftWingGroundRooms = leftWingGroundRooms;
@@ -1533,7 +1545,7 @@ function LeftWingLayout({ isNight, floor = 'ground', liftUpdateTrigger }: { isNi
     <group>
       {/* Wing identifier */}
       <Text
-        position={[CENTER_X, corridorY + 4, CENTER_Z]}
+        position={[CENTER_X, corridorY + 4, CENTER_Z - ROOM_DEPTH / 2]}
         fontSize={1.0}
         color={isNight ? "#a5d6a7" : "#388e3c"}
         anchorX="center"
@@ -1558,107 +1570,19 @@ function LeftWingLayout({ isNight, floor = 'ground', liftUpdateTrigger }: { isNi
         </group>
       ))}
 
-      {/* Corridor connecting front and back rooms */}
-      {rooms.length === 2 && (
-        <Corridor from={rooms[0].position} to={rooms[1].position} y={corridorY} />
+      {/* Corridors connecting rooms */}
+      {rooms.map((roomA, i, arr) =>
+        arr.slice(i + 1).map((roomB, j) => {
+          const isAdjacent = (roomA.position[0] === roomB.position[0] && Math.abs(roomA.position[2] - roomB.position[2]) === ROOM_DEPTH)
+            || (roomA.position[2] === roomB.position[2] && Math.abs(roomA.position[0] - roomB.position[0]) === ROOM_SPACING);
+          if (!isAdjacent) return null;
+          return <Corridor key={roomA.name + '-' + roomB.name} from={roomA.position} to={roomB.position} y={roomA.position[1]} />;
+        })
       )}
 
-      {/* Front corridor (in front of front room) */}
-      <mesh position={[CENTER_X, corridorY, CENTER_Z + 14]} scale={[12, 0.1, 4]} receiveShadow>
-        <boxGeometry />
-        <meshStandardMaterial color="#e8f5e8" opacity={0.4} transparent />
-      </mesh>
-
-      {/* Back corridor (behind back room) */}
-      <mesh position={[CENTER_X, corridorY, CENTER_Z - 14]} scale={[12, 0.1, 4]} receiveShadow>
-        <boxGeometry />
-        <meshStandardMaterial color="#e8f5e8" opacity={0.4} transparent />
-      </mesh>
-
-      {/* Side corridors connecting to stairs and lift */}
-      {/* Left side corridor to stairs */}
-      <mesh position={[CENTER_X - 6, corridorY, CENTER_Z]} scale={[8, 0.1, 4]} receiveShadow>
-        <boxGeometry />
-        <meshStandardMaterial color="#e8f5e8" opacity={0.4} transparent />
-      </mesh>
-
-      {/* Right side corridor (opposite side for balance) */}
-      <mesh position={[CENTER_X + 6, corridorY, CENTER_Z]} scale={[8, 0.1, 4]} receiveShadow>
-        <boxGeometry />
-        <meshStandardMaterial color="#e8f5e8" opacity={0.4} transparent />
-      </mesh>
-
-      {/* Walking path connections to stairs - floor specific - aligned with extended platforms */}
-      {/* Ground floor stair connection - extended to meet stair platform edge */}
-      {(floor === 'ground' || floor === 'first') && (
-        <mesh position={[CENTER_X - 8, groundY + 0.05, CENTER_Z]} scale={[8, 0.1, 4]} receiveShadow>
-          <boxGeometry />
-          <meshStandardMaterial color="#e8f5e8" opacity={0.5} transparent />
-        </mesh>
-      )}
-      
-      {/* First floor stair connection - extended to meet stair platform edge */}
-      {(floor === 'first' || floor === 'second') && (
-        <mesh position={[CENTER_X - 8, firstY + 0.05, CENTER_Z]} scale={[8, 0.1, 4]} receiveShadow>
-          <boxGeometry />
-          <meshStandardMaterial color="#e8f5e8" opacity={0.5} transparent />
-        </mesh>
-      )}
-      
-      {/* Second floor stair connection - extended to meet stair platform edge */}
-      {floor === 'second' && (
-        <mesh position={[CENTER_X - 8, secondY + 0.05, CENTER_Z]} scale={[8, 0.1, 4]} receiveShadow>
-          <boxGeometry />
-          <meshStandardMaterial color="#e8f5e8" opacity={0.5} transparent />
-        </mesh>
-      )}
-
-      {/* Lift access corridor */}
-      <mesh position={[CENTER_X, corridorY, CENTER_Z]} scale={[4, 0.1, 4]} receiveShadow>
-        <boxGeometry />
-        <meshStandardMaterial color="#f0f8f0" opacity={0.5} transparent />
-      </mesh>
-
-      {/* Lift area markers for each floor */}
-      {floor === 'ground' && (
-        <Text
-          position={[CENTER_X, groundY + 3, CENTER_Z]}
-          fontSize={0.6}
-          color={isNight ? "#81c784" : "#4caf50"}
-          anchorX="center"
-          anchorY="middle"
-        >
-          🛗 LEFT WING LIFT
-        </Text>
-      )}
-      
-      {floor === 'first' && (
-        <Text
-          position={[CENTER_X, firstY + 3, CENTER_Z]}
-          fontSize={0.6}
-          color={isNight ? "#81c784" : "#4caf50"}
-          anchorX="center"
-          anchorY="middle"
-        >
-          🛗 LEFT WING LIFT
-        </Text>
-      )}
-      
-      {floor === 'second' && (
-        <Text
-          position={[CENTER_X, secondY + 3, CENTER_Z]}
-          fontSize={0.6}
-          color={isNight ? "#81c784" : "#4caf50"}
-          anchorX="center"
-          anchorY="middle"
-        >
-          🛗 LEFT WING LIFT
-        </Text>
-      )}
-
-      {/* Wing lift system - centered between front and back rooms */}
+      {/* Wing lift system */}
       <Lift3D
-        position={[CENTER_X, groundY, CENTER_Z]}
+        position={[CENTER_X, groundY, CENTER_Z - ROOM_DEPTH / 2]}
         currentFloor={floor}
         totalFloors={3}
         isNight={isNight}
@@ -1671,138 +1595,14 @@ function LeftWingLayout({ isNight, floor = 'ground', liftUpdateTrigger }: { isNi
         estimatedArrival={0}
       />
 
-      {/* Wing stairs - conditional based on floor like central wing */}
-      
-      {/* Ground Floor View: Show only ground to first floor stairs */}
-      {floor === 'ground' && (
-        <>
-          <Stairs3D
-            position={[CENTER_X - 12, groundY, CENTER_Z]}
-            rotation={[0, 0, 0]}
-            stairsDirection="left"
-            floorHeight={FLOOR_HEIGHT}
-            isNight={isNight}
-          />
-          <Text
-            position={[CENTER_X - 12, groundY + 4, CENTER_Z]}
-            fontSize={0.5}
-            color={isNight ? "#64b5f6" : "#1976d2"}
-            anchorX="center"
-            anchorY="middle"
-          >
-            STAIRS ↑
-          </Text>
-          
-          {/* Ground floor platform - positioned to connect with walking path */}
-          <mesh position={[CENTER_X - 12, groundY + 0.1, CENTER_Z]} receiveShadow>
-            <boxGeometry args={[4, 0.2, 4]} />
-            <meshStandardMaterial color="#6a7c89" />
-          </mesh>
-          
-          {/* Extended walking platform connecting to stairs */}
-          <mesh position={[CENTER_X - 10, groundY + 0.1, CENTER_Z]} receiveShadow>
-            <boxGeometry args={[4, 0.2, 4]} />
-            <meshStandardMaterial color="#6a7c89" />
-          </mesh>
-        </>
-      )}
-      
-      {/* First Floor View: Show stairs from ground and to second floor */}
-      {floor === 'first' && (
-        <>
-          {/* Show stairs coming up from ground */}
-          <Stairs3D
-            position={[CENTER_X - 12, groundY, CENTER_Z]}
-            rotation={[0, 0, 0]}
-            stairsDirection="left"
-            floorHeight={FLOOR_HEIGHT}
-            isNight={isNight}
-          />
-          
-          {/* Show stairs going to second floor */}
-          <Stairs3D
-            position={[CENTER_X - 12, firstY, CENTER_Z]}
-            rotation={[0, 0, 0]}
-            stairsDirection="left"
-            floorHeight={FLOOR_HEIGHT}
-            isNight={isNight}
-          />
-          
-          <Text
-            position={[CENTER_X - 12, firstY + 4, CENTER_Z]}
-            fontSize={0.5}
-            color={isNight ? "#64b5f6" : "#1976d2"}
-            anchorX="center"
-            anchorY="middle"
-          >
-            STAIRS ↑↓
-          </Text>
-          
-          {/* Ground and first floor platforms - positioned to connect seamlessly */}
-          <mesh position={[CENTER_X - 12, groundY + 0.1, CENTER_Z]} receiveShadow>
-            <boxGeometry args={[4, 0.2, 4]} />
-            <meshStandardMaterial color="#6a7c89" />
-          </mesh>
-          <mesh position={[CENTER_X - 12, firstY + 0.1, CENTER_Z]} receiveShadow>
-            <boxGeometry args={[4, 0.2, 4]} />
-            <meshStandardMaterial color="#6a7c89" />
-          </mesh>
-          
-          {/* Extended walking platforms connecting to stairs */}
-          <mesh position={[CENTER_X - 10, groundY + 0.1, CENTER_Z]} receiveShadow>
-            <boxGeometry args={[4, 0.2, 4]} />
-            <meshStandardMaterial color="#6a7c89" />
-          </mesh>
-          <mesh position={[CENTER_X - 10, firstY + 0.1, CENTER_Z]} receiveShadow>
-            <boxGeometry args={[4, 0.2, 4]} />
-            <meshStandardMaterial color="#6a7c89" />
-          </mesh>
-        </>
-      )}
-      
-      {/* Second Floor View: Show stairs coming up from first floor */}
-      {floor === 'second' && (
-        <>
-          {/* Show stairs coming up from first floor (positioned at first floor level) */}
-          <Stairs3D
-            position={[CENTER_X - 12, firstY, CENTER_Z]}
-            rotation={[0, 0, 0]}
-            stairsDirection="left"
-            floorHeight={FLOOR_HEIGHT}
-            isNight={isNight}
-          />
-          
-          <Text
-            position={[CENTER_X - 12, secondY + 4, CENTER_Z]}
-            fontSize={0.5}
-            color={isNight ? "#64b5f6" : "#1976d2"}
-            anchorX="center"
-            anchorY="middle"
-          >
-            STAIRS ↓
-          </Text>
-          
-          {/* First and second floor platforms - positioned to connect seamlessly */}
-          <mesh position={[CENTER_X - 12, firstY + 0.1, CENTER_Z]} receiveShadow>
-            <boxGeometry args={[4, 0.2, 4]} />
-            <meshStandardMaterial color="#6a7c89" />
-          </mesh>
-          <mesh position={[CENTER_X - 12, secondY + 0.1, CENTER_Z]} receiveShadow>
-            <boxGeometry args={[4, 0.2, 4]} />
-            <meshStandardMaterial color="#6a7c89" />
-          </mesh>
-          
-          {/* Extended walking platforms connecting to stairs */}
-          <mesh position={[CENTER_X - 10, firstY + 0.1, CENTER_Z]} receiveShadow>
-            <boxGeometry args={[4, 0.2, 4]} />
-            <meshStandardMaterial color="#6a7c89" />
-          </mesh>
-          <mesh position={[CENTER_X - 10, secondY + 0.1, CENTER_Z]} receiveShadow>
-            <boxGeometry args={[4, 0.2, 4]} />
-            <meshStandardMaterial color="#6a7c89" />
-          </mesh>
-        </>
-      )}
+      {/* Wing stairs */}
+      <Stairs3D
+        position={[CENTER_X - 22, groundY, CENTER_Z - ROOM_DEPTH / 2]}
+        rotation={[0, 0, 0]}
+        stairsDirection="left"
+        floorHeight={FLOOR_HEIGHT}
+        isNight={isNight}
+      />
     </group>
   );
 }
@@ -1829,30 +1629,30 @@ function LeftWingLayout3D({ isNight, floor = 'ground', liftUpdateTrigger }: { is
 
   // Left Wing Room Configurations (Support Services Focus - NO DUPLICATES)
   const leftWingGroundRooms: RoomDef[] = [
-    { name: 'Main Pharmacy', room: 'pharmacy', position: [WING_OFFSET_X, groundY, WING_OFFSET_Z], rotation: [0, 0, 0] },
-    { name: 'Medical Storage', room: 'store', position: [WING_OFFSET_X + ROOM_SPACING, groundY, WING_OFFSET_Z], rotation: [0, 0, 0] },
-    { name: 'Generator Room', room: 'generator', position: [WING_OFFSET_X - ROOM_SPACING, groundY, WING_OFFSET_Z], rotation: [0, 0, 0] },
-    { name: 'Consultation Room A', room: 'consultation', position: [WING_OFFSET_X, groundY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
-    { name: 'Consultation Room B', room: 'consultation', position: [WING_OFFSET_X + ROOM_SPACING, groundY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
-    { name: 'Equipment Storage', room: 'store', position: [WING_OFFSET_X - ROOM_SPACING, groundY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Main Pharmacy', room: 'pharmacy', position: [WING_OFFSET_X, groundY, WING_OFFSET_Z], rotation: [0, 0, 0] }, // Front
+    { name: 'Medical Storage', room: 'store', position: [WING_OFFSET_X + ROOM_SPACING, groundY, WING_OFFSET_Z], rotation: [0, 0, 0] }, // Back
+    { name: 'Generator Room', room: 'generator', position: [WING_OFFSET_X - ROOM_SPACING, groundY, WING_OFFSET_Z], rotation: [0, 0, 0] }, // Back
+    { name: 'Consultation Room A', room: 'consultation', position: [WING_OFFSET_X, groundY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Consultation Room B', room: 'consultation', position: [WING_OFFSET_X + ROOM_SPACING, groundY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Equipment Storage', room: 'store', position: [WING_OFFSET_X - ROOM_SPACING, groundY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] }, // Back
   ];
 
   const leftWingFirstRooms: RoomDef[] = [
-    { name: 'Pharmacy Lab', room: 'pharmacy', position: [WING_OFFSET_X, firstY, WING_OFFSET_Z], rotation: [0, 0, 0] },
-    { name: 'Recovery Room A', room: 'recovery', position: [WING_OFFSET_X + ROOM_SPACING, firstY, WING_OFFSET_Z], rotation: [0, 0, 0] },
-    { name: 'Recovery Room B', room: 'recovery', position: [WING_OFFSET_X - ROOM_SPACING, firstY, WING_OFFSET_Z], rotation: [0, 0, 0] },
-    { name: 'Nurse Station 1', room: 'nurseStations', position: [WING_OFFSET_X, firstY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
-    { name: 'Consultation Room C', room: 'consultation', position: [WING_OFFSET_X + ROOM_SPACING, firstY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
-    { name: 'Consultation Room D', room: 'consultation', position: [WING_OFFSET_X - ROOM_SPACING, firstY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Pharmacy Lab', room: 'pharmacy', position: [WING_OFFSET_X, firstY, WING_OFFSET_Z + 8], rotation: [0, 0, 0] }, // Front
+    { name: 'Recovery Room A', room: 'recovery', position: [WING_OFFSET_X + ROOM_SPACING, firstY, WING_OFFSET_Z + 8], rotation: [0, 0, 0] }, // Back
+    { name: 'Recovery Room B', room: 'recovery', position: [WING_OFFSET_X - ROOM_SPACING, firstY, WING_OFFSET_Z + 8], rotation: [0, 0, 0] }, // Back
+    { name: 'Nurse Station 1', room: 'nurseStations', position: [WING_OFFSET_X, firstY, WING_OFFSET_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Consultation Room C', room: 'consultation', position: [WING_OFFSET_X + ROOM_SPACING, firstY, WING_OFFSET_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Consultation Room D', room: 'consultation', position: [WING_OFFSET_X - ROOM_SPACING, firstY, WING_OFFSET_Z - 8], rotation: [0, Math.PI, 0] }, // Back
   ];
 
   const leftWingSecondRooms: RoomDef[] = [
-    { name: 'Pharmacy Storage', room: 'store', position: [WING_OFFSET_X, secondY, WING_OFFSET_Z], rotation: [0, 0, 0] },
-    { name: 'Recovery Suite', room: 'recovery', position: [WING_OFFSET_X + ROOM_SPACING, secondY, WING_OFFSET_Z], rotation: [0, 0, 0] },
-    { name: 'Nurse Station 2', room: 'nurseStations', position: [WING_OFFSET_X - ROOM_SPACING, secondY, WING_OFFSET_Z], rotation: [0, 0, 0] },
-    { name: 'Consultation Suite', room: 'consultation', position: [WING_OFFSET_X, secondY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
-    { name: 'Chapel & Prayer', room: 'chapelPrayerRoom', position: [WING_OFFSET_X + ROOM_SPACING, secondY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
-    { name: 'Supply Storage', room: 'store', position: [WING_OFFSET_X - ROOM_SPACING, secondY, WING_OFFSET_Z - ROOM_DEPTH], rotation: [0, Math.PI, 0] },
+    { name: 'Pharmacy Storage', room: 'store', position: [WING_OFFSET_X, secondY, WING_OFFSET_Z + 8], rotation: [0, 0, 0] }, // Front
+    { name: 'Recovery Suite', room: 'recovery', position: [WING_OFFSET_X + ROOM_SPACING, secondY, WING_OFFSET_Z + 8], rotation: [0, 0, 0] }, // Back
+    { name: 'Nurse Station 2', room: 'nurseStations', position: [WING_OFFSET_X - ROOM_SPACING, secondY, WING_OFFSET_Z + 8], rotation: [0, 0, 0] }, // Back
+    { name: 'Consultation Suite', room: 'consultation', position: [WING_OFFSET_X, secondY, WING_OFFSET_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Chapel & Prayer', room: 'chapelPrayerRoom', position: [WING_OFFSET_X + ROOM_SPACING, secondY, WING_OFFSET_Z - 8], rotation: [0, Math.PI, 0] }, // Back
+    { name: 'Supply Storage', room: 'store', position: [WING_OFFSET_X - ROOM_SPACING, secondY, WING_OFFSET_Z - 8], rotation: [0, Math.PI, 0] }, // Back
   ];
 
   let rooms: typeof leftWingGroundRooms = leftWingGroundRooms;
