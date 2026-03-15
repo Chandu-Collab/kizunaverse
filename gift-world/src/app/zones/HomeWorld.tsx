@@ -108,21 +108,21 @@ export default function HomeWorld() {
           className={`flex flex-col items-center focus:outline-none ${selectedCharacter === 'bunny' ? 'ring-2 ring-pink-400' : ''}`}
           onClick={() => setSelectedCharacter('bunny')}
         >
-          <img src="/Bunny.glb" alt="Bunny" style={{ width: 48, height: 48, objectFit: 'contain' }} />
+          <img src="/images/bunny.png" alt="Bunny" style={{ width: 48, height: 48, objectFit: 'contain' }} />
           <span className="text-white mt-1">Bunny</span>
         </button>
         <button
           className={`flex flex-col items-center focus:outline-none ${selectedCharacter === 'rakshitha' ? 'ring-2 ring-blue-400' : ''}`}
           onClick={() => setSelectedCharacter('rakshitha')}
         >
-          <img src="/Rakshitha.glb" alt="Rakshitha" style={{ width: 48, height: 48, objectFit: 'contain' }} />
+          <img src="/images/cute.png" alt="Rakshitha" style={{ width: 48, height: 48, objectFit: 'contain' }} />
           <span className="text-white mt-1">Rakshitha</span>
         </button>
         <button
           className={`flex flex-col items-center focus:outline-none ${selectedCharacter === 'kizuna' ? 'ring-2 ring-purple-400' : ''}`}
           onClick={() => setSelectedCharacter('kizuna')}
         >
-          <img src="/Kizuna.glb" alt="Kizuna" style={{ width: 48, height: 48, objectFit: 'contain' }} />
+          <img src="/images/kizuna.png" alt="Kizuna" style={{ width: 48, height: 48, objectFit: 'contain' }} />
           <span className="text-white mt-1">Kizuna</span>
         </button>
       </div>
