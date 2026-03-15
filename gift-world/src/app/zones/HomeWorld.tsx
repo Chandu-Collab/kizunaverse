@@ -19,13 +19,9 @@ import Male3D from '@/components/3d/Male3D';
 import Female3D from '@/components/3d/Female3D';
 import { Bird, Butterfly } from '@/components/3d/BirdButterfly3D';
 import FlockingBirds from '@/components/3d/FlockingBirds';
-import PriyaCharacter from '@/components/3d/PriyaCharacter';
-import UruruCharacter from '@/components/3d/UruruCharacter';
-import GalaxiaAnimeGirl from '@/components/3d/GalaxiaAnimeGirl';
 import BunnyCharacter from '@/components/3d/BunnyCharacter';
 import RakshithaCharacter from '@/components/3d/RakshithaCharacter';
 import KizunaAnimeGirl from '@/components/3d/KizunaAnimeGirl';
-import AnimatedGLBModel from '@/components/3d/AnimatedGLBModel';
 import { useCharacter } from '@/hooks/useCharacter';
 import Scene from '@/components/3d/Scene';
 import OotyScene from '@/components/3d/OotyScene';
@@ -112,20 +108,21 @@ export default function HomeWorld() {
           className={`flex flex-col items-center focus:outline-none ${selectedCharacter === 'bunny' ? 'ring-2 ring-pink-400' : ''}`}
           onClick={() => setSelectedCharacter('bunny')}
         >
-          <img src="/cute_girl_character.glb" alt="Bunny" style={{ width: 48, height: 48, objectFit: 'contain' }} />
+          <img src="/Bunny.glb" alt="Bunny" style={{ width: 48, height: 48, objectFit: 'contain' }} />
           <span className="text-white mt-1">Bunny</span>
         </button>
         <button
           className={`flex flex-col items-center focus:outline-none ${selectedCharacter === 'rakshitha' ? 'ring-2 ring-blue-400' : ''}`}
           onClick={() => setSelectedCharacter('rakshitha')}
         >
-          <img src="/ururu.glb" alt="Rakshitha" style={{ width: 48, height: 48, objectFit: 'contain' }} />
+          <img src="/Rakshitha.glb" alt="Rakshitha" style={{ width: 48, height: 48, objectFit: 'contain' }} />
           <span className="text-white mt-1">Rakshitha</span>
         </button>
         <button
           className={`flex flex-col items-center focus:outline-none ${selectedCharacter === 'kizuna' ? 'ring-2 ring-purple-400' : ''}`}
           onClick={() => setSelectedCharacter('kizuna')}
         >
+          <img src="/Kizuna.glb" alt="Kizuna" style={{ width: 48, height: 48, objectFit: 'contain' }} />
           <span className="text-white mt-1">Kizuna</span>
         </button>
       </div>
@@ -447,42 +444,42 @@ export default function HomeWorld() {
           {(() => {
             const [greeting, setGreeting] = useState<string | null>(null);
             const [greetPos, setGreetPos] = useState<[number, number, number] | null>(null);
-            const handlePriya = (pos: [number, number, number]) => {
-              setGreeting('Hi! I am Priya, your guide!');
+            const handleBunny = (pos: [number, number, number]) => {
+              setGreeting('Hi! I am Bunny, your guide!');
               setGreetPos([pos[0], pos[1] + 2.2, pos[2]]);
               setTimeout(() => setGreeting(null), 2000);
             };
-            const handleUruru = (pos: [number, number, number]) => {
-              setGreeting('Hello! I am Ururu, nice to meet you!');
+            const handleRakshitha = (pos: [number, number, number]) => {
+              setGreeting('Hello! I am Rakshitha, nice to meet you!');
               setGreetPos([pos[0], pos[1] + 2.2, pos[2]]);
               setTimeout(() => setGreeting(null), 2000);
             };
-            // Galaxia is a static model, so just show a message at center
-            const handleGalaxia = (pos: [number, number, number]) => {
-              setGreeting('Galaxia: Welcome to the universe!');
+            // Kizuna is a static model, so just show a message at center
+            const handleKizuna = (pos: [number, number, number]) => {
+              setGreeting('Kizuna: Welcome to the universe!');
               setGreetPos([pos[0], pos[1] + 2.5, pos[2]]);
               setTimeout(() => setGreeting(null), 2000);
             };
             return <>
-              {selectedCharacter === 'priya' && (
-                <PriyaCharacter
+              {selectedCharacter === 'bunny' && (
+                <BunnyCharacter
                   initialPosition={[0, 1, 6]}
                   roamRadius={4}
-                  onInteract={pos => handlePriya(pos || [0, 1, 6])}
+                  onInteract={(pos) => handleBunny(pos || [0, 1, 6])}
                 />
               )}
-              {selectedCharacter === 'ururu' && (
-                <UruruCharacter
+              {selectedCharacter === 'rakshitha' && (
+                <RakshithaCharacter
                   initialPosition={[0, 1, 6]}
                   roamRadius={4}
-                  onInteract={pos => handleUruru(pos || [0, 1, 6])}
+                  onInteract={(pos) => handleRakshitha(pos || [0, 1, 6])}
                 />
               )}
-              {selectedCharacter === 'galaxia' && (
-                <AnimatedGLBModel
-                  initialPosition={[0, 1, 6]} // Ensure this prop is supported by AnimatedGLBModel
+              {selectedCharacter === 'kizuna' && (
+                <KizunaAnimeGirl
+                  initialPosition={[0, 1, 6]}
                   roamRadius={4}
-                  onInteract={(pos: [number, number, number]) => handleGalaxia(pos || [0, 1, 6])} // Explicitly type 'pos'
+                  onInteract={(pos) => handleKizuna(pos || [0, 1, 6])}
                 />
               )}
               {greeting && greetPos && (

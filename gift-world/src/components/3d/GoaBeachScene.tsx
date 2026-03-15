@@ -7,9 +7,9 @@ import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion } from 'framer-motion';
 import WeatherSystem from './weather/WeatherSystem';
-import PriyaCharacter from './PriyaCharacter';
-import UruruCharacter from './UruruCharacter';
-import GalaxiaAnimeGirl from './GalaxiaAnimeGirl';
+import BunnyCharacter from './BunnyCharacter';
+import RakshithaCharacter from './RakshithaCharacter';
+import KizunaAnimeGirl from './KizunaAnimeGirl';
 
 // Enhanced Time of Day System
 type TimeOfDay = 'dawn' | 'morning' | 'noon' | 'afternoon' | 'evening' | 'night';
@@ -1389,7 +1389,7 @@ function BeachVendors() {
 export default function GoaBeachScene({ 
   season = 'summer', 
   weather = 'sunny', 
-  character = 'priya'
+  character = 'bunny'
 }: { 
   season?: string; 
   weather?: string; 
@@ -1470,14 +1470,14 @@ export default function GoaBeachScene({
     const charPosition: [number, number, number] = [3, 0, 1];
     
     switch (character) {
-      case 'priya':
-        return <PriyaCharacter initialPosition={charPosition} />;
-      case 'ururu':
-        return <UruruCharacter initialPosition={charPosition} />;
-      case 'galaxia':
-        return <GalaxiaAnimeGirl />;
+      case 'bunny':
+        return <BunnyCharacter initialPosition={charPosition} />;
+      case 'rakshitha':
+        return <RakshithaCharacter initialPosition={charPosition} />;
+      case 'kizuna':
+        return <KizunaAnimeGirl />;
       default:
-        return <PriyaCharacter initialPosition={charPosition} />;
+        return <BunnyCharacter initialPosition={charPosition} />;
     }
   };
   
